@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace anonymous_chat
 {
-    public partial class Chat : Form
+    public partial class Main : Form
     {
-        public Chat()
+        public Main()
         {
             InitializeComponent();
         }

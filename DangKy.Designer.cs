@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            PictureBox pictureBox1;
+            PictureBox logo;
             TB_signIn = new Button();
             TB_password = new TextBox();
             label5 = new Label();
@@ -38,23 +38,25 @@
             TB_email = new TextBox();
             TB_repassword = new TextBox();
             label2 = new Label();
-            pictureBox1 = new PictureBox();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            label3 = new Label();
+            textBox1 = new TextBox();
+            logo = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
             SuspendLayout();
             // 
-            // pictureBox1
+            // logo
             // 
-            pictureBox1.Image = Properties.Resources.logo150x150;
-            pictureBox1.Location = new Point(287, 9);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(160, 146);
-            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
-            pictureBox1.TabIndex = 28;
-            pictureBox1.TabStop = false;
+            logo.Image = Properties.Resources.logo150x150;
+            logo.Location = new Point(287, 9);
+            logo.Name = "logo";
+            logo.Size = new Size(160, 146);
+            logo.SizeMode = PictureBoxSizeMode.CenterImage;
+            logo.TabIndex = 28;
+            logo.TabStop = false;
             // 
             // TB_signIn
             // 
-            TB_signIn.Location = new Point(125, 388);
+            TB_signIn.Location = new Point(125, 405);
             TB_signIn.Margin = new Padding(3, 4, 3, 4);
             TB_signIn.Name = "TB_signIn";
             TB_signIn.Size = new Size(141, 31);
@@ -64,7 +66,7 @@
             // 
             // TB_password
             // 
-            TB_password.Location = new Point(287, 274);
+            TB_password.Location = new Point(287, 308);
             TB_password.Margin = new Padding(3, 4, 3, 4);
             TB_password.Name = "TB_password";
             TB_password.Size = new Size(258, 27);
@@ -73,7 +75,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(196, 277);
+            label5.Location = new Point(196, 311);
             label5.Name = "label5";
             label5.Size = new Size(70, 20);
             label5.TabIndex = 21;
@@ -91,7 +93,7 @@
             // 
             // TB_signUP
             // 
-            TB_signUP.Location = new Point(393, 388);
+            TB_signUP.Location = new Point(393, 405);
             TB_signUP.Margin = new Padding(3, 4, 3, 4);
             TB_signUP.Name = "TB_signUP";
             TB_signUP.Size = new Size(152, 31);
@@ -102,15 +104,15 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(220, 230);
+            label1.Location = new Point(220, 264);
             label1.Name = "label1";
-            label1.Size = new Size(46, 20);
+            label1.Size = new Size(32, 20);
             label1.TabIndex = 16;
-            label1.Text = "Email";
+            label1.Text = "Tên";
             // 
             // TB_email
             // 
-            TB_email.Location = new Point(287, 227);
+            TB_email.Location = new Point(287, 261);
             TB_email.Margin = new Padding(3, 4, 3, 4);
             TB_email.Name = "TB_email";
             TB_email.Size = new Size(258, 27);
@@ -118,7 +120,7 @@
             // 
             // TB_repassword
             // 
-            TB_repassword.Location = new Point(287, 320);
+            TB_repassword.Location = new Point(287, 354);
             TB_repassword.Margin = new Padding(3, 4, 3, 4);
             TB_repassword.Name = "TB_repassword";
             TB_repassword.Size = new Size(258, 27);
@@ -127,18 +129,37 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(132, 323);
+            label2.Location = new Point(132, 357);
             label2.Name = "label2";
             label2.Size = new Size(134, 20);
             label2.TabIndex = 26;
             label2.Text = "Xác nhận mật khẩu";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(220, 220);
+            label3.Name = "label3";
+            label3.Size = new Size(46, 20);
+            label3.TabIndex = 30;
+            label3.Text = "Email";
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(287, 217);
+            textBox1.Margin = new Padding(3, 4, 3, 4);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(258, 27);
+            textBox1.TabIndex = 29;
             // 
             // DangKy
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(705, 449);
-            Controls.Add(pictureBox1);
+            Controls.Add(label3);
+            Controls.Add(textBox1);
+            Controls.Add(logo);
             Controls.Add(TB_repassword);
             Controls.Add(label2);
             Controls.Add(TB_signIn);
@@ -150,7 +171,7 @@
             Controls.Add(TB_email);
             Name = "DangKy";
             Text = "Anonymous Chat";
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)logo).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -166,5 +187,7 @@
         private TextBox TB_email;
         private TextBox TB_repassword;
         private Label label2;
+        private Label label3;
+        private TextBox textBox1;
     }
 }

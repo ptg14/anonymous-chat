@@ -52,7 +52,7 @@
             // 
             // TB_signIn
             // 
-            TB_signIn.Location = new Point(125, 367);
+            TB_signIn.Location = new Point(125, 350);
             TB_signIn.Margin = new Padding(3, 4, 3, 4);
             TB_signIn.Name = "TB_signIn";
             TB_signIn.Size = new Size(141, 44);
@@ -89,7 +89,7 @@
             // 
             // TB_signUP
             // 
-            TB_signUP.Location = new Point(393, 367);
+            TB_signUP.Location = new Point(393, 350);
             TB_signUP.Margin = new Padding(3, 4, 3, 4);
             TB_signUP.Name = "TB_signUP";
             TB_signUP.Size = new Size(152, 44);
