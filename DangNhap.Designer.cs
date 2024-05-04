@@ -36,6 +36,8 @@
             TB_signUP = new Button();
             label1 = new Label();
             TB_email = new TextBox();
+            label2 = new Label();
+            button1 = new Button();
             pictureBox1 = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -114,11 +116,31 @@
             TB_email.Size = new Size(258, 27);
             TB_email.TabIndex = 29;
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(196, 412);
+            label2.Name = "label2";
+            label2.Size = new Size(120, 20);
+            label2.TabIndex = 39;
+            label2.Text = "Quên mật khẩu ?";
+            // 
+            // button1
+            // 
+            button1.Location = new Point(322, 408);
+            button1.Name = "button1";
+            button1.Size = new Size(94, 29);
+            button1.TabIndex = 40;
+            button1.Text = "Khôi phục";
+            button1.UseVisualStyleBackColor = true;
+            // 
             // DangNhap
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(705, 449);
+            Controls.Add(button1);
+            Controls.Add(label2);
             Controls.Add(pictureBox1);
             Controls.Add(TB_signIn);
             Controls.Add(TB_password);
@@ -143,5 +165,7 @@
         private Button TB_signUP;
         private Label label1;
         private TextBox TB_email;
+        private Label label2;
+        private Button button1;
     }
 }

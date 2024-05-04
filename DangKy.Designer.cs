@@ -35,11 +35,11 @@
             label4 = new Label();
             TB_signUP = new Button();
             label1 = new Label();
-            TB_email = new TextBox();
+            TB_username = new TextBox();
             TB_repassword = new TextBox();
             label2 = new Label();
             label3 = new Label();
-            textBox1 = new TextBox();
+            TB_email = new TextBox();
             logo = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
             SuspendLayout();
@@ -63,6 +63,7 @@
             TB_signIn.TabIndex = 25;
             TB_signIn.Text = "Trở về đăng nhập";
             TB_signIn.UseVisualStyleBackColor = true;
+            TB_signIn.Click += TB_signIn_Click;
             // 
             // TB_password
             // 
@@ -100,6 +101,7 @@
             TB_signUP.TabIndex = 19;
             TB_signUP.Text = "Đăng ký";
             TB_signUP.UseVisualStyleBackColor = true;
+            TB_signUP.Click += TB_signUP_Click;
             // 
             // label1
             // 
@@ -110,13 +112,13 @@
             label1.TabIndex = 16;
             label1.Text = "Tên";
             // 
-            // TB_email
+            // TB_username
             // 
-            TB_email.Location = new Point(287, 261);
-            TB_email.Margin = new Padding(3, 4, 3, 4);
-            TB_email.Name = "TB_email";
-            TB_email.Size = new Size(258, 27);
-            TB_email.TabIndex = 13;
+            TB_username.Location = new Point(287, 261);
+            TB_username.Margin = new Padding(3, 4, 3, 4);
+            TB_username.Name = "TB_username";
+            TB_username.Size = new Size(258, 27);
+            TB_username.TabIndex = 13;
             // 
             // TB_repassword
             // 
@@ -144,13 +146,13 @@
             label3.TabIndex = 30;
             label3.Text = "Email";
             // 
-            // textBox1
+            // TB_email
             // 
-            textBox1.Location = new Point(287, 217);
-            textBox1.Margin = new Padding(3, 4, 3, 4);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(258, 27);
-            textBox1.TabIndex = 29;
+            TB_email.Location = new Point(287, 217);
+            TB_email.Margin = new Padding(3, 4, 3, 4);
+            TB_email.Name = "TB_email";
+            TB_email.Size = new Size(258, 27);
+            TB_email.TabIndex = 29;
             // 
             // DangKy
             // 
@@ -158,7 +160,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(705, 449);
             Controls.Add(label3);
-            Controls.Add(textBox1);
+            Controls.Add(TB_email);
             Controls.Add(logo);
             Controls.Add(TB_repassword);
             Controls.Add(label2);
@@ -168,7 +170,7 @@
             Controls.Add(label4);
             Controls.Add(TB_signUP);
             Controls.Add(label1);
-            Controls.Add(TB_email);
+            Controls.Add(TB_username);
             Name = "DangKy";
             Text = "Anonymous Chat";
             ((System.ComponentModel.ISupportInitialize)logo).EndInit();
@@ -184,10 +186,10 @@
         private Label label4;
         private Button TB_signUP;
         private Label label1;
-        private TextBox TB_email;
+        private TextBox TB_username;
         private TextBox TB_repassword;
         private Label label2;
         private Label label3;
-        private TextBox textBox1;
+        private TextBox TB_email;
     }
 }
