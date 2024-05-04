@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.ApplicationServices;
+using System.Security.Cryptography;
 
 namespace anonymous_chat.Redis
 {
@@ -15,7 +16,9 @@ namespace anonymous_chat.Redis
         private static ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("ec2-18-204-20-251.compute-1.amazonaws.com");
         private static IDatabase db = redis.GetDatabase();
 
-        public bool StoreUserData(IDatabase db, string email, string username, string password, string ipAddress)
+        #region User Data
+        
+        public bool StoreUserData(IDatabase db, string email, string username, string password)
         {
             if (!IsValidEmail(email))
             {
@@ -26,23 +29,24 @@ namespace anonymous_chat.Redis
             {
                 throw new ArgumentException("Email is already in use", nameof(email));
             }
-            // Create a UserData instance
-            UserData user = new UserData
-            {
-                UserName = username,
-                Email = email,
-                Password = password,
-                IPAddress = ipAddress
-            };
-
-            // Serialize the UserData instance to JSON
-            string json = JsonConvert.SerializeObject(user);
 
             // Get the next user ID
             long UID = db.StringIncrement("UID");
 
+            // Create a UserData instance
+            UserData user = new UserData
+            {
+                UID = UID,
+                UserName = username,
+                Email = email,
+                Password = password,
+            };
+
+            // Serialize the UserData instance to JSON
+            string jsonData = JsonConvert.SerializeObject(user);
+
             // Store the JSON in Redis
-            return db.StringSet($"user:{UID}", json);
+            return db.StringSet($"user:{UID}", jsonData);
         }
 
         public bool IsValidEmail(string email)
@@ -50,6 +54,24 @@ namespace anonymous_chat.Redis
             var regex = new Regex(@"^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$");
             return regex.IsMatch(email);
         }
+
+        public bool UpdateUserData(IDatabase db, long UID, string email, string username, string password)
+        {
+            // Update a UserData instance
+            UserData user = new UserData
+            {
+                UserName = username,
+                Password = password,
+            };
+
+            // Serialize the UserData object to a JSON string
+            string jsonData = JsonConvert.SerializeObject(user);
+
+            // Store the JSON string in the Redis database with the key "user:{UID}"
+            return db.StringSet($"user:{UID}", jsonData);
+        }
+
+        #endregion
 
         public IDatabase GetDatabase()
         {
