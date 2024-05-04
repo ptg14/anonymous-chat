@@ -93,9 +93,29 @@ namespace anonymous_chat.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap phone40x40 {
+            get {
+                object obj = ResourceManager.GetObject("phone40x40", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap search20x20 {
             get {
                 object obj = ResourceManager.GetObject("search20x20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap setting40x40 {
+            get {
+                object obj = ResourceManager.GetObject("setting40x40", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

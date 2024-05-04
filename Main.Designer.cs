@@ -40,15 +40,21 @@
             LB_UID = new Label();
             LB_name = new Label();
             BT_avatar = new Button();
+            mainchat = new Panel();
+            richTextBox1 = new RichTextBox();
             BT_send = new Button();
             BT_sendFile = new Button();
             button8 = new Button();
-            richTextBox1 = new RichTextBox();
-            mainchat = new Panel();
+            pictureBox1 = new PictureBox();
+            label1 = new Label();
+            BT_setting = new Button();
+            BT_call = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            mainchat.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // splitContainer1
@@ -175,6 +181,27 @@
             BT_avatar.TabIndex = 0;
             BT_avatar.UseVisualStyleBackColor = true;
             // 
+            // mainchat
+            // 
+            mainchat.Controls.Add(BT_call);
+            mainchat.Controls.Add(BT_setting);
+            mainchat.Controls.Add(label1);
+            mainchat.Controls.Add(pictureBox1);
+            mainchat.Location = new Point(3, 3);
+            mainchat.Name = "mainchat";
+            mainchat.Size = new Size(619, 460);
+            mainchat.TabIndex = 13;
+            // 
+            // richTextBox1
+            // 
+            richTextBox1.BackColor = SystemColors.Window;
+            richTextBox1.BorderStyle = BorderStyle.None;
+            richTextBox1.Location = new Point(3, 469);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new Size(447, 30);
+            richTextBox1.TabIndex = 12;
+            richTextBox1.Text = "";
+            // 
             // BT_send
             // 
             BT_send.Location = new Point(528, 470);
@@ -202,22 +229,41 @@
             button8.TabIndex = 9;
             button8.UseVisualStyleBackColor = true;
             // 
-            // richTextBox1
+            // pictureBox1
             // 
-            richTextBox1.BackColor = SystemColors.Window;
-            richTextBox1.BorderStyle = BorderStyle.None;
-            richTextBox1.Location = new Point(3, 469);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(447, 30);
-            richTextBox1.TabIndex = 12;
-            richTextBox1.Text = "";
+            pictureBox1.Location = new Point(3, 0);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(50, 50);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
             // 
-            // mainchat
+            // label1
             // 
-            mainchat.Location = new Point(3, 3);
-            mainchat.Name = "mainchat";
-            mainchat.Size = new Size(619, 460);
-            mainchat.TabIndex = 13;
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.Location = new Point(59, 6);
+            label1.Name = "label1";
+            label1.Size = new Size(97, 41);
+            label1.TabIndex = 1;
+            label1.Text = "Name";
+            // 
+            // BT_setting
+            // 
+            BT_setting.Image = Properties.Resources.setting40x40;
+            BT_setting.Location = new Point(566, 3);
+            BT_setting.Name = "BT_setting";
+            BT_setting.Size = new Size(50, 50);
+            BT_setting.TabIndex = 9;
+            BT_setting.UseVisualStyleBackColor = true;
+            // 
+            // BT_call
+            // 
+            BT_call.Image = Properties.Resources.phone40x40;
+            BT_call.Location = new Point(510, 3);
+            BT_call.Name = "BT_call";
+            BT_call.Size = new Size(50, 50);
+            BT_call.TabIndex = 10;
+            BT_call.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -232,6 +278,9 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            mainchat.ResumeLayout(false);
+            mainchat.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
 
@@ -254,5 +303,9 @@
         private Button button8;
         private RichTextBox richTextBox1;
         private Panel mainchat;
+        private Button BT_call;
+        private Button BT_setting;
+        private Label label1;
+        private PictureBox pictureBox1;
     }
 }
