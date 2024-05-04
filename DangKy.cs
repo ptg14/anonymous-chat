@@ -31,15 +31,13 @@ namespace anonymous_chat
             }
         }
 
-        private async void TB_signUP_Click(object sender, EventArgs e)
+        private void TB_signUP_Click(object sender, EventArgs e)
         {
             DataBase dataBase = new DataBase();
             try
             {
-                // Get the public IP address of the user
-                string ipAddress = await GetPublicIPAddressAsync();
                 // Store the user data in the database
-                bool result = dataBase.StoreUserData(dataBase.GetDatabase(), TB_email.Text, TB_username.Text, TB_password.Text, ipAddress);
+                bool result = dataBase.StoreUserData(dataBase.GetDatabase(), TB_email.Text, TB_username.Text, TB_password.Text);
 
                 if (result)
                 {
