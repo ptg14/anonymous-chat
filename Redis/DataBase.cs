@@ -24,22 +24,28 @@ namespace anonymous_chat.Redis
             }
             catch (Exception)
             {
-                throw new ArgumentException("Cannot connect to the database server");
+                throw new ArgumentException("Không thể kết nối đến máy chủ");
             }
+        }
+
+        public bool IsValidEmail(string email)
+        {
+            var regex = new Regex(@"^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$");
+            return regex.IsMatch(email);
         }
 
         #region User Data
 
-        public bool StoreUserData(IDatabase db, string email, string username, string password)
+        public bool StoreUserData(IDatabase db, string email, string username, string password, string noti)
         {
             if (!IsValidEmail(email))
             {
-                throw new ArgumentException("Invalid email format", nameof(email));
+                noti = "Email không hợp lệ";
             }
             // Check if the email is already in use
             if (db.KeyExists(email))
             {
-                throw new ArgumentException("Email is already in use", nameof(email));
+                noti = "Email đã được sử dụng";
             }
 
             // Get the next user ID
@@ -64,12 +70,6 @@ namespace anonymous_chat.Redis
             bool isMappingStored = db.StringSet(email, UID.ToString());
 
             return isUserStored && isMappingStored;
-        }
-
-        public bool IsValidEmail(string email)
-        {
-            var regex = new Regex(@"^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$");
-            return regex.IsMatch(email);
         }
 
         public bool UpdateUserData(IDatabase db, long UID, string newUsername, string newPassword)
@@ -135,7 +135,7 @@ namespace anonymous_chat.Redis
             }
             else
             {
-                throw new ArgumentException("Cannot connect to the database server");
+                throw new ArgumentException("Không thể kết nối đến máy chủ");
             }
         }
     }

@@ -45,6 +45,11 @@ namespace anonymous_chat
 
         private void TB_signUP_Click(object sender, EventArgs e)
         {
+            if (TB_email.Text == "" || TB_username.Text == "" || TB_password.Text == "" || TB_repassword.Text == "")
+            {
+                LB_noti.Text = "Vui lòng điền đầy đủ thông tin";
+                return;
+            }
             if (TB_password.Text != TB_repassword.Text)
             {
                 LB_noti.Text = "Mật khẩu không khớp";
@@ -53,7 +58,7 @@ namespace anonymous_chat
             try
             {
                 // Store the user data in the database
-                bool result = dataBase.StoreUserData(redis, TB_email.Text, TB_username.Text, TB_password.Text);
+                bool result = dataBase.StoreUserData(redis, TB_email.Text, TB_username.Text, TB_password.Text, LB_noti.Text);
 
                 if (result)
                 {
@@ -63,6 +68,7 @@ namespace anonymous_chat
                 else
                 {
                     LB_noti.Text = "Đăng ký không thành công";
+                    return;
                 }
             }
             catch (ArgumentException ex)

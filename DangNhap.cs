@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ServiceStack;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace anonymous_chat
 {
@@ -29,6 +30,12 @@ namespace anonymous_chat
         private string UserName;
         private string? email;
         private string? password;
+
+        public bool IsValidEmail(string email)
+        {
+            var regex = new Regex(@"^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$");
+            return regex.IsMatch(email);
+        }
 
         public static bool ShowAndTryGetInput(out long UID, out string userName, IWin32Window? owner = null)
         {
@@ -52,7 +59,12 @@ namespace anonymous_chat
             if (TB_email.Text == "" || TB_password.Text == "")
             {
                 LB_noti.Text = "Vui lòng nhập đủ thông tin";
-                DialogResult = DialogResult.Cancel;
+                return;
+            }
+            else if (!IsValidEmail(TB_email.Text))
+            {
+                LB_noti.Text = "Email không hợp lệ";
+                return;
             }
             // Get user IDs
             string userID = redis.StringGet(TB_email.Text);
@@ -60,25 +72,27 @@ namespace anonymous_chat
             if (userID.IsNullOrEmpty())
             {
                 LB_noti.Text = "Email không tồn tại";
-            }
-
-            // Get the user data associated with the UID
-            string jsonData = redis.StringGet(userID);
-            UserData user = JsonConvert.DeserializeObject<UserData>(jsonData);
-
-            // Check the password
-            if (user.Password == TB_password.Text)
-            {
-                UID = long.Parse(userID);
-                UserName = user.UserName;
-                DialogResult = DialogResult.OK;
                 return;
             }
             else
             {
-                LB_noti.Text = "Sai mật khẩu";
-                DialogResult = DialogResult.Cancel;
-                return;
+                // Get the user data associated with the UID
+                string jsonData = redis.StringGet(userID);
+                UserData user = JsonConvert.DeserializeObject<UserData>(jsonData);
+
+                // Check the password
+                if (user.Password == TB_password.Text)
+                {
+                    UID = long.Parse(userID);
+                    UserName = user.UserName;
+                    DialogResult = DialogResult.OK;
+                    return;
+                }
+                else
+                {
+                    LB_noti.Text = "Sai mật khẩu";
+                    return;
+                }
             }
         }
 
@@ -89,10 +103,6 @@ namespace anonymous_chat
                 LB_noti.Text = "Đăng ký thành công";
                 TB_email.Text = email;
                 TB_password.Text = password;
-            }
-            else
-            {
-                // nothing
             }
         }
     }
