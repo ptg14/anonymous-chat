@@ -23,6 +23,19 @@ namespace anonymous_chat
             InitializeComponent();
         }
 
+        public static bool ShowAndTryGetInput(IWin32Window? owner = null)
+        {
+            DangKy dangKy = new DangKy();
+            if (dangKy.ShowDialog(owner) == DialogResult.OK)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public async Task<string> GetPublicIPAddressAsync()
         {
             using (var httpClient = new HttpClient())
@@ -33,36 +46,39 @@ namespace anonymous_chat
 
         private void TB_signUP_Click(object sender, EventArgs e)
         {
-            DataBase dataBase = new DataBase();
+            if (TB_password.Text != TB_repassword.Text)
+            {
+                LB_noti.Text = "Mật khẩu không khớp";
+                DialogResult = DialogResult.Cancel;
+                return;
+            }
             try
             {
+                DataBase dataBase = new DataBase();
                 // Store the user data in the database
                 bool result = dataBase.StoreUserData(dataBase.GetDatabase(), TB_email.Text, TB_username.Text, TB_password.Text);
 
                 if (result)
                 {
-                    MessageBox.Show("SignUp successfully");
+                    LB_noti.Text = "Đăng ký thành công";
+                    DialogResult = DialogResult.OK;
                 }
                 else
                 {
-                    MessageBox.Show("Failed to SignUp");
+                    LB_noti.Text = "Đăng ký không thành công";
+                    DialogResult = DialogResult.Cancel;
                 }
             }
             catch (ArgumentException ex)
             {
                 // Show the error message in a message box
                 MessageBox.Show(ex.Message);
+                DialogResult = DialogResult.Cancel;
             }
         }
 
         private void TB_signIn_Click(object sender, EventArgs e)
         {
-            // Create an instance of the DangNhap form
-            DangNhap dangNhap = new DangNhap();
-
-            // Show the DangNhap form
-            dangNhap.Show();
-
             // Close the DangKy form
             this.Close();
         }

@@ -15,6 +15,17 @@ namespace anonymous_chat
         public Main()
         {
             InitializeComponent();
+
+            if (DangNhap.ShowAndTryGetInput(this))
+            {
+                // The user has successfully signed in
+                // Do something
+            }
+            else
+            {
+                // The user has not signed in
+                Load += (s, e) => Close();
+            }
         }
     }
 }

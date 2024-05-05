@@ -16,8 +16,20 @@ namespace anonymous_chat.Redis
         private static ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("ec2-18-204-20-251.compute-1.amazonaws.com");
         private static IDatabase db = redis.GetDatabase();
 
+        public bool IsConnected()
+        {
+            try
+            {
+            return redis.IsConnected;
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Cannot connect to the database server");
+            }
+        }
+
         #region User Data
-        
+
         public bool StoreUserData(IDatabase db, string email, string username, string password)
         {
             if (!IsValidEmail(email))
@@ -75,7 +87,14 @@ namespace anonymous_chat.Redis
 
         public IDatabase GetDatabase()
         {
-            return db;
+            if (IsConnected())
+            {
+                return db;
+            }
+            else
+            {
+                throw new ArgumentException("Cannot connect to the database server");
+            }
         }
     }
 }
