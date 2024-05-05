@@ -72,6 +72,7 @@
             TB_password.Location = new Point(287, 293);
             TB_password.Margin = new Padding(3, 4, 3, 4);
             TB_password.Name = "TB_password";
+            TB_password.PasswordChar = '*';
             TB_password.Size = new Size(258, 27);
             TB_password.TabIndex = 34;
             // 

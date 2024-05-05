@@ -23,24 +23,23 @@ namespace anonymous_chat
             InitializeComponent();
         }
 
-        public static bool ShowAndTryGetInput(IWin32Window? owner = null)
+        private static DataBase dataBase = new DataBase();
+        private static IDatabase redis = dataBase.GetDatabase();
+
+        public static bool ShowAndTryGetInput(out string email, out string password, IWin32Window? owner = null)
         {
             DangKy dangKy = new DangKy();
             if (dangKy.ShowDialog(owner) == DialogResult.OK)
             {
+                email = dangKy.TB_email.Text;
+                password = dangKy.TB_password.Text;
                 return true;
             }
             else
             {
+                email = "";
+                password = "";
                 return false;
-            }
-        }
-
-        public async Task<string> GetPublicIPAddressAsync()
-        {
-            using (var httpClient = new HttpClient())
-            {
-                return await httpClient.GetStringAsync("https://api.ipify.org");
             }
         }
 
@@ -49,31 +48,26 @@ namespace anonymous_chat
             if (TB_password.Text != TB_repassword.Text)
             {
                 LB_noti.Text = "Mật khẩu không khớp";
-                DialogResult = DialogResult.Cancel;
                 return;
             }
             try
             {
-                DataBase dataBase = new DataBase();
                 // Store the user data in the database
-                bool result = dataBase.StoreUserData(dataBase.GetDatabase(), TB_email.Text, TB_username.Text, TB_password.Text);
+                bool result = dataBase.StoreUserData(redis, TB_email.Text, TB_username.Text, TB_password.Text);
 
                 if (result)
                 {
                     LB_noti.Text = "Đăng ký thành công";
-                    DialogResult = DialogResult.OK;
                 }
                 else
                 {
                     LB_noti.Text = "Đăng ký không thành công";
-                    DialogResult = DialogResult.Cancel;
                 }
             }
             catch (ArgumentException ex)
             {
                 // Show the error message in a message box
                 MessageBox.Show(ex.Message);
-                DialogResult = DialogResult.Cancel;
             }
         }
 

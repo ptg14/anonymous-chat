@@ -1,5 +1,7 @@
 ﻿using anonymous_chat.Redis;
 using StackExchange.Redis;
+using ServiceStack.Redis;
+using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ServiceStack;
+using Newtonsoft.Json;
 
 namespace anonymous_chat
 {
@@ -19,51 +23,56 @@ namespace anonymous_chat
             InitializeComponent();
         }
 
-        public static bool ShowAndTryGetInput(IWin32Window? owner = null)
+        private static DataBase dataBase = new DataBase();
+        private static IDatabase redis = dataBase.GetDatabase();
+        private long UID;
+        private string? email;
+        private string? password;
+
+        public static bool ShowAndTryGetInput(out long UID, IWin32Window? owner = null)
         {
             DangNhap dangNhap = new DangNhap();
             if (dangNhap.ShowDialog(owner) == DialogResult.OK)
             {
+                UID = dangNhap.UID;
                 return true;
             }
             else
             {
+                UID = -1;
                 return false;
             }
         }
 
         private void TB_signIn_Click(object sender, EventArgs e)
         {
-            DataBase dataBase = new DataBase();
             if (TB_email.Text == "" || TB_password.Text == "")
             {
                 LB_noti.Text = "Vui lòng nhập đủ thông tin";
                 DialogResult = DialogResult.Cancel;
             }
-            // Check if the email exists
-            if (dataBase.GetDatabase().KeyExists(TB_email.Text))
-            {
-                // The email exists, now check the password
-                string? correctPassword = dataBase.GetDatabase().StringGet(TB_email.Text); // Assuming the password is stored under the email key
+            // Get user IDs
+            string userID = redis.StringGet(TB_email.Text);
 
-                if (correctPassword != null && TB_password.Text == correctPassword)
-                {
-                    // Login successful
-                    DialogResult = DialogResult.OK;
-                    return;
-                }
-                else
-                {
-                    // Login failed
-                    LB_noti.Text = "Sai mật khẩu";
-                    DialogResult = DialogResult.Cancel;
-                    return;
-                }
+            if (userID.IsNullOrEmpty())
+            {
+                LB_noti.Text = "Email không tồn tại";
+            }
+
+            // Get the user data associated with the UID
+            string jsonData = redis.StringGet(userID);
+            UserData user = JsonConvert.DeserializeObject<UserData>(jsonData);
+
+            // Check the password
+            if (user.Password == TB_password.Text)
+            {
+                UID = long.Parse(userID);
+                DialogResult = DialogResult.OK;
+                return;
             }
             else
             {
-                // The email does not exist
-                LB_noti.Text = "Email không tồn tại";
+                LB_noti.Text = "Sai mật khẩu";
                 DialogResult = DialogResult.Cancel;
                 return;
             }
@@ -71,13 +80,14 @@ namespace anonymous_chat
 
         private void TB_signUp_Click(object sender, EventArgs e)
         {
-            if (DangKy.ShowAndTryGetInput(this))
+            if (DangKy.ShowAndTryGetInput(out email, out password, this))
             {
-
+                TB_email.Text = email;
+                TB_password.Text = password;
             }
             else
             {
-
+                // nothing
             }
         }
     }

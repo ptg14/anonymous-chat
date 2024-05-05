@@ -13,7 +13,7 @@ namespace anonymous_chat.Redis
 {
     public class DataBase
     {
-        private static ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("ec2-18-204-20-251.compute-1.amazonaws.com");
+        private static ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("ec2-18-210-20-184.compute-1.amazonaws.com");
         private static IDatabase db = redis.GetDatabase();
 
         public bool IsConnected()
@@ -37,7 +37,7 @@ namespace anonymous_chat.Redis
                 throw new ArgumentException("Invalid email format", nameof(email));
             }
             // Check if the email is already in use
-            if (db.SetContains("emails", email))
+            if (db.KeyExists(email))
             {
                 throw new ArgumentException("Email is already in use", nameof(email));
             }
@@ -57,8 +57,13 @@ namespace anonymous_chat.Redis
             // Serialize the UserData instance to JSON
             string jsonData = JsonConvert.SerializeObject(user);
 
-            // Store the JSON in Redis
-            return db.StringSet($"user:{UID}", jsonData);
+            // Store the JSON in Redis with the UID as the key
+            bool isUserStored = db.StringSet(UID.ToString(), jsonData);
+
+            // Store the email-UID mapping in Redis
+            bool isMappingStored = db.StringSet(email, UID.ToString());
+
+            return isUserStored && isMappingStored;
         }
 
         public bool IsValidEmail(string email)
@@ -67,20 +72,39 @@ namespace anonymous_chat.Redis
             return regex.IsMatch(email);
         }
 
-        public bool UpdateUserData(IDatabase db, long UID, string email, string username, string password)
+        public bool UpdateUserData(IDatabase db, long UID, string newUsername, string newPassword)
         {
-            // Update a UserData instance
-            UserData user = new UserData
+            // Get the existing user data
+            string existingJsonData = db.StringGet(UID.ToString());
+            UserData existingUser = JsonConvert.DeserializeObject<UserData>(existingJsonData);
+
+            // Update the username and password
+            existingUser.UserName = newUsername;
+            existingUser.Password = newPassword;
+
+            // Serialize the updated UserData object to a JSON string
+            string updatedJsonData = JsonConvert.SerializeObject(existingUser);
+
+            // Store the updated JSON string in the Redis database with the UID as the key
+            return db.StringSet(UID.ToString(), updatedJsonData);
+        }
+
+        #endregion
+
+        #region Online Users
+
+        public void AddOnlineUser(IDatabase db, long UID, string IP, bool search)
+        {
+            Online online = new Online
             {
-                UserName = username,
-                Password = password,
+                UID = UID,
+                IP = IP,
+                Searching = search,
             };
 
-            // Serialize the UserData object to a JSON string
-            string jsonData = JsonConvert.SerializeObject(user);
+            string jsonData = JsonConvert.SerializeObject(online);
 
-            // Store the JSON string in the Redis database with the key "user:{UID}"
-            return db.StringSet($"user:{UID}", jsonData);
+            db.StringSet($"online:{UID}", jsonData);
         }
 
         #endregion
