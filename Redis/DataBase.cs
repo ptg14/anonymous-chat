@@ -13,7 +13,7 @@ namespace anonymous_chat.Redis
 {
     public class DataBase
     {
-        private static ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("ec2-18-210-20-184.compute-1.amazonaws.com");
+        private static ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("ec2-44-218-196-243.compute-1.amazonaws.com");
         private static IDatabase db = redis.GetDatabase();
 
         public bool IsConnected()

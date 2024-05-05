@@ -41,14 +41,14 @@
             LB_name = new Label();
             BT_avatar = new Button();
             mainchat = new Panel();
+            BT_call = new Button();
+            BT_setting = new Button();
+            label1 = new Label();
+            pictureBox1 = new PictureBox();
             richTextBox1 = new RichTextBox();
             BT_send = new Button();
             BT_sendFile = new Button();
             button8 = new Button();
-            pictureBox1 = new PictureBox();
-            label1 = new Label();
-            BT_setting = new Button();
-            BT_call = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -115,6 +115,7 @@
             // 
             // button4
             // 
+            button4.Image = Properties.Resources.random20x20;
             button4.Location = new Point(112, 59);
             button4.Name = "button4";
             button4.Size = new Size(30, 30);
@@ -123,6 +124,7 @@
             // 
             // button3
             // 
+            button3.Image = Properties.Resources.AI30x30;
             button3.Location = new Point(75, 59);
             button3.Name = "button3";
             button3.Size = new Size(30, 30);
@@ -131,6 +133,7 @@
             // 
             // button2
             // 
+            button2.Image = Properties.Resources.friend20x20;
             button2.Location = new Point(39, 59);
             button2.Name = "button2";
             button2.Size = new Size(30, 30);
@@ -192,6 +195,42 @@
             mainchat.Size = new Size(619, 460);
             mainchat.TabIndex = 13;
             // 
+            // BT_call
+            // 
+            BT_call.Image = Properties.Resources.phone40x40;
+            BT_call.Location = new Point(510, 3);
+            BT_call.Name = "BT_call";
+            BT_call.Size = new Size(50, 50);
+            BT_call.TabIndex = 10;
+            BT_call.UseVisualStyleBackColor = true;
+            // 
+            // BT_setting
+            // 
+            BT_setting.Image = Properties.Resources.setting40x40;
+            BT_setting.Location = new Point(566, 3);
+            BT_setting.Name = "BT_setting";
+            BT_setting.Size = new Size(50, 50);
+            BT_setting.TabIndex = 9;
+            BT_setting.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.Location = new Point(59, 6);
+            label1.Name = "label1";
+            label1.Size = new Size(97, 41);
+            label1.TabIndex = 1;
+            label1.Text = "Name";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Location = new Point(3, 0);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(50, 50);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            // 
             // richTextBox1
             // 
             richTextBox1.BackColor = SystemColors.Window;
@@ -228,42 +267,6 @@
             button8.Size = new Size(30, 30);
             button8.TabIndex = 9;
             button8.UseVisualStyleBackColor = true;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Location = new Point(3, 0);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(50, 50);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(59, 6);
-            label1.Name = "label1";
-            label1.Size = new Size(97, 41);
-            label1.TabIndex = 1;
-            label1.Text = "Name";
-            // 
-            // BT_setting
-            // 
-            BT_setting.Image = Properties.Resources.setting40x40;
-            BT_setting.Location = new Point(566, 3);
-            BT_setting.Name = "BT_setting";
-            BT_setting.Size = new Size(50, 50);
-            BT_setting.TabIndex = 9;
-            BT_setting.UseVisualStyleBackColor = true;
-            // 
-            // BT_call
-            // 
-            BT_call.Image = Properties.Resources.phone40x40;
-            BT_call.Location = new Point(510, 3);
-            BT_call.Name = "BT_call";
-            BT_call.Size = new Size(50, 50);
-            BT_call.TabIndex = 10;
-            BT_call.UseVisualStyleBackColor = true;
             // 
             // Main
             // 

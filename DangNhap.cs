@@ -82,6 +82,7 @@ namespace anonymous_chat
         {
             if (DangKy.ShowAndTryGetInput(out email, out password, this))
             {
+                LB_noti.Text = "Đăng ký thành công";
                 TB_email.Text = email;
                 TB_password.Text = password;
             }

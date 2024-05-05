@@ -63,6 +63,16 @@ namespace anonymous_chat.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AI30x30 {
+            get {
+                object obj = ResourceManager.GetObject("AI30x30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap emoji20x20 {
             get {
                 object obj = ResourceManager.GetObject("emoji20x20", resourceCulture);
@@ -83,6 +93,16 @@ namespace anonymous_chat.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap friend20x20 {
+            get {
+                object obj = ResourceManager.GetObject("friend20x20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap logo150x150 {
             get {
                 object obj = ResourceManager.GetObject("logo150x150", resourceCulture);
@@ -96,6 +116,16 @@ namespace anonymous_chat.Properties {
         internal static System.Drawing.Bitmap phone40x40 {
             get {
                 object obj = ResourceManager.GetObject("phone40x40", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap random20x20 {
+            get {
+                object obj = ResourceManager.GetObject("random20x20", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

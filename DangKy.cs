@@ -58,6 +58,7 @@ namespace anonymous_chat
                 if (result)
                 {
                     LB_noti.Text = "Đăng ký thành công";
+                    DialogResult = DialogResult.OK;
                 }
                 else
                 {
@@ -74,7 +75,7 @@ namespace anonymous_chat
         private void TB_signIn_Click(object sender, EventArgs e)
         {
             // Close the DangKy form
-            this.Close();
+            DialogResult = DialogResult.Cancel;
         }
     }
 }
