@@ -29,6 +29,13 @@
         private void InitializeComponent()
         {
             splitContainer1 = new SplitContainer();
+            addFriend = new Panel();
+            PB_findResult = new PictureBox();
+            TB_findResult = new TextBox();
+            BT_addFriend = new Button();
+            BT_findFriend = new Button();
+            label1 = new Label();
+            TB_friendUID = new TextBox();
             button7 = new Button();
             button6 = new Button();
             button5 = new Button();
@@ -36,15 +43,16 @@
             button3 = new Button();
             button2 = new Button();
             BT_search = new Button();
-            LB_listFriends = new ListBox();
+            LBox_listFriends = new ListBox();
             LB_UID = new Label();
             LB_name = new Label();
             BT_avatar = new Button();
             mainchat = new Panel();
+            chatArea = new Panel();
             BT_call = new Button();
             BT_setting = new Button();
-            label1 = new Label();
-            pictureBox1 = new PictureBox();
+            LB_friendName = new Label();
+            PB_friendAvatar = new PictureBox();
             richTextBox1 = new RichTextBox();
             BT_send = new Button();
             BT_sendFile = new Button();
@@ -53,8 +61,10 @@
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            addFriend.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)PB_findResult).BeginInit();
             mainchat.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PB_friendAvatar).BeginInit();
             SuspendLayout();
             // 
             // splitContainer1
@@ -66,6 +76,7 @@
             // splitContainer1.Panel1
             // 
             splitContainer1.Panel1.BackColor = SystemColors.ActiveCaption;
+            splitContainer1.Panel1.Controls.Add(addFriend);
             splitContainer1.Panel1.Controls.Add(button7);
             splitContainer1.Panel1.Controls.Add(button6);
             splitContainer1.Panel1.Controls.Add(button5);
@@ -73,7 +84,7 @@
             splitContainer1.Panel1.Controls.Add(button3);
             splitContainer1.Panel1.Controls.Add(button2);
             splitContainer1.Panel1.Controls.Add(BT_search);
-            splitContainer1.Panel1.Controls.Add(LB_listFriends);
+            splitContainer1.Panel1.Controls.Add(LBox_listFriends);
             splitContainer1.Panel1.Controls.Add(LB_UID);
             splitContainer1.Panel1.Controls.Add(LB_name);
             splitContainer1.Panel1.Controls.Add(BT_avatar);
@@ -89,8 +100,76 @@
             splitContainer1.SplitterDistance = 253;
             splitContainer1.TabIndex = 0;
             // 
+            // addFriend
+            // 
+            addFriend.Controls.Add(PB_findResult);
+            addFriend.Controls.Add(TB_findResult);
+            addFriend.Controls.Add(BT_addFriend);
+            addFriend.Controls.Add(BT_findFriend);
+            addFriend.Controls.Add(label1);
+            addFriend.Controls.Add(TB_friendUID);
+            addFriend.Location = new Point(3, 95);
+            addFriend.Name = "addFriend";
+            addFriend.Size = new Size(246, 126);
+            addFriend.TabIndex = 9;
+            addFriend.Visible = false;
+            // 
+            // PB_findResult
+            // 
+            PB_findResult.Location = new Point(3, 56);
+            PB_findResult.Name = "PB_findResult";
+            PB_findResult.Size = new Size(27, 27);
+            PB_findResult.TabIndex = 12;
+            PB_findResult.TabStop = false;
+            // 
+            // TB_findResult
+            // 
+            TB_findResult.BorderStyle = BorderStyle.FixedSingle;
+            TB_findResult.Location = new Point(36, 56);
+            TB_findResult.Name = "TB_findResult";
+            TB_findResult.ReadOnly = true;
+            TB_findResult.Size = new Size(207, 27);
+            TB_findResult.TabIndex = 13;
+            // 
+            // BT_addFriend
+            // 
+            BT_addFriend.Location = new Point(3, 89);
+            BT_addFriend.Name = "BT_addFriend";
+            BT_addFriend.Size = new Size(240, 29);
+            BT_addFriend.TabIndex = 12;
+            BT_addFriend.Text = "Thêm bạn";
+            BT_addFriend.UseVisualStyleBackColor = true;
+            BT_addFriend.Click += BT_addFriend_Click;
+            // 
+            // BT_findFriend
+            // 
+            BT_findFriend.Image = Properties.Resources.search20x20;
+            BT_findFriend.Location = new Point(213, 21);
+            BT_findFriend.Name = "BT_findFriend";
+            BT_findFriend.Size = new Size(30, 30);
+            BT_findFriend.TabIndex = 10;
+            BT_findFriend.UseVisualStyleBackColor = true;
+            BT_findFriend.Click += BT_findFriend_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(3, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(34, 20);
+            label1.TabIndex = 1;
+            label1.Text = "UID";
+            // 
+            // TB_friendUID
+            // 
+            TB_friendUID.Location = new Point(3, 23);
+            TB_friendUID.Name = "TB_friendUID";
+            TB_friendUID.Size = new Size(204, 27);
+            TB_friendUID.TabIndex = 0;
+            // 
             // button7
             // 
+            button7.Image = Properties.Resources.noti20x20;
             button7.Location = new Point(220, 59);
             button7.Name = "button7";
             button7.Size = new Size(30, 30);
@@ -148,15 +227,16 @@
             BT_search.Size = new Size(30, 30);
             BT_search.TabIndex = 0;
             BT_search.UseVisualStyleBackColor = true;
+            BT_search.Click += BT_search_Click;
             // 
-            // LB_listFriends
+            // LBox_listFriends
             // 
-            LB_listFriends.BackColor = SystemColors.Info;
-            LB_listFriends.FormattingEnabled = true;
-            LB_listFriends.Location = new Point(3, 95);
-            LB_listFriends.Name = "LB_listFriends";
-            LB_listFriends.Size = new Size(246, 404);
-            LB_listFriends.TabIndex = 0;
+            LBox_listFriends.BackColor = SystemColors.Info;
+            LBox_listFriends.FormattingEnabled = true;
+            LBox_listFriends.Location = new Point(3, 95);
+            LBox_listFriends.Name = "LBox_listFriends";
+            LBox_listFriends.Size = new Size(246, 404);
+            LBox_listFriends.TabIndex = 0;
             // 
             // LB_UID
             // 
@@ -186,14 +266,23 @@
             // 
             // mainchat
             // 
+            mainchat.Controls.Add(chatArea);
             mainchat.Controls.Add(BT_call);
             mainchat.Controls.Add(BT_setting);
-            mainchat.Controls.Add(label1);
-            mainchat.Controls.Add(pictureBox1);
+            mainchat.Controls.Add(LB_friendName);
+            mainchat.Controls.Add(PB_friendAvatar);
             mainchat.Location = new Point(3, 3);
             mainchat.Name = "mainchat";
             mainchat.Size = new Size(619, 460);
             mainchat.TabIndex = 13;
+            // 
+            // chatArea
+            // 
+            chatArea.BackColor = SystemColors.Window;
+            chatArea.Location = new Point(0, 56);
+            chatArea.Name = "chatArea";
+            chatArea.Size = new Size(619, 401);
+            chatArea.TabIndex = 11;
             // 
             // BT_call
             // 
@@ -213,23 +302,22 @@
             BT_setting.TabIndex = 9;
             BT_setting.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // LB_friendName
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(59, 6);
-            label1.Name = "label1";
-            label1.Size = new Size(97, 41);
-            label1.TabIndex = 1;
-            label1.Text = "Name";
+            LB_friendName.AutoSize = true;
+            LB_friendName.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            LB_friendName.Location = new Point(59, 6);
+            LB_friendName.Name = "LB_friendName";
+            LB_friendName.Size = new Size(0, 41);
+            LB_friendName.TabIndex = 1;
             // 
-            // pictureBox1
+            // PB_friendAvatar
             // 
-            pictureBox1.Location = new Point(3, 0);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(50, 50);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
+            PB_friendAvatar.Location = new Point(3, 0);
+            PB_friendAvatar.Name = "PB_friendAvatar";
+            PB_friendAvatar.Size = new Size(50, 50);
+            PB_friendAvatar.TabIndex = 0;
+            PB_friendAvatar.TabStop = false;
             // 
             // richTextBox1
             // 
@@ -281,9 +369,12 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            addFriend.ResumeLayout(false);
+            addFriend.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)PB_findResult).EndInit();
             mainchat.ResumeLayout(false);
             mainchat.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PB_friendAvatar).EndInit();
             ResumeLayout(false);
         }
 
@@ -292,7 +383,7 @@
         private SplitContainer splitContainer1;
         private Label LB_name;
         private Button BT_avatar;
-        private ListBox LB_listFriends;
+        private ListBox LBox_listFriends;
         private Label LB_UID;
         private Button button7;
         private Button button6;
@@ -308,7 +399,15 @@
         private Panel mainchat;
         private Button BT_call;
         private Button BT_setting;
+        private Label LB_friendName;
+        private PictureBox PB_friendAvatar;
+        private Panel chatArea;
+        private Panel addFriend;
+        private Button BT_addFriend;
+        private Button BT_findFriend;
         private Label label1;
-        private PictureBox pictureBox1;
+        private TextBox TB_friendUID;
+        private PictureBox PB_findResult;
+        private TextBox TB_findResult;
     }
 }

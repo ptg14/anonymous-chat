@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace anonymous_chat.Redis
 {
-    internal class Friend
+    public class Friend
     {
         public long UID { get; set; }
         public long FriendUID { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace anonymous_chat.Redis
 {
-    internal class Online
+    public class Online
     {
         public long UID { get; set; }
         public string? IP { get; set; }

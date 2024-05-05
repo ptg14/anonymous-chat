@@ -26,20 +26,23 @@ namespace anonymous_chat
         private static DataBase dataBase = new DataBase();
         private static IDatabase redis = dataBase.GetDatabase();
         private long UID;
+        private string UserName;
         private string? email;
         private string? password;
 
-        public static bool ShowAndTryGetInput(out long UID, IWin32Window? owner = null)
+        public static bool ShowAndTryGetInput(out long UID, out string userName, IWin32Window? owner = null)
         {
             DangNhap dangNhap = new DangNhap();
             if (dangNhap.ShowDialog(owner) == DialogResult.OK)
             {
                 UID = dangNhap.UID;
+                userName = dangNhap.UserName;
                 return true;
             }
             else
             {
                 UID = -1;
+                userName = "";
                 return false;
             }
         }
@@ -67,6 +70,7 @@ namespace anonymous_chat
             if (user.Password == TB_password.Text)
             {
                 UID = long.Parse(userID);
+                UserName = user.UserName;
                 DialogResult = DialogResult.OK;
                 return;
             }

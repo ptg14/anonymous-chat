@@ -109,6 +109,24 @@ namespace anonymous_chat.Redis
 
         #endregion
 
+        #region Friend Data
+
+        public void sendFriendRequest(IDatabase db, long UID, long friendUID)
+        {
+            Friend friend = new Friend
+            {
+                UID = UID,
+                FriendUID = friendUID,
+                isFriend = false,
+            };
+
+            string jsonData = JsonConvert.SerializeObject(friend);
+
+            db.StringSet($"friend:{UID}:{friendUID}", jsonData);
+        }
+
+        #endregion
+
         public IDatabase GetDatabase()
         {
             if (IsConnected())
