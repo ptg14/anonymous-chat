@@ -1,6 +1,6 @@
-﻿using anonymous_chat.Redis;
+﻿using anonymous_chat.DataBase;
+using Google.Cloud.Firestore;
 using Newtonsoft.Json;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,9 +15,8 @@ namespace anonymous_chat
 {
     public partial class Main : Form
     {
-        private static DataBase dataBase = new DataBase();
-        private static IDatabase redis = dataBase.GetDatabase();
-        private long UID;
+        private static FirestoreDb db = FireBase.dataBase;
+        private int UID;
         private string userName;
         private bool addFriendVisible = false;
 
@@ -27,7 +26,7 @@ namespace anonymous_chat
 
             if (DangNhap.ShowAndTryGetInput(out UID, out userName, this))
             {
-                dataBase.AddOnlineUser(redis, UID, GetPublicIPAddressAsync().Result, false);
+                isOnline();
                 LB_name.Text = userName;
                 LB_UID.Text = "UID: " + UID.ToString();
             }
@@ -38,6 +37,22 @@ namespace anonymous_chat
             }
         }
 
+        private async void isOnline()  // Create a new async method
+        {
+            // Get the user's public IP address
+            string ip = await GetPublicIPAddressAsync();
+
+            // Create a new Online object
+            Online online = new Online {
+                UID = UID,
+                IP = ip,
+                Searching = false
+            };
+
+            // Add the Online object to the Online collection in the Firestore database
+            await db.Collection("Online").Document(UID.ToString()).SetAsync(online);
+        }
+
         public async Task<string> GetPublicIPAddressAsync()
         {
             using (var httpClient = new HttpClient())
@@ -45,8 +60,6 @@ namespace anonymous_chat
                 return await httpClient.GetStringAsync("https://api.ipify.org");
             }
         }
-
-
 
         private void BT_search_Click(object sender, EventArgs e)
         {
@@ -62,24 +75,34 @@ namespace anonymous_chat
             }
         }
 
-        private void BT_findFriend_Click(object sender, EventArgs e)
+        private async void BT_findFriend_Click(object sender, EventArgs e)
         {
             if (TB_friendUID.Text == "")
             {
                 TB_findResult.Text = "Nhập UID của bạn bè";
                 return;
             }
-
-            string jsonData = redis.StringGet(TB_friendUID.Text);
-
-            if (string.IsNullOrEmpty(jsonData))
+            if (TB_friendUID.Text == UID.ToString())
             {
-                TB_findResult.Text = "Không tìm thấy " + TB_friendUID.Text;
+                TB_findResult.Text = "Đây là UID của bạn";
                 return;
             }
 
-            UserData user = JsonConvert.DeserializeObject<UserData>(jsonData);
+            // Query the database for the UID
+            DocumentSnapshot snapshot = await db.Collection("Users").Document(TB_friendUID.Text).GetSnapshotAsync();
 
+            if (!snapshot.Exists)
+            {
+                // The UID does not exist in the database
+                TB_findResult.Text = "UID không tồn tại";
+                return;
+            }
+
+            // The UID exists in the database
+            // Get the user data
+            UserData user = snapshot.ConvertTo<UserData>();
+
+            // Display the user's name
             TB_findResult.Text = user.UserName;
         }
 
@@ -96,8 +119,7 @@ namespace anonymous_chat
                 TB_findResult.Text = "Đây là UID của bạn";
                 return;
             }
-
-            dataBase.sendFriendRequest(redis, UID, long.Parse(TB_friendUID.Text));
+            // send to server
         }
 
     }

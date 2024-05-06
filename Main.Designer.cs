@@ -169,7 +169,7 @@
             // 
             // button7
             // 
-            button7.Image = Properties.Resources.noti20x20;
+            button7.Image = Properties.Resources.logout20x20;
             button7.Location = new Point(220, 59);
             button7.Name = "button7";
             button7.Size = new Size(30, 30);
@@ -178,6 +178,7 @@
             // 
             // button6
             // 
+            button6.Image = Properties.Resources.noti20x20;
             button6.Location = new Point(184, 59);
             button6.Name = "button6";
             button6.Size = new Size(30, 30);

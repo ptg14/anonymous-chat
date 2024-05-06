@@ -1,8 +1,4 @@
-﻿using anonymous_chat.Redis;
-using StackExchange.Redis;
-using ServiceStack.Redis;
-using ServiceStack.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,9 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ServiceStack;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using anonymous_chat.DataBase;
+using Google.Cloud.Firestore;
 
 namespace anonymous_chat
 {
@@ -24,9 +21,8 @@ namespace anonymous_chat
             InitializeComponent();
         }
 
-        private static DataBase dataBase = new DataBase();
-        private static IDatabase redis = dataBase.GetDatabase();
-        private long UID;
+        private static FirestoreDb db = FireBase.dataBase;
+        private int UID;
         private string UserName;
         private string? email;
         private string? password;
@@ -37,7 +33,7 @@ namespace anonymous_chat
             return regex.IsMatch(email);
         }
 
-        public static bool ShowAndTryGetInput(out long UID, out string userName, IWin32Window? owner = null)
+        public static bool ShowAndTryGetInput(out int UID, out string userName, IWin32Window? owner = null)
         {
             DangNhap dangNhap = new DangNhap();
             if (dangNhap.ShowDialog(owner) == DialogResult.OK)
@@ -54,7 +50,7 @@ namespace anonymous_chat
             }
         }
 
-        private void TB_signIn_Click(object sender, EventArgs e)
+        private async void TB_signIn_Click(object sender, EventArgs e)
         {
             if (TB_email.Text == "" || TB_password.Text == "")
             {
@@ -66,33 +62,37 @@ namespace anonymous_chat
                 LB_noti.Text = "Email không hợp lệ";
                 return;
             }
-            // Get user IDs
-            string userID = redis.StringGet(TB_email.Text);
 
-            if (userID.IsNullOrEmpty())
+            if (!FireBase.setEnironmentVariables())
             {
+                LB_noti.Text = "Không thể kết nối đến cơ sở dữ liệu";
+                return;
+            }
+            CollectionReference usersRef = db.Collection("Users");
+            QuerySnapshot snapshot = await usersRef.WhereEqualTo("Email", TB_email.Text).GetSnapshotAsync();
+
+            if (snapshot.Count == 0)
+            {
+                // The email does not exist in the database
                 LB_noti.Text = "Email không tồn tại";
                 return;
             }
+
+            // The email exists in the database
+            // Get the user data
+            DocumentSnapshot userDocument = snapshot.Documents[0];
+            UserData user = userDocument.ConvertTo<UserData>();
+
+            // Check the password
+            if (user.Password == TB_password.Text)
+            {
+                UID = user.UID;
+                UserName = user.UserName;
+                DialogResult = DialogResult.OK;
+            }
             else
             {
-                // Get the user data associated with the UID
-                string jsonData = redis.StringGet(userID);
-                UserData user = JsonConvert.DeserializeObject<UserData>(jsonData);
-
-                // Check the password
-                if (user.Password == TB_password.Text)
-                {
-                    UID = long.Parse(userID);
-                    UserName = user.UserName;
-                    DialogResult = DialogResult.OK;
-                    return;
-                }
-                else
-                {
-                    LB_noti.Text = "Sai mật khẩu";
-                    return;
-                }
+                LB_noti.Text = "Sai mật khẩu";
             }
         }
 

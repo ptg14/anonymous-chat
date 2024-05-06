@@ -1,5 +1,4 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,11 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using anonymous_chat.Redis;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using System.Net;
 using System.Net.Http;
+using anonymous_chat.DataBase;
+using Google.Cloud.Firestore;
+using System.Text.RegularExpressions;
 
 namespace anonymous_chat
 {
@@ -23,8 +24,7 @@ namespace anonymous_chat
             InitializeComponent();
         }
 
-        private static DataBase dataBase = new DataBase();
-        private static IDatabase redis = dataBase.GetDatabase();
+        private static FirestoreDb db = FireBase.dataBase;
 
         public static bool ShowAndTryGetInput(out string email, out string password, IWin32Window? owner = null)
         {
@@ -43,7 +43,13 @@ namespace anonymous_chat
             }
         }
 
-        private void TB_signUP_Click(object sender, EventArgs e)
+        public bool IsValidEmail(string email)
+        {
+            var regex = new Regex(@"^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$");
+            return regex.IsMatch(email);
+        }
+
+        private async void TB_signUP_Click(object sender, EventArgs e)
         {
             if (TB_email.Text == "" || TB_username.Text == "" || TB_password.Text == "" || TB_repassword.Text == "")
             {
@@ -55,12 +61,49 @@ namespace anonymous_chat
                 LB_noti.Text = "Mật khẩu không khớp";
                 return;
             }
+            if (IsValidEmail(TB_email.Text) == false)
+            {
+                LB_noti.Text = "Email không hợp lệ";
+                return;
+            }
+            if (!FireBase.setEnironmentVariables())
+            {
+                LB_noti.Text = "Không thể kết nối đến cơ sở dữ liệu";
+            }
             try
             {
-                // Store the user data in the database
-                bool result = dataBase.StoreUserData(redis, TB_email.Text, TB_username.Text, TB_password.Text, LB_noti.Text);
+                // Generate a unique random 4-digit number
+                Random random = new Random();
+                int uid;
+                bool isUnique;
+                CollectionReference usersRef = db.Collection("Users");
 
-                if (result)
+                do
+                {
+                    uid = random.Next(1000, 10000);  // Generates a random number between 1000 and 9999
+
+                    QuerySnapshot snapshot = await usersRef.WhereEqualTo("UID", uid).GetSnapshotAsync();
+                    isUnique = snapshot.Count == 0;
+                }
+                while (!isUnique);
+
+                // Store the user data in the database
+                UserData userData = new UserData
+                {
+                    UID = uid,
+                    Email = TB_email.Text,
+                    UserName = TB_username.Text,
+                    Password = TB_password.Text
+                };
+
+                // Create a DocumentReference with the UID as the document ID
+                DocumentReference docRef = usersRef.Document(uid.ToString());
+
+                // Set the userData in the document
+                await docRef.SetAsync(userData);
+
+                // If the document was set successfully, docRef.Id will not be null
+                if (!string.IsNullOrEmpty(docRef.Id))
                 {
                     LB_noti.Text = "Đăng ký thành công";
                     DialogResult = DialogResult.OK;
