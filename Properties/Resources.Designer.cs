@@ -83,9 +83,9 @@ namespace anonymous_chat.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap folder30x30 {
+        internal static System.Drawing.Bitmap folder20x20 {
             get {
-                object obj = ResourceManager.GetObject("folder30x30", resourceCulture);
+                object obj = ResourceManager.GetObject("folder20x20", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

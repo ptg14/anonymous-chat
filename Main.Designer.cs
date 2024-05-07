@@ -1,4 +1,6 @@
-﻿namespace anonymous_chat
+﻿using anonymous_chat.Chat;
+
+namespace anonymous_chat
 {
     partial class Main
     {
@@ -36,34 +38,33 @@
             BT_findFriend = new Button();
             label1 = new Label();
             TB_friendUID = new TextBox();
-            button7 = new Button();
-            button6 = new Button();
-            button5 = new Button();
-            button4 = new Button();
-            button3 = new Button();
-            button2 = new Button();
+            BT_logOut = new Button();
+            BT_noti = new Button();
+            BT_refresh = new Button();
+            BT_random = new Button();
+            BT_AI = new Button();
+            BT_listFriends = new Button();
             BT_search = new Button();
             LBox_listFriends = new ListBox();
             LB_UID = new Label();
             LB_name = new Label();
             BT_avatar = new Button();
-            mainchat = new Panel();
-            chatArea = new Panel();
-            BT_call = new Button();
+            topChatPanel = new Panel();
             BT_setting = new Button();
             LB_friendName = new Label();
             PB_friendAvatar = new PictureBox();
-            richTextBox1 = new RichTextBox();
-            BT_send = new Button();
-            BT_sendFile = new Button();
-            button8 = new Button();
+            BT_call = new Button();
+            // main chat
+            messageData = new MessageData();
+            //
+            chatBox = new ChatBox(messageData);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             addFriend.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PB_findResult).BeginInit();
-            mainchat.SuspendLayout();
+            topChatPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PB_friendAvatar).BeginInit();
             SuspendLayout();
             // 
@@ -77,12 +78,12 @@
             // 
             splitContainer1.Panel1.BackColor = SystemColors.ActiveCaption;
             splitContainer1.Panel1.Controls.Add(addFriend);
-            splitContainer1.Panel1.Controls.Add(button7);
-            splitContainer1.Panel1.Controls.Add(button6);
-            splitContainer1.Panel1.Controls.Add(button5);
-            splitContainer1.Panel1.Controls.Add(button4);
-            splitContainer1.Panel1.Controls.Add(button3);
-            splitContainer1.Panel1.Controls.Add(button2);
+            splitContainer1.Panel1.Controls.Add(BT_logOut);
+            splitContainer1.Panel1.Controls.Add(BT_noti);
+            splitContainer1.Panel1.Controls.Add(BT_refresh);
+            splitContainer1.Panel1.Controls.Add(BT_random);
+            splitContainer1.Panel1.Controls.Add(BT_AI);
+            splitContainer1.Panel1.Controls.Add(BT_listFriends);
             splitContainer1.Panel1.Controls.Add(BT_search);
             splitContainer1.Panel1.Controls.Add(LBox_listFriends);
             splitContainer1.Panel1.Controls.Add(LB_UID);
@@ -91,17 +92,15 @@
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(mainchat);
-            splitContainer1.Panel2.Controls.Add(richTextBox1);
-            splitContainer1.Panel2.Controls.Add(BT_send);
-            splitContainer1.Panel2.Controls.Add(BT_sendFile);
-            splitContainer1.Panel2.Controls.Add(button8);
+            splitContainer1.Panel2.Controls.Add(topChatPanel);
+            splitContainer1.Panel2.Controls.Add(chatBox);
             splitContainer1.Size = new Size(882, 503);
             splitContainer1.SplitterDistance = 253;
             splitContainer1.TabIndex = 0;
             // 
             // addFriend
             // 
+            addFriend.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             addFriend.Controls.Add(PB_findResult);
             addFriend.Controls.Add(TB_findResult);
             addFriend.Controls.Add(BT_addFriend);
@@ -124,6 +123,7 @@
             // 
             // TB_findResult
             // 
+            TB_findResult.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             TB_findResult.BorderStyle = BorderStyle.FixedSingle;
             TB_findResult.Location = new Point(36, 56);
             TB_findResult.Name = "TB_findResult";
@@ -133,6 +133,7 @@
             // 
             // BT_addFriend
             // 
+            BT_addFriend.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             BT_addFriend.Location = new Point(3, 89);
             BT_addFriend.Name = "BT_addFriend";
             BT_addFriend.Size = new Size(240, 29);
@@ -143,6 +144,7 @@
             // 
             // BT_findFriend
             // 
+            BT_findFriend.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             BT_findFriend.Image = Properties.Resources.search20x20;
             BT_findFriend.Location = new Point(213, 21);
             BT_findFriend.Name = "BT_findFriend";
@@ -162,63 +164,64 @@
             // 
             // TB_friendUID
             // 
+            TB_friendUID.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             TB_friendUID.Location = new Point(3, 23);
             TB_friendUID.Name = "TB_friendUID";
             TB_friendUID.Size = new Size(204, 27);
             TB_friendUID.TabIndex = 0;
             // 
-            // button7
+            // BT_logOut
             // 
-            button7.Image = Properties.Resources.logout20x20;
-            button7.Location = new Point(220, 59);
-            button7.Name = "button7";
-            button7.Size = new Size(30, 30);
-            button7.TabIndex = 8;
-            button7.UseVisualStyleBackColor = true;
+            BT_logOut.Image = Properties.Resources.logout20x20;
+            BT_logOut.Location = new Point(220, 59);
+            BT_logOut.Name = "BT_logOut";
+            BT_logOut.Size = new Size(30, 30);
+            BT_logOut.TabIndex = 8;
+            BT_logOut.UseVisualStyleBackColor = true;
             // 
-            // button6
+            // BT_noti
             // 
-            button6.Image = Properties.Resources.noti20x20;
-            button6.Location = new Point(184, 59);
-            button6.Name = "button6";
-            button6.Size = new Size(30, 30);
-            button6.TabIndex = 7;
-            button6.UseVisualStyleBackColor = true;
+            BT_noti.Image = Properties.Resources.noti20x20;
+            BT_noti.Location = new Point(184, 59);
+            BT_noti.Name = "BT_noti";
+            BT_noti.Size = new Size(30, 30);
+            BT_noti.TabIndex = 7;
+            BT_noti.UseVisualStyleBackColor = true;
             // 
-            // button5
+            // BT_refresh
             // 
-            button5.Location = new Point(148, 59);
-            button5.Name = "button5";
-            button5.Size = new Size(30, 30);
-            button5.TabIndex = 6;
-            button5.UseVisualStyleBackColor = true;
+            BT_refresh.Location = new Point(148, 59);
+            BT_refresh.Name = "BT_refresh";
+            BT_refresh.Size = new Size(30, 30);
+            BT_refresh.TabIndex = 6;
+            BT_refresh.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // BT_random
             // 
-            button4.Image = Properties.Resources.random20x20;
-            button4.Location = new Point(112, 59);
-            button4.Name = "button4";
-            button4.Size = new Size(30, 30);
-            button4.TabIndex = 5;
-            button4.UseVisualStyleBackColor = true;
+            BT_random.Image = Properties.Resources.random20x20;
+            BT_random.Location = new Point(112, 59);
+            BT_random.Name = "BT_random";
+            BT_random.Size = new Size(30, 30);
+            BT_random.TabIndex = 5;
+            BT_random.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // BT_AI
             // 
-            button3.Image = Properties.Resources.AI30x30;
-            button3.Location = new Point(75, 59);
-            button3.Name = "button3";
-            button3.Size = new Size(30, 30);
-            button3.TabIndex = 4;
-            button3.UseVisualStyleBackColor = true;
+            BT_AI.Image = Properties.Resources.AI30x30;
+            BT_AI.Location = new Point(75, 59);
+            BT_AI.Name = "BT_AI";
+            BT_AI.Size = new Size(30, 30);
+            BT_AI.TabIndex = 4;
+            BT_AI.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // BT_listFriends
             // 
-            button2.Image = Properties.Resources.friend20x20;
-            button2.Location = new Point(39, 59);
-            button2.Name = "button2";
-            button2.Size = new Size(30, 30);
-            button2.TabIndex = 3;
-            button2.UseVisualStyleBackColor = true;
+            BT_listFriends.Image = Properties.Resources.friend20x20;
+            BT_listFriends.Location = new Point(39, 59);
+            BT_listFriends.Name = "BT_listFriends";
+            BT_listFriends.Size = new Size(30, 30);
+            BT_listFriends.TabIndex = 3;
+            BT_listFriends.UseVisualStyleBackColor = true;
             // 
             // BT_search
             // 
@@ -232,6 +235,7 @@
             // 
             // LBox_listFriends
             // 
+            LBox_listFriends.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             LBox_listFriends.BackColor = SystemColors.Info;
             LBox_listFriends.FormattingEnabled = true;
             LBox_listFriends.Location = new Point(3, 95);
@@ -265,39 +269,23 @@
             BT_avatar.TabIndex = 0;
             BT_avatar.UseVisualStyleBackColor = true;
             // 
-            // mainchat
+            // topChatPanel
             // 
-            mainchat.Controls.Add(chatArea);
-            mainchat.Controls.Add(BT_call);
-            mainchat.Controls.Add(BT_setting);
-            mainchat.Controls.Add(LB_friendName);
-            mainchat.Controls.Add(PB_friendAvatar);
-            mainchat.Location = new Point(3, 3);
-            mainchat.Name = "mainchat";
-            mainchat.Size = new Size(619, 460);
-            mainchat.TabIndex = 13;
-            // 
-            // chatArea
-            // 
-            chatArea.BackColor = SystemColors.Window;
-            chatArea.Location = new Point(0, 56);
-            chatArea.Name = "chatArea";
-            chatArea.Size = new Size(619, 401);
-            chatArea.TabIndex = 11;
-            // 
-            // BT_call
-            // 
-            BT_call.Image = Properties.Resources.phone40x40;
-            BT_call.Location = new Point(510, 3);
-            BT_call.Name = "BT_call";
-            BT_call.Size = new Size(50, 50);
-            BT_call.TabIndex = 10;
-            BT_call.UseVisualStyleBackColor = true;
+            topChatPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            topChatPanel.Controls.Add(BT_setting);
+            topChatPanel.Controls.Add(LB_friendName);
+            topChatPanel.Controls.Add(PB_friendAvatar);
+            topChatPanel.Controls.Add(BT_call);
+            topChatPanel.Location = new Point(3, 3);
+            topChatPanel.Name = "topChatPanel";
+            topChatPanel.Size = new Size(619, 50);
+            topChatPanel.TabIndex = 13;
             // 
             // BT_setting
             // 
+            BT_setting.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             BT_setting.Image = Properties.Resources.setting40x40;
-            BT_setting.Location = new Point(566, 3);
+            BT_setting.Location = new Point(566, 0);
             BT_setting.Name = "BT_setting";
             BT_setting.Size = new Size(50, 50);
             BT_setting.TabIndex = 9;
@@ -314,48 +302,31 @@
             // 
             // PB_friendAvatar
             // 
-            PB_friendAvatar.Location = new Point(3, 0);
+            PB_friendAvatar.Location = new Point(0, 0);
             PB_friendAvatar.Name = "PB_friendAvatar";
             PB_friendAvatar.Size = new Size(50, 50);
             PB_friendAvatar.TabIndex = 0;
             PB_friendAvatar.TabStop = false;
             // 
-            // richTextBox1
+            // BT_call
             // 
-            richTextBox1.BackColor = SystemColors.Window;
-            richTextBox1.BorderStyle = BorderStyle.None;
-            richTextBox1.Location = new Point(3, 469);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(447, 30);
-            richTextBox1.TabIndex = 12;
-            richTextBox1.Text = "";
+            BT_call.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BT_call.Image = Properties.Resources.phone40x40;
+            BT_call.Location = new Point(513, 0);
+            BT_call.Name = "BT_call";
+            BT_call.Size = new Size(50, 50);
+            BT_call.TabIndex = 10;
+            BT_call.UseVisualStyleBackColor = true;
             // 
-            // BT_send
+            // chatBox
             // 
-            BT_send.Location = new Point(528, 470);
-            BT_send.Name = "BT_send";
-            BT_send.Size = new Size(94, 29);
-            BT_send.TabIndex = 11;
-            BT_send.Text = "Gửi";
-            BT_send.UseVisualStyleBackColor = true;
-            // 
-            // BT_sendFile
-            // 
-            BT_sendFile.Image = Properties.Resources.folder30x30;
-            BT_sendFile.Location = new Point(492, 469);
-            BT_sendFile.Name = "BT_sendFile";
-            BT_sendFile.Size = new Size(30, 30);
-            BT_sendFile.TabIndex = 10;
-            BT_sendFile.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            button8.Image = Properties.Resources.emoji20x20;
-            button8.Location = new Point(456, 469);
-            button8.Name = "button8";
-            button8.Size = new Size(30, 30);
-            button8.TabIndex = 9;
-            button8.UseVisualStyleBackColor = true;
+            chatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            chatBox.BackColor = SystemColors.Window;
+            chatBox.Location = new Point(3, 59);
+            chatBox.Margin = new Padding(3, 4, 3, 4);
+            chatBox.Name = "chatBox";
+            chatBox.Size = new Size(619, 440);
+            chatBox.TabIndex = 14;
             // 
             // Main
             // 
@@ -373,8 +344,8 @@
             addFriend.ResumeLayout(false);
             addFriend.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PB_findResult).EndInit();
-            mainchat.ResumeLayout(false);
-            mainchat.PerformLayout();
+            topChatPanel.ResumeLayout(false);
+            topChatPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PB_friendAvatar).EndInit();
             ResumeLayout(false);
         }
@@ -386,23 +357,18 @@
         private Button BT_avatar;
         private ListBox LBox_listFriends;
         private Label LB_UID;
-        private Button button7;
-        private Button button6;
-        private Button button5;
-        private Button button4;
-        private Button button3;
-        private Button button2;
+        private Button BT_logOut;
+        private Button BT_noti;
+        private Button BT_refresh;
+        private Button BT_random;
+        private Button BT_AI;
+        private Button BT_listFriends;
         private Button BT_search;
-        private Button BT_send;
-        private Button BT_sendFile;
-        private Button button8;
-        private RichTextBox richTextBox1;
-        private Panel mainchat;
+        private Panel topChatPanel;
         private Button BT_call;
         private Button BT_setting;
         private Label LB_friendName;
         private PictureBox PB_friendAvatar;
-        private Panel chatArea;
         private Panel addFriend;
         private Button BT_addFriend;
         private Button BT_findFriend;
@@ -410,5 +376,8 @@
         private TextBox TB_friendUID;
         private PictureBox PB_findResult;
         private TextBox TB_findResult;
+        // main chat
+        private ChatBox chatBox;
+        private MessageData messageData;
     }
 }

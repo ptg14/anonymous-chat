@@ -43,7 +43,8 @@ namespace anonymous_chat
             string ip = await GetPublicIPAddressAsync();
 
             // Create a new Online object
-            Online online = new Online {
+            Online online = new Online
+            {
                 UID = UID,
                 IP = ip,
                 Searching = false
