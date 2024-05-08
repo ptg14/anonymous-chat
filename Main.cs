@@ -24,7 +24,21 @@ namespace anonymous_chat
         {
             InitializeComponent();
 
+            /*
             if (DangNhap.ShowAndTryGetInput(out UID, out userName, this))
+            {
+                isOnline();
+                LB_name.Text = userName;
+                LB_UID.Text = "UID: " + UID.ToString();
+            }
+            else
+            {
+                // The user has not signed in
+                Load += (s, e) => Close();
+            }
+            */
+
+            if (SignIn_SignUp.ShowAndTryGetInput(out UID, out userName, this))
             {
                 isOnline();
                 LB_name.Text = userName;

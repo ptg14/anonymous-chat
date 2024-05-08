@@ -159,7 +159,7 @@ namespace anonymous_chat.Chat
                 try
                 {
                     var file = File.ReadAllBytes(selected);
-                    if (file.Length > 1450000)
+                    if (file.Length > 100 * 1024 * 1024)
                     {
                         MessageBox.Show("The attachment provided " + fileDialog.SafeFileName + " is too big to be sent by SMS. Please select another.", "Attachment not added.");
                         return;

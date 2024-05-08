@@ -1,47 +1,30 @@
-﻿using System;
+﻿using anonymous_chat.DataBase;
+using Google.Cloud.Firestore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using System.Net;
-using System.Net.Http;
-using anonymous_chat.DataBase;
-using Google.Cloud.Firestore;
-using System.Text.RegularExpressions;
 
-namespace anonymous_chat
+namespace anonymous_chat.Chat
 {
-    public partial class DangKy : Form
+    public partial class SignUp : UserControl
     {
-        public DangKy()
+        public SignIn SignIn { get; set; }
+
+        public SignUp()
         {
             InitializeComponent();
         }
 
         private static FirestoreDb db = FireBase.dataBase;
-
-        public static bool ShowAndTryGetInput(out string email, out string password, IWin32Window? owner = null)
-        {
-            DangKy dangKy = new DangKy();
-            if (dangKy.ShowDialog(owner) == DialogResult.OK)
-            {
-                email = dangKy.TB_email.Text;
-                password = dangKy.TB_password.Text;
-                return true;
-            }
-            else
-            {
-                email = "";
-                password = "";
-                return false;
-            }
-        }
+        public string Email;
+        public string Password;
 
         public bool IsValidEmail(string email)
         {
@@ -49,7 +32,7 @@ namespace anonymous_chat
             return regex.IsMatch(email);
         }
 
-        private async void TB_signUP_Click(object sender, EventArgs e)
+        private async void TB_signUp_Click(object sender, EventArgs e)
         {
             if (TB_email.Text == "" || TB_username.Text == "" || TB_password.Text == "" || TB_repassword.Text == "")
             {
@@ -69,6 +52,7 @@ namespace anonymous_chat
             if (!FireBase.setEnironmentVariables())
             {
                 LB_noti.Text = "Không thể kết nối đến cơ sở dữ liệu";
+                return;
             }
             try
             {
@@ -106,7 +90,10 @@ namespace anonymous_chat
                 if (!string.IsNullOrEmpty(docRef.Id))
                 {
                     LB_noti.Text = "Đăng ký thành công";
-                    DialogResult = DialogResult.OK;
+                    Email = TB_email.Text;
+                    Password = TB_password.Text;
+                    SignIn.TB_email.Text = Email;
+                    SignIn.TB_password.Text = Password;
                 }
                 else
                 {
@@ -116,15 +103,14 @@ namespace anonymous_chat
             }
             catch (ArgumentException ex)
             {
-                // Show the error message in a message box
-                MessageBox.Show(ex.Message);
+                LB_noti.Text = "Lỗi: " + ex.Message;
             }
         }
 
         private void TB_signIn_Click(object sender, EventArgs e)
         {
-            // Close the DangKy form
-            DialogResult = DialogResult.Cancel;
+            this.Visible = false;
+            SignIn.Visible = true;
         }
     }
 }
