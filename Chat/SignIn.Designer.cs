@@ -58,6 +58,7 @@
             // 
             LB_noti.AutoSize = true;
             LB_noti.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            LB_noti.ForeColor = SystemColors.ControlText;
             LB_noti.Location = new Point(201, 334);
             LB_noti.Name = "LB_noti";
             LB_noti.Size = new Size(0, 25);
@@ -181,7 +182,7 @@
 
         #endregion
 
-        private Label LB_noti;
+        public Label LB_noti;
         private Button BT_reco;
         private Label label2;
         private Button BT_signUp;

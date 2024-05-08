@@ -39,17 +39,20 @@ namespace anonymous_chat.Chat
 
             if (TB_email.Text == "" || TB_password.Text == "")
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Vui lòng nhập đủ thông tin";
                 return;
             }
             else if (!IsValidEmail(TB_email.Text))
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Email không hợp lệ";
                 return;
             }
 
             if (!FireBase.setEnironmentVariables())
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Không thể kết nối đến cơ sở dữ liệu";
                 return;
             }
@@ -61,6 +64,7 @@ namespace anonymous_chat.Chat
                 if (snapshot.Count == 0)
                 {
                     // The email does not exist in the database
+                    LB_noti.ForeColor = Color.Red;
                     LB_noti.Text = "Email không tồn tại";
                     return;
                 }
@@ -79,11 +83,13 @@ namespace anonymous_chat.Chat
                 }
                 else
                 {
+                    LB_noti.ForeColor = Color.Red;
                     LB_noti.Text = "Sai mật khẩu";
                 }
             }
             catch (Exception ex)
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Lỗi: " + ex.Message;
             }
         }

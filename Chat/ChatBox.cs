@@ -119,12 +119,13 @@ namespace anonymous_chat.Chat
                     SEND MESSSAGE TO SERVER HERE
 
                 */
-
+                // check file attachment
                 if (chatModel != null)
                 {
                     AddMessage(chatModel);
                     CancelAttachment(null, null);
                 }
+                // check text message
                 if (textModel != null)
                 {
                     AddMessage(textModel);

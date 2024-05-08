@@ -36,21 +36,25 @@ namespace anonymous_chat.Chat
         {
             if (TB_email.Text == "" || TB_username.Text == "" || TB_password.Text == "" || TB_repassword.Text == "")
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Vui lòng điền đầy đủ thông tin";
                 return;
             }
             if (TB_password.Text != TB_repassword.Text)
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Mật khẩu không khớp";
                 return;
             }
             if (IsValidEmail(TB_email.Text) == false)
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Email không hợp lệ";
                 return;
             }
             if (!FireBase.setEnironmentVariables())
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Không thể kết nối đến cơ sở dữ liệu";
                 return;
             }
@@ -89,6 +93,7 @@ namespace anonymous_chat.Chat
                 // If the document was set successfully, docRef.Id will not be null
                 if (!string.IsNullOrEmpty(docRef.Id))
                 {
+                    LB_noti.ForeColor = Color.Green;
                     LB_noti.Text = "Đăng ký thành công";
                     Email = TB_email.Text;
                     Password = TB_password.Text;
@@ -97,12 +102,14 @@ namespace anonymous_chat.Chat
                 }
                 else
                 {
+                    LB_noti.ForeColor = Color.Red;
                     LB_noti.Text = "Đăng ký không thành công";
                     return;
                 }
             }
             catch (ArgumentException ex)
             {
+                LB_noti.ForeColor = Color.Red;
                 LB_noti.Text = "Lỗi: " + ex.Message;
             }
         }
@@ -111,6 +118,7 @@ namespace anonymous_chat.Chat
         {
             this.Visible = false;
             SignIn.Visible = true;
+            SignIn.LB_noti.Text = "";
         }
     }
 }

@@ -60,6 +60,7 @@
             // 
             LB_noti.AutoSize = true;
             LB_noti.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            LB_noti.ForeColor = SystemColors.ControlText;
             LB_noti.Location = new Point(201, 404);
             LB_noti.Name = "LB_noti";
             LB_noti.Size = new Size(0, 25);
@@ -204,7 +205,7 @@
 
         #endregion
 
-        private Label LB_noti;
+        public Label LB_noti;
         private Label label3;
         private TextBox TB_email;
         private TextBox TB_repassword;
