@@ -32,19 +32,25 @@
             dangKy = new Chat.SignUp();
             SuspendLayout();
             // 
-            // dangKy
-            // 
-            dangKy.Location = new Point(12, 12);
-            dangKy.Name = "dangKy";
-            dangKy.TabIndex = 1;
-            dangKy.Visible = false;
-            //
             // dangNhap
-            //
+            // 
+            dangNhap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dangNhap.BackColor = SystemColors.Control;
             dangNhap.Location = new Point(12, 12);
             dangNhap.Name = "dangNhap";
+            dangNhap.SignUp = null;
+            dangNhap.Size = new Size(681, 482);
             dangNhap.TabIndex = 0;
-            dangNhap.Visible = true;
+            // 
+            // dangKy
+            // 
+            dangKy.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dangKy.Location = new Point(12, 12);
+            dangKy.Name = "dangKy";
+            dangKy.SignIn = null;
+            dangKy.Size = new Size(681, 482);
+            dangKy.TabIndex = 1;
+            dangKy.Visible = false;
             // 
             // SignIn_SignUp
             // 
@@ -54,7 +60,8 @@
             Controls.Add(dangKy);
             Controls.Add(dangNhap);
             Name = "SignIn_SignUp";
-            Text = "SignIn_SignUp";
+            Text = "Anonymous Chat";
+            Icon = new Icon("resource\\icon.ico");
             ResumeLayout(false);
         }
 

@@ -110,7 +110,7 @@ namespace anonymous_chat.Chat
             // 
             // bottomPanel
             // 
-            bottomPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            bottomPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             bottomPanel.BackColor = Color.PowderBlue;
             bottomPanel.Controls.Add(LB_fileName);
             bottomPanel.Controls.Add(BT_send);

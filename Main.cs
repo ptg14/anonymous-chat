@@ -1,4 +1,5 @@
-﻿using anonymous_chat.DataBase;
+﻿using anonymous_chat.Chat;
+using anonymous_chat.DataBase;
 using Google.Cloud.Firestore;
 using Newtonsoft.Json;
 using System;
@@ -7,6 +8,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,6 +22,7 @@ namespace anonymous_chat
         private int UID;
         private string userName;
         private bool addFriendVisible = false;
+        private Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         public Main()
         {
@@ -41,7 +45,9 @@ namespace anonymous_chat
             if (SignIn_SignUp.ShowAndTryGetInput(out UID, out userName, this))
             {
                 isOnline();
+                LoadFriendList();
                 LB_name.Text = userName;
+                chatBox.chatbox_info.User = userName;
                 LB_UID.Text = "UID: " + UID.ToString();
             }
             else
@@ -68,6 +74,25 @@ namespace anonymous_chat
             await db.Collection("Online").Document(UID.ToString()).SetAsync(online);
         }
 
+        public async Task ConnectToMessageServerAsync(string ipAddress, int port)
+        {
+            try
+            {
+                await socket.ConnectAsync(new IPEndPoint(IPAddress.Parse(ipAddress), port));
+                // Connection successful
+            }
+            catch (Exception ex)
+            {
+                // Handle connection errors
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+            }
+        }
+
         public async Task<string> GetPublicIPAddressAsync()
         {
             using (var httpClient = new HttpClient())
@@ -87,6 +112,22 @@ namespace anonymous_chat
             {
                 addFriendVisible = true;
                 addFriend.Visible = true;
+            }
+        }
+
+        private void LoadFriendList()
+        {
+            // Query the database for the user's friend list
+            QuerySnapshot snapshot = db.Collection("Users").Document(UID.ToString()).Collection("Friends").GetSnapshotAsync().Result;
+
+            // Clear the friend list
+            LBox_listFriends.Items.Clear();
+
+            // Add each friend to the friend list
+            foreach (DocumentSnapshot document in snapshot.Documents)
+            {
+                UserData friend = document.ConvertTo<UserData>();
+                LBox_listFriends.Items.Add(friend.UserName);
             }
         }
 
@@ -137,5 +178,9 @@ namespace anonymous_chat
             // send to server
         }
 
+        private void BT_refresh_Click(object sender, EventArgs e)
+        {
+            LoadFriendList();
+        }
     }
 }

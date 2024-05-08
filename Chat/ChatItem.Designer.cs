@@ -59,7 +59,7 @@
             authorLabel.Name = "authorLabel";
             authorLabel.Size = new Size(142, 19);
             authorLabel.TabIndex = 0;
-            authorLabel.Text = "System - 10/22/2020";
+            authorLabel.Text = "System - 10/05/2024";
             // 
             // bodyPanel
             // 
@@ -87,7 +87,7 @@
             bodyTextBox.ReadOnly = true;
             bodyTextBox.Size = new Size(471, 47);
             bodyTextBox.TabIndex = 4;
-            bodyTextBox.Text = "Test Message";
+            bodyTextBox.Text = "This is a test for the longer word usage.";
             // 
             // ChatItem
             // 

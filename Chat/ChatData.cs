@@ -36,13 +36,9 @@ namespace anonymous_chat.Chat
             }
         }
 
-        public static async Task<TextChatModel> ReadText(string File)
+        public static TextChatModel ReadText(string json)
         {
-            using (StreamReader reader = new StreamReader(File))
-            {
-                string json = await reader.ReadToEndAsync();
-                return JsonConvert.DeserializeObject<TextChatModel>(json);
-            }
+            return JsonConvert.DeserializeObject<TextChatModel>(json);
         }
     }
 
@@ -89,36 +85,32 @@ namespace anonymous_chat.Chat
             }
         }
 
-        public static async Task<ImageChatModel> ReadImage(string File)
+        public static ImageChatModel ReadImage(string json)
         {
-            using (StreamReader reader = new StreamReader(File))
+            var deserializedObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+
+            // Convert the Base64 string back to a byte array
+            byte[] imageBytes = Convert.FromBase64String(deserializedObject["Image"].ToString());
+
+            // Convert the byte array back to an Image
+            Image image;
+            using (var ms = new MemoryStream(imageBytes))
             {
-                string json = await reader.ReadToEndAsync();
-                var deserializedObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-
-                // Convert the Base64 string back to a byte array
-                byte[] imageBytes = Convert.FromBase64String(deserializedObject["Image"].ToString());
-
-                // Convert the byte array back to an Image
-                Image image;
-                using (var ms = new MemoryStream(imageBytes))
-                {
-                    image = Image.FromStream(ms);
-                }
-
-                // Create an ImageChatModel object
-                var imageChatModel = new ImageChatModel
-                {
-                    Inbound = (bool)deserializedObject["Inbound"],
-                    Read = (bool)deserializedObject["Read"],
-                    Time = DateTime.Parse(deserializedObject["Time"].ToString()),
-                    Author = deserializedObject["Author"]?.ToString(),
-                    Image = image,
-                    ImageName = deserializedObject["ImageName"]?.ToString()
-                };
-
-                return imageChatModel;
+                image = Image.FromStream(ms);
             }
+
+            // Create an ImageChatModel object
+            var imageChatModel = new ImageChatModel
+            {
+                Inbound = (bool)deserializedObject["Inbound"],
+                Read = (bool)deserializedObject["Read"],
+                Time = DateTime.Parse(deserializedObject["Time"].ToString()),
+                Author = deserializedObject["Author"]?.ToString(),
+                Image = image,
+                ImageName = deserializedObject["ImageName"]?.ToString()
+            };
+
+            return imageChatModel;
         }
     }
 
@@ -157,29 +149,25 @@ namespace anonymous_chat.Chat
             }
         }
 
-        public static async Task<AttachmentChatModel> ReadAttachment(string File)
+        public static AttachmentChatModel ReadAttachment(string json)
         {
-            using (StreamReader reader = new StreamReader(File))
+            var deserializedObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+
+            // Convert the Base64 string back to a byte array
+            byte[] attachmentBytes = Convert.FromBase64String(deserializedObject["Attachment"].ToString());
+
+            // Create an AttachmentChatModel object
+            var attachmentChatModel = new AttachmentChatModel
             {
-                string json = await reader.ReadToEndAsync();
-                var deserializedObject = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                Inbound = (bool)deserializedObject["Inbound"],
+                Read = (bool)deserializedObject["Read"],
+                Time = DateTime.Parse(deserializedObject["Time"].ToString()),
+                Author = deserializedObject["Author"]?.ToString(),
+                Attachment = attachmentBytes,
+                Filename = deserializedObject["Filename"]?.ToString()
+            };
 
-                // Convert the Base64 string back to a byte array
-                byte[] attachmentBytes = Convert.FromBase64String(deserializedObject["Attachment"].ToString());
-
-                // Create an AttachmentChatModel object
-                var attachmentChatModel = new AttachmentChatModel
-                {
-                    Inbound = (bool)deserializedObject["Inbound"],
-                    Read = (bool)deserializedObject["Read"],
-                    Time = DateTime.Parse(deserializedObject["Time"].ToString()),
-                    Author = deserializedObject["Author"]?.ToString(),
-                    Attachment = attachmentBytes,
-                    Filename = deserializedObject["Filename"]?.ToString()
-                };
-
-                return attachmentChatModel;
-            }
+            return attachmentChatModel;
         }
 
     }

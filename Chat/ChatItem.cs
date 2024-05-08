@@ -29,7 +29,7 @@ namespace anonymous_chat.Chat
                 chatModel = new TextChatModel()
                 {
                     Author = "System",
-                    Body = "No chat messages were found regarding this client.",
+                    Body = "Lịch sử tin nhắn bị lỗi",
                     Inbound = true,
                     Time = DateTime.Now
                 };

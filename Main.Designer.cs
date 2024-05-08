@@ -54,9 +54,7 @@ namespace anonymous_chat
             LB_friendName = new Label();
             PB_friendAvatar = new PictureBox();
             BT_call = new Button();
-            // main chat
             messageData = new MessageData();
-            //
             chatBox = new ChatBox(messageData);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -190,11 +188,13 @@ namespace anonymous_chat
             // 
             // BT_refresh
             // 
+            BT_refresh.Image = Properties.Resources.refresh20x20;
             BT_refresh.Location = new Point(148, 59);
             BT_refresh.Name = "BT_refresh";
             BT_refresh.Size = new Size(30, 30);
             BT_refresh.TabIndex = 6;
             BT_refresh.UseVisualStyleBackColor = true;
+            BT_refresh.Click += BT_refresh_Click;
             // 
             // BT_random
             // 
@@ -271,7 +271,7 @@ namespace anonymous_chat
             // 
             // topChatPanel
             // 
-            topChatPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            topChatPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             topChatPanel.Controls.Add(BT_setting);
             topChatPanel.Controls.Add(LB_friendName);
             topChatPanel.Controls.Add(PB_friendAvatar);

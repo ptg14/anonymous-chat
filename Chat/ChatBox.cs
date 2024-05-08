@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -33,7 +34,6 @@ namespace anonymous_chat.Chat
 
             TB_message.KeyDown += OnEnter;
 
-            AddMessage(null);
         }
 
         public void AddMessage(IChatModel message)
