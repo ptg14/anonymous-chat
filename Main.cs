@@ -13,47 +13,108 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Chat_Server.DataBase;
+using System.Diagnostics;
 
 namespace anonymous_chat
 {
     public partial class Main : Form
     {
         private static FirestoreDb db = FireBase.dataBase;
-        private int UID;
+        public int UID;
+        public int toUID;
         private string userName;
         private bool addFriendVisible = false;
-        private Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        public Dictionary<int, ChatBox> chatBoxes = new Dictionary<int, ChatBox>();
 
         public Main()
         {
             InitializeComponent();
 
-            /*
-            if (DangNhap.ShowAndTryGetInput(out UID, out userName, this))
-            {
-                isOnline();
-                LB_name.Text = userName;
-                LB_UID.Text = "UID: " + UID.ToString();
-            }
-            else
-            {
-                // The user has not signed in
-                Load += (s, e) => Close();
-            }
-            */
-
             if (SignIn_SignUp.ShowAndTryGetInput(out UID, out userName, this))
             {
-                isOnline();
-                LoadFriendList();
                 LB_name.Text = userName;
                 chatBox.chatbox_info.User = userName;
                 LB_UID.Text = "UID: " + UID.ToString();
+                isOnline();
+                LoadFriendList();
+                Thread connectThread = new Thread(ConnectToServer);
+                connectThread.IsBackground = true;
+                connectThread.Start();
+                chatBox.main = this;
             }
             else
             {
                 // The user has not signed in
                 Load += (s, e) => Close();
+            }
+        }
+
+        private TcpClient client;
+        private NetworkStream stream;
+        public bool isConnected;
+
+        private void ConnectToServer()
+        {
+            // Try to connect to the server until successful
+            while (true)
+            {
+                try
+                {
+                    client = new TcpClient("127.0.0.1", 8888);
+                    break; // Connection successful, exit the loop
+                }
+                catch (SocketException)
+                {
+                    // Connection failed, wait and then try again
+                    Thread.Sleep(1000);
+                }
+            }
+            isConnected = true;
+
+            stream = client.GetStream(); // Get the stream for sending and receiving data
+
+            Thread receiveThread = new Thread(ReceiveMessages);
+            receiveThread.IsBackground = true;
+            receiveThread.Start();
+        }
+
+        public void Send(string text)
+        {
+            if (isConnected)
+            {
+                byte[] message = Encoding.ASCII.GetBytes(text);
+                stream.Write(message, 0, message.Length); // Send the message to the server
+            }
+        }
+
+        private void ReceiveMessages()
+        {
+            while (isConnected)
+            {
+                byte[] data = new byte[256];
+                int bytes = 0;
+                try
+                {
+                    bytes = stream.Read(data, 0, data.Length);
+                }
+                catch (IOException ex)
+                {
+                    // Handle the exception here
+                    Send("An error occurred: " + ex.Message);
+                    break;
+                }
+
+                string responseData = Encoding.ASCII.GetString(data, 0, bytes);
+
+                // Update TB_remessage on the UI thread
+                if (this.IsHandleCreated) // Check if the handle has been created
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        // Update the UI here
+                    });
+                }
             }
         }
 
@@ -74,24 +135,55 @@ namespace anonymous_chat
             await db.Collection("Online").Document(UID.ToString()).SetAsync(online);
         }
 
-        public async Task ConnectToMessageServerAsync(string ipAddress, int port)
+        private void LBox_listFriends_SelectedIndexChanged(object sender, EventArgs e)
         {
-            try
+            if (LBox_listFriends.SelectedIndex != -1)
             {
-                await socket.ConnectAsync(new IPEndPoint(IPAddress.Parse(ipAddress), port));
-                // Connection successful
-            }
-            catch (Exception ex)
-            {
-                // Handle connection errors
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Close();
+                // An item is selected
+                string selectedFriend = LBox_listFriends.SelectedItem.ToString();
+                toUID = int.Parse(selectedFriend);
+
+                // Check if a ChatBox already exists for this friend
+                if (chatBoxes.ContainsKey(toUID))
+                {
+                    chatBox.Visible = false;
+                    // Show the existing ChatBox and hide the others
+                    foreach (var otherChatBox in chatBoxes.Values)
+                    {
+                        otherChatBox.Visible = otherChatBox == chatBoxes[toUID];
+                    }
+                    chatBoxes[toUID].BringToFront();
+                }
+                else
+                {
+                    // Create a new ChatBox for this friend
+                    ChatBox newChatBox = new ChatBox(new MessageData());
+                    newChatBox.main = this;
+                    chatBoxes.Add(toUID, newChatBox);
+
+                    mainChat.Controls.Add(newChatBox);
+
+                    newChatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                    newChatBox.BackColor = SystemColors.Window;
+                    newChatBox.Location = chatBox.Location;
+                    newChatBox.Margin = new Padding(3, 4, 3, 4);
+                    newChatBox.Name = $"newChatBox{toUID}";
+                    newChatBox.Size = chatBox.Size;
+
+                    // Debugging: Check if newChatBox is added to mainChat
+                    Debug.WriteLine($"newChatBox is added to mainChat: {mainChat.Controls.Contains(newChatBox)}");
+
+                    // Hide the other newChatBoxes
+                    chatBox.Visible = false;
+                    foreach (var otherChatBox in chatBoxes.Values)
+                    {
+                        otherChatBox.Visible = otherChatBox == newChatBox;
+                    }
+                    newChatBox.BringToFront();
+                }
             }
         }
+
 
         public async Task<string> GetPublicIPAddressAsync()
         {
@@ -115,20 +207,34 @@ namespace anonymous_chat
             }
         }
 
-        private void LoadFriendList()
+        private async void LoadFriendList()
         {
             // Query the database for the user's friend list
-            QuerySnapshot snapshot = db.Collection("Users").Document(UID.ToString()).Collection("Friends").GetSnapshotAsync().Result;
+            Query query = db.Collection("Friends").WhereEqualTo("UID", UID).WhereEqualTo("isFriend", true);
 
-            // Clear the friend list
-            LBox_listFriends.Items.Clear();
+            var querySnapshot = await query.GetSnapshotAsync();
+            //MessageBox.Show($"Number of documents returned by the query: {querySnapshot.Count}");
 
-            // Add each friend to the friend list
-            foreach (DocumentSnapshot document in snapshot.Documents)
-            {
-                UserData friend = document.ConvertTo<UserData>();
-                LBox_listFriends.Items.Add(friend.UserName);
-            }
+            this.Invoke((MethodInvoker)delegate {
+                // Clear the friend list
+                LBox_listFriends.Items.Clear();
+
+                // Add each friend to the friend list
+                foreach (DocumentSnapshot document in querySnapshot.Documents)
+                {
+                    try
+                    {
+                        Friends friend = document.ConvertTo<Friends>();
+                        //MessageBox.Show($"FriendUID: {friend.FriendUID}");
+                        LBox_listFriends.Items.Add(friend.FriendUID);
+                        //MessageBox.Show($"Added {friend.FriendUID} to the ListBox");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            });
         }
 
         private async void BT_findFriend_Click(object sender, EventArgs e)
@@ -162,7 +268,6 @@ namespace anonymous_chat
             TB_findResult.Text = user.UserName;
         }
 
-
         private void BT_addFriend_Click(object sender, EventArgs e)
         {
             if (TB_friendUID.Text == "")
@@ -176,6 +281,7 @@ namespace anonymous_chat
                 return;
             }
             // send to server
+            string friendRequestMessage = $"FRIENDREQUEST: {UID}=>{TB_friendUID.Text}";
         }
 
         private void BT_refresh_Click(object sender, EventArgs e)

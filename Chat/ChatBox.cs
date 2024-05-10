@@ -17,6 +17,7 @@ namespace anonymous_chat.Chat
         public MessageData chatbox_info;
         public OpenFileDialog fileDialog = new OpenFileDialog();
         public string initialdirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        public Main main;
 
         public ChatBox(MessageData input_info)
         {
@@ -114,21 +115,23 @@ namespace anonymous_chat.Chat
 
             try
             {
-                /*
-
-                    SEND MESSSAGE TO SERVER HERE
-
-                */
                 // check file attachment
                 if (chatModel != null)
                 {
                     AddMessage(chatModel);
+
                     CancelAttachment(null, null);
                 }
                 // check text message
                 if (textModel != null)
                 {
                     AddMessage(textModel);
+                    if (main.toUID != 0 && main.isConnected)
+                    {
+                        string textJson = main.UID + "=>" + main.toUID + JsonConvert.SerializeObject(textModel);
+                        MessageBox.Show(textJson);
+                        main.Send(textJson);
+                    }
                     TB_message.Text = string.Empty;
                 }
             }
@@ -209,7 +212,7 @@ namespace anonymous_chat.Chat
             chatbox_info.AttachmentName = null;
             chatbox_info.AttachmentType = null;
             BT_clear.Visible = false;
-            BT_file.Width = 30;
+            BT_file.Width = 50;
         }
 
         async void OnEnter(object sender, KeyEventArgs e)

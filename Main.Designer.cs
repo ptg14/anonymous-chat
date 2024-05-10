@@ -54,6 +54,7 @@ namespace anonymous_chat
             LB_friendName = new Label();
             PB_friendAvatar = new PictureBox();
             BT_call = new Button();
+            mainChat = new Panel();
             messageData = new MessageData();
             chatBox = new ChatBox(messageData);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -90,8 +91,8 @@ namespace anonymous_chat
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(mainChat);
             splitContainer1.Panel2.Controls.Add(topChatPanel);
-            splitContainer1.Panel2.Controls.Add(chatBox);
             splitContainer1.Size = new Size(882, 503);
             splitContainer1.SplitterDistance = 253;
             splitContainer1.TabIndex = 0;
@@ -242,6 +243,7 @@ namespace anonymous_chat
             LBox_listFriends.Name = "LBox_listFriends";
             LBox_listFriends.Size = new Size(246, 404);
             LBox_listFriends.TabIndex = 0;
+            LBox_listFriends.SelectedIndexChanged += LBox_listFriends_SelectedIndexChanged;
             // 
             // LB_UID
             // 
@@ -322,11 +324,19 @@ namespace anonymous_chat
             // 
             chatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             chatBox.BackColor = SystemColors.Window;
-            chatBox.Location = new Point(3, 59);
+            chatBox.Location = new Point(0, 0);
             chatBox.Margin = new Padding(3, 4, 3, 4);
             chatBox.Name = "chatBox";
             chatBox.Size = new Size(619, 440);
             chatBox.TabIndex = 14;
+            // 
+            // mainChat
+            // 
+            mainChat.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            mainChat.Location = new Point(3, 59);
+            mainChat.Name = "mainChat";
+            mainChat.Size = new Size(619, 440);
+            mainChat.Controls.Add(chatBox);
             // 
             // Main
             // 
@@ -379,5 +389,6 @@ namespace anonymous_chat
         // main chat
         private ChatBox chatBox;
         private MessageData messageData;
+        private Panel mainChat;
     }
 }

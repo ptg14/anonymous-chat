@@ -49,7 +49,7 @@ namespace anonymous_chat.Chat
             ChatPanel.Location = new Point(0, 0);
             ChatPanel.Margin = new Padding(4, 3, 4, 3);
             ChatPanel.Name = "ChatPanel";
-            ChatPanel.Size = new Size(619, 380);
+            ChatPanel.Size = new Size(619, 360);
             ChatPanel.TabIndex = 1;
             // 
             // BT_send
@@ -61,7 +61,7 @@ namespace anonymous_chat.Chat
             BT_send.Location = new Point(537, 15);
             BT_send.Margin = new Padding(4, 3, 4, 3);
             BT_send.Name = "BT_send";
-            BT_send.Size = new Size(78, 30);
+            BT_send.Size = new Size(78, 50);
             BT_send.TabIndex = 1;
             BT_send.Text = "Send";
             BT_send.UseVisualStyleBackColor = false;
@@ -76,7 +76,7 @@ namespace anonymous_chat.Chat
             BT_clear.Location = new Point(515, 15);
             BT_clear.Margin = new Padding(4, 3, 4, 3);
             BT_clear.Name = "BT_clear";
-            BT_clear.Size = new Size(20, 30);
+            BT_clear.Size = new Size(20, 50);
             BT_clear.TabIndex = 5;
             BT_clear.Text = "X";
             BT_clear.UseVisualStyleBackColor = false;
@@ -91,10 +91,10 @@ namespace anonymous_chat.Chat
             BT_file.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             BT_file.ForeColor = SystemColors.ControlText;
             BT_file.Image = Resources.folder20x20;
-            BT_file.Location = new Point(483, 15);
+            BT_file.Location = new Point(463, 15);
             BT_file.Margin = new Padding(4, 3, 4, 3);
             BT_file.Name = "BT_file";
-            BT_file.Size = new Size(30, 30);
+            BT_file.Size = new Size(50, 50);
             BT_file.TabIndex = 6;
             BT_file.UseVisualStyleBackColor = false;
             // 
@@ -105,7 +105,7 @@ namespace anonymous_chat.Chat
             TB_message.Margin = new Padding(4, 3, 4, 3);
             TB_message.Multiline = true;
             TB_message.Name = "TB_message";
-            TB_message.Size = new Size(479, 30);
+            TB_message.Size = new Size(459, 50);
             TB_message.TabIndex = 7;
             // 
             // bottomPanel
@@ -118,11 +118,11 @@ namespace anonymous_chat.Chat
             bottomPanel.Controls.Add(TB_message);
             bottomPanel.Controls.Add(BT_file);
             bottomPanel.ForeColor = SystemColors.ControlLightLight;
-            bottomPanel.Location = new Point(0, 380);
+            bottomPanel.Location = new Point(0, 360);
             bottomPanel.Margin = new Padding(4, 3, 4, 3);
             bottomPanel.Name = "bottomPanel";
             bottomPanel.Padding = new Padding(18, 12, 18, 12);
-            bottomPanel.Size = new Size(619, 60);
+            bottomPanel.Size = new Size(619, 80);
             bottomPanel.TabIndex = 0;
             // 
             // LB_fileName
