@@ -55,8 +55,7 @@ namespace anonymous_chat
             PB_friendAvatar = new PictureBox();
             BT_call = new Button();
             mainChat = new Panel();
-            messageData = new MessageData();
-            chatBox = new ChatBox(messageData);
+            chatBox = new ChatBox(new MessageData());
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -214,6 +213,7 @@ namespace anonymous_chat
             BT_AI.Size = new Size(30, 30);
             BT_AI.TabIndex = 4;
             BT_AI.UseVisualStyleBackColor = true;
+            BT_AI.Click += BT_AI_Click;
             // 
             // BT_listFriends
             // 
@@ -388,7 +388,6 @@ namespace anonymous_chat
         private TextBox TB_findResult;
         // main chat
         private ChatBox chatBox;
-        private MessageData messageData;
         private Panel mainChat;
     }
 }

@@ -170,5 +170,13 @@ namespace anonymous_chat.Chat
             return attachmentChatModel;
         }
 
+        public class SimsimiResponse
+        {
+            public string text { get; set; }
+            public string message { get; set; }
+            public string id { get; set; }
+            public string status { get; set; }
+            public string language { get; set; }
+        }
     }
 }

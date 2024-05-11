@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static anonymous_chat.Chat.AttachmentChatModel;
 
 namespace anonymous_chat.Chat
 {
@@ -126,11 +128,45 @@ namespace anonymous_chat.Chat
                 if (textModel != null)
                 {
                     AddMessage(textModel);
-                    if (main.toUID != 0 && main.isConnected)
+                    if (main.toUID != 0)
                     {
-                        string textJson = main.UID + "=>" + main.toUID + JsonConvert.SerializeObject(textModel);
-                        MessageBox.Show(textJson);
-                        main.Send(textJson);
+                        if (main.toUID == 10000)
+                        {
+                            using (var client = new HttpClient())
+                            {
+                                var content = new FormUrlEncodedContent(new[]
+                                {
+                                    new KeyValuePair<string, string>("text", chatmessage),
+                                    new KeyValuePair<string, string>("lc", "vn"),
+                                    new KeyValuePair<string, string>("key", "")
+                                });
+
+                                var response = await client.PostAsync("https://api.simsimi.vn/v2/simtalk", content);
+                                Debug.WriteLine(await response.Content.ReadAsStringAsync());
+
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    var responseString = await response.Content.ReadAsStringAsync();
+                                    var simsimiResponse = JsonConvert.DeserializeObject<SimsimiResponse>(responseString);
+
+                                    var textChatModel = new TextChatModel
+                                    {
+                                        Inbound = true,
+                                        Read = false,
+                                        Time = DateTime.Now,
+                                        Author = "AI",
+                                        Body = simsimiResponse.message
+                                    };
+                                    AddMessage(textChatModel);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            string textJson = main.UID + "=>" + main.toUID + ":" + JsonConvert.SerializeObject(textModel);
+                            Debug.WriteLine(textJson);
+                            main.Send(textJson);
+                        }
                     }
                     TB_message.Text = string.Empty;
                 }

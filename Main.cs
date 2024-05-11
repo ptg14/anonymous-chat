@@ -23,9 +23,10 @@ namespace anonymous_chat
         private static FirestoreDb db = FireBase.dataBase;
         public int UID;
         public int toUID;
-        private string userName;
+        public string userName;
         private bool addFriendVisible = false;
         public Dictionary<int, ChatBox> chatBoxes = new Dictionary<int, ChatBox>();
+        ChatBox AI = new ChatBox(new MessageData());
 
         public Main()
         {
@@ -61,7 +62,7 @@ namespace anonymous_chat
             {
                 try
                 {
-                    client = new TcpClient("127.0.0.1", 8888);
+                    client = new TcpClient("192.168.1.6", 8888);
                     break; // Connection successful, exit the loop
                 }
                 catch (SocketException)
@@ -105,15 +106,59 @@ namespace anonymous_chat
                     break;
                 }
 
-                string responseData = Encoding.ASCII.GetString(data, 0, bytes);
+                string receivedMessage = Encoding.ASCII.GetString(data, 0, bytes);
+                MessageBox.Show(receivedMessage);
 
-                // Update TB_remessage on the UI thread
-                if (this.IsHandleCreated) // Check if the handle has been created
+                string[] parts = receivedMessage.Split(new string[] { "=>" }, StringSplitOptions.None);
+                int senderUID = int.Parse(parts[0]);
+
+                // Extract the toUID from the string before the JSON object starts
+                int toUIDIndex = parts[1].IndexOf(':');
+                string recipientUIDString = (toUIDIndex > 0) ? parts[1].Substring(0, toUIDIndex) : parts[1];
+                int recipientUID = int.Parse(recipientUIDString);
+
+                // If the toUID was extracted from the string, the chatDataJson should start from the JSON object
+                string chatDataJson = (toUIDIndex > 0) ? parts[1].Substring(toUIDIndex) : parts[2];
+
+                // Deserialize the chat data json to a dictionary to access the Type property
+                var chatDataDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(chatDataJson);
+
+                // Get the type of the chat data
+                string chatDataType = chatDataDictionary["Type"].ToString();
+
+                IChatModel chatData;
+
+                // Deserialize the chat data json to the appropriate model based on the type
+                switch (chatDataType)
                 {
-                    this.Invoke((MethodInvoker)delegate
+                    case "text":
+                        chatData = TextChatModel.ReadText(chatDataJson);
+                        break;
+                    case "image":
+                        chatData = ImageChatModel.ReadImage(chatDataJson);
+                        break;
+                    case "attachment":
+                        chatData = AttachmentChatModel.ReadAttachment(chatDataJson);
+                        break;
+                    default:
+                        throw new Exception("Unknown chat data type: " + chatDataType);
+                }
+                chatData.Inbound = true;
+
+                // Check if the message is sent to you
+                if (recipientUID == UID)
+                {
+                    // Update TB_remessage on the UI thread
+                    if (this.IsHandleCreated) // Check if the handle has been created
                     {
-                        // Update the UI here
-                    });
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            if (chatBoxes.ContainsKey(senderUID))
+                            {
+                                chatBoxes[senderUID].AddMessage(chatData);
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -141,6 +186,17 @@ namespace anonymous_chat
             {
                 // An item is selected
                 string selectedFriend = LBox_listFriends.SelectedItem.ToString();
+                if (selectedFriend == "AI")
+                {
+                    // Show the AI ChatBox
+                    foreach (var otherChatBox in chatBoxes.Values)
+                    {
+                        otherChatBox.Visible = false;
+                    }
+                    AI.BringToFront();
+                    toUID = 10000;
+                    return;
+                }
                 toUID = int.Parse(selectedFriend);
 
                 // Check if a ChatBox already exists for this friend
@@ -169,9 +225,6 @@ namespace anonymous_chat
                     newChatBox.Margin = new Padding(3, 4, 3, 4);
                     newChatBox.Name = $"newChatBox{toUID}";
                     newChatBox.Size = chatBox.Size;
-
-                    // Debugging: Check if newChatBox is added to mainChat
-                    Debug.WriteLine($"newChatBox is added to mainChat: {mainChat.Controls.Contains(newChatBox)}");
 
                     // Hide the other newChatBoxes
                     chatBox.Visible = false;
@@ -215,7 +268,8 @@ namespace anonymous_chat
             var querySnapshot = await query.GetSnapshotAsync();
             //MessageBox.Show($"Number of documents returned by the query: {querySnapshot.Count}");
 
-            this.Invoke((MethodInvoker)delegate {
+            this.Invoke((MethodInvoker)delegate
+            {
                 // Clear the friend list
                 LBox_listFriends.Items.Clear();
 
@@ -287,6 +341,29 @@ namespace anonymous_chat
         private void BT_refresh_Click(object sender, EventArgs e)
         {
             LoadFriendList();
+            foreach (var otherChatBox in chatBoxes.Values)
+            {
+                otherChatBox.Visible = false;
+            }
+            chatBox.Visible = true;
+        }
+
+        private void BT_AI_Click(object sender, EventArgs e)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                LBox_listFriends.Items.Insert(0, "AI");
+            });
+
+            AI.main = this;
+            mainChat.Controls.Add(AI);
+
+            AI.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            AI.BackColor = SystemColors.Window;
+            AI.Location = chatBox.Location;
+            AI.Margin = new Padding(3, 4, 3, 4);
+            AI.Name = "AI";
+            AI.Size = chatBox.Size;
         }
     }
 }
