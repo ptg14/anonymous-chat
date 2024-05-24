@@ -54,6 +54,7 @@ namespace anonymous_chat
             LB_friendName = new Label();
             PB_friendAvatar = new PictureBox();
             BT_call = new Button();
+            setting = new Setting();
             mainChat = new Panel();
             chatBox = new ChatBox(new MessageData());
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -292,6 +293,7 @@ namespace anonymous_chat
             BT_setting.Size = new Size(50, 50);
             BT_setting.TabIndex = 9;
             BT_setting.UseVisualStyleBackColor = true;
+            BT_setting.Click += BT_setting_Click;
             // 
             // LB_friendName
             // 
@@ -319,7 +321,15 @@ namespace anonymous_chat
             BT_call.Size = new Size(50, 50);
             BT_call.TabIndex = 10;
             BT_call.UseVisualStyleBackColor = true;
+            //
+            // setting
             // 
+            setting.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            setting.Location = new Point(494, 0);
+            setting.Name = "setting";
+            setting.Size = new Size(125, 147);
+            setting.Visible = false;
+            //
             // chatBox
             // 
             chatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -337,6 +347,7 @@ namespace anonymous_chat
             mainChat.Name = "mainChat";
             mainChat.Size = new Size(619, 440);
             mainChat.Controls.Add(chatBox);
+            mainChat.Controls.Add(setting);
             // 
             // Main
             // 
@@ -389,5 +400,40 @@ namespace anonymous_chat
         // main chat
         private ChatBox chatBox;
         private Panel mainChat;
+        private Setting setting;
     }
+
+    /*
+    setting = new Setting();
+    mainChat = new Panel();
+    chatBox = new ChatBox(new MessageData());
+    splitContainer1.Panel2.Controls.Add(mainChat);
+    //
+    // setting
+    // 
+    setting.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+    setting.Location = new Point(494, 0);
+    setting.Name = "setting";
+    setting.Size = new Size(125, 147);
+    setting.Visible = false;
+    //
+    // chatBox
+    // 
+    chatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+    chatBox.BackColor = SystemColors.Window;
+    chatBox.Location = new Point(0, 0);
+    chatBox.Margin = new Padding(3, 4, 3, 4);
+    chatBox.Name = "chatBox";
+    chatBox.Size = new Size(619, 440);
+    chatBox.TabIndex = 14;
+    // 
+    // mainChat
+    // 
+    mainChat.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+    mainChat.Location = new Point(3, 59);
+    mainChat.Name = "mainChat";
+    mainChat.Size = new Size(619, 440);
+    mainChat.Controls.Add(chatBox);
+    mainChat.Controls.Add(setting);
+    */
 }

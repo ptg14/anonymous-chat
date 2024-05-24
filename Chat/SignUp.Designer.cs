@@ -179,7 +179,8 @@
             // 
             // BT_hide2
             // 
-            BT_hide2.Image = Properties.Resources.eye25x25;
+            BT_hide2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BT_hide2.Image = Properties.Resources.eye20x20;
             BT_hide2.Location = new Point(556, 363);
             BT_hide2.Name = "BT_hide2";
             BT_hide2.Size = new Size(27, 27);
@@ -189,7 +190,8 @@
             // 
             // BT_hide1
             // 
-            BT_hide1.Image = Properties.Resources.eye25x25;
+            BT_hide1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BT_hide1.Image = Properties.Resources.eye20x20;
             BT_hide1.Location = new Point(556, 317);
             BT_hide1.Name = "BT_hide1";
             BT_hide1.Size = new Size(27, 27);

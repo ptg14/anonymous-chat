@@ -160,7 +160,8 @@
             // 
             // BT_hide
             // 
-            BT_hide.Image = Properties.Resources.eye25x25;
+            BT_hide.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BT_hide.Image = Properties.Resources.eye20x20;
             BT_hide.Location = new Point(556, 277);
             BT_hide.Name = "BT_hide";
             BT_hide.Size = new Size(27, 27);

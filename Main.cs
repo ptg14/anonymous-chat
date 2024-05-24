@@ -166,7 +166,7 @@ namespace anonymous_chat
                         });
                     }
                 }
-                
+
             }
         }
 
@@ -374,6 +374,12 @@ namespace anonymous_chat
             AI.Margin = new Padding(3, 4, 3, 4);
             AI.Name = "AI";
             AI.Size = chatBox.Size;
+        }
+
+        private void BT_setting_Click(object sender, EventArgs e)
+        {
+            setting.Visible = !setting.Visible;
+            setting.BringToFront();
         }
     }
 }
