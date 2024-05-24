@@ -7,6 +7,12 @@
     <Compile Update="Chat\ChatItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Chat\Noti.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Chat\Setting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Chat\SignIn.cs">
       <SubType>UserControl</SubType>
     </Compile>

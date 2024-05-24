@@ -163,8 +163,9 @@ namespace anonymous_chat.Chat
                         }
                         else
                         {
-                            string textJson = main.UID + "=>" + main.toUID + ":" + JsonConvert.SerializeObject(textModel);
-                            Debug.WriteLine(textJson);
+                            textModel.Author = main.userName;
+                            string textJson = main.UID + ">" + main.toUID + "=" + JsonConvert.SerializeObject(textModel);
+                            //Debug.WriteLine(textJson);
                             main.Send(textJson);
                         }
                     }

@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Chat_Server.DataBase;
 using System.Diagnostics;
+using Newtonsoft.Json.Linq;
 
 namespace anonymous_chat
 {
@@ -62,7 +63,7 @@ namespace anonymous_chat
             {
                 try
                 {
-                    client = new TcpClient("192.168.1.6", 8888);
+                    client = new TcpClient("127.0.0.1", 8888);
                     break; // Connection successful, exit the loop
                 }
                 catch (SocketException)
@@ -74,7 +75,7 @@ namespace anonymous_chat
             isConnected = true;
 
             stream = client.GetStream(); // Get the stream for sending and receiving data
-
+            Send("UIDCONNECT:" + UID);
             Thread receiveThread = new Thread(ReceiveMessages);
             receiveThread.IsBackground = true;
             receiveThread.Start();
@@ -102,64 +103,70 @@ namespace anonymous_chat
                 catch (IOException ex)
                 {
                     // Handle the exception here
-                    Send("An error occurred: " + ex.Message);
+                    MessageBox.Show(ex.Message, "ERROR");
+                    isConnected = false;
+                    Thread connectThread = new Thread(ConnectToServer);
+                    connectThread.IsBackground = true;
+                    connectThread.Start();
                     break;
                 }
 
                 string receivedMessage = Encoding.ASCII.GetString(data, 0, bytes);
-                MessageBox.Show(receivedMessage);
+                MessageBox.Show("Receive:\n" + receivedMessage);
 
-                string[] parts = receivedMessage.Split(new string[] { "=>" }, StringSplitOptions.None);
-                int senderUID = int.Parse(parts[0]);
 
-                // Extract the toUID from the string before the JSON object starts
-                int toUIDIndex = parts[1].IndexOf(':');
-                string recipientUIDString = (toUIDIndex > 0) ? parts[1].Substring(0, toUIDIndex) : parts[1];
-                int recipientUID = int.Parse(recipientUIDString);
+                string[] parts = receivedMessage.Split('=');
+                string[] ids = parts[0].Split(">");
 
-                // If the toUID was extracted from the string, the chatDataJson should start from the JSON object
-                string chatDataJson = (toUIDIndex > 0) ? parts[1].Substring(toUIDIndex) : parts[2];
+                int senderID = int.Parse(ids[0]);
+                int receiverID = int.Parse(ids[1]);
+                string json = parts[1];
+                IChatModel receivedModel = null;
 
-                // Deserialize the chat data json to a dictionary to access the Type property
-                var chatDataDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(chatDataJson);
-
-                // Get the type of the chat data
-                string chatDataType = chatDataDictionary["Type"].ToString();
-
-                IChatModel chatData;
-
-                // Deserialize the chat data json to the appropriate model based on the type
-                switch (chatDataType)
+                JObject jObject = JObject.Parse(json);
+                if (jObject.ContainsKey("Type"))
                 {
-                    case "text":
-                        chatData = TextChatModel.ReadText(chatDataJson);
-                        break;
-                    case "image":
-                        chatData = ImageChatModel.ReadImage(chatDataJson);
-                        break;
-                    case "attachment":
-                        chatData = AttachmentChatModel.ReadAttachment(chatDataJson);
-                        break;
-                    default:
-                        throw new Exception("Unknown chat data type: " + chatDataType);
+                    string type = (string)jObject["Type"];
+                    switch (type)
+                    {
+                        case "text":
+                            receivedModel = new TextChatModel();
+                            receivedModel = JsonConvert.DeserializeObject<TextChatModel>(json);
+                            receivedModel.Inbound = true;
+                            break;
+                        case "image":
+                            receivedModel = new ImageChatModel();
+                            receivedModel = JsonConvert.DeserializeObject<ImageChatModel>(json);
+                            receivedModel.Inbound = true;
+                            break;
+                        case "attachment":
+                            receivedModel = new AttachmentChatModel();
+                            receivedModel = JsonConvert.DeserializeObject<AttachmentChatModel>(json);
+                            receivedModel.Inbound = true;
+                            break;
+                        default:
+                            // Handle unexpected type
+                            MessageBox.Show($"Received an object of unexpected type: {type}");
+                            break;
+                    }
                 }
-                chatData.Inbound = true;
 
                 // Check if the message is sent to you
-                if (recipientUID == UID)
+                if (receiverID == UID)
                 {
                     // Update TB_remessage on the UI thread
                     if (this.IsHandleCreated) // Check if the handle has been created
                     {
                         this.Invoke((MethodInvoker)delegate
                         {
-                            if (chatBoxes.ContainsKey(senderUID))
+                            if (chatBoxes.ContainsKey(senderID) && receivedModel != null)
                             {
-                                chatBoxes[senderUID].AddMessage(chatData);
+                                chatBoxes[senderID].AddMessage(receivedModel);
                             }
                         });
                     }
                 }
+                
             }
         }
 
@@ -194,6 +201,7 @@ namespace anonymous_chat
                         otherChatBox.Visible = false;
                     }
                     AI.BringToFront();
+                    LB_friendName.Text = "AI";
                     toUID = 10000;
                     return;
                 }
@@ -202,13 +210,14 @@ namespace anonymous_chat
                 // Check if a ChatBox already exists for this friend
                 if (chatBoxes.ContainsKey(toUID))
                 {
-                    chatBox.Visible = false;
+                    //chatBox.Visible = false;
                     // Show the existing ChatBox and hide the others
                     foreach (var otherChatBox in chatBoxes.Values)
                     {
                         otherChatBox.Visible = otherChatBox == chatBoxes[toUID];
                     }
                     chatBoxes[toUID].BringToFront();
+                    LB_friendName.Text = selectedFriend;
                 }
                 else
                 {
@@ -227,12 +236,13 @@ namespace anonymous_chat
                     newChatBox.Size = chatBox.Size;
 
                     // Hide the other newChatBoxes
-                    chatBox.Visible = false;
+                    //chatBox.Visible = false;
                     foreach (var otherChatBox in chatBoxes.Values)
                     {
                         otherChatBox.Visible = otherChatBox == newChatBox;
                     }
                     newChatBox.BringToFront();
+                    LB_friendName.Text = selectedFriend;
                 }
             }
         }
