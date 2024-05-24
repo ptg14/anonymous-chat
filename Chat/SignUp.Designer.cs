@@ -41,6 +41,8 @@
             TB_signUp = new Button();
             label1 = new Label();
             TB_username = new TextBox();
+            BT_hide2 = new Button();
+            BT_hide1 = new Button();
             logo = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
             SuspendLayout();
@@ -175,10 +177,32 @@
             TB_username.Size = new Size(258, 27);
             TB_username.TabIndex = 56;
             // 
+            // BT_hide2
+            // 
+            BT_hide2.Image = Properties.Resources.eye25x25;
+            BT_hide2.Location = new Point(556, 363);
+            BT_hide2.Name = "BT_hide2";
+            BT_hide2.Size = new Size(27, 27);
+            BT_hide2.TabIndex = 69;
+            BT_hide2.UseVisualStyleBackColor = true;
+            BT_hide2.Click += BT_hide2_Click;
+            // 
+            // BT_hide1
+            // 
+            BT_hide1.Image = Properties.Resources.eye25x25;
+            BT_hide1.Location = new Point(556, 317);
+            BT_hide1.Name = "BT_hide1";
+            BT_hide1.Size = new Size(27, 27);
+            BT_hide1.TabIndex = 70;
+            BT_hide1.UseVisualStyleBackColor = true;
+            BT_hide1.Click += BT_hide1_Click;
+            // 
             // SignUp
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(BT_hide1);
+            Controls.Add(BT_hide2);
             Controls.Add(LB_noti);
             Controls.Add(label3);
             Controls.Add(TB_email);
@@ -213,5 +237,7 @@
         private Button TB_signUp;
         private Label label1;
         private TextBox TB_username;
+        private Button BT_hide2;
+        private Button BT_hide1;
     }
 }

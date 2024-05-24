@@ -104,5 +104,10 @@ namespace anonymous_chat.Chat
         {
 
         }
+
+        private void BT_hide_Click(object sender, EventArgs e)
+        {
+            TB_password.PasswordChar = TB_password.PasswordChar == '*' ? '\0' : '*';
+        }
     }
 }

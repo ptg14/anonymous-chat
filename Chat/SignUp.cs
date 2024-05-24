@@ -120,5 +120,15 @@ namespace anonymous_chat.Chat
             SignIn.Visible = true;
             SignIn.LB_noti.Text = "";
         }
+
+        private void BT_hide1_Click(object sender, EventArgs e)
+        {
+            TB_password.PasswordChar = TB_password.PasswordChar == '*' ? '\0' : '*';
+        }
+
+        private void BT_hide2_Click(object sender, EventArgs e)
+        {
+            TB_repassword.PasswordChar = TB_repassword.PasswordChar == '*' ? '\0' : '*';
+        }
     }
 }

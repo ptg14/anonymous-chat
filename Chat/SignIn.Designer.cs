@@ -39,6 +39,7 @@
             BT_signIn = new Button();
             label1 = new Label();
             TB_email = new TextBox();
+            BT_hide = new Button();
             pictureBox1 = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -157,11 +158,22 @@
             TB_email.Size = new Size(258, 27);
             TB_email.TabIndex = 42;
             // 
+            // BT_hide
+            // 
+            BT_hide.Image = Properties.Resources.eye25x25;
+            BT_hide.Location = new Point(556, 277);
+            BT_hide.Name = "BT_hide";
+            BT_hide.Size = new Size(27, 27);
+            BT_hide.TabIndex = 53;
+            BT_hide.UseVisualStyleBackColor = true;
+            BT_hide.Click += BT_hide_Click;
+            // 
             // SignIn
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
+            Controls.Add(BT_hide);
             Controls.Add(LB_noti);
             Controls.Add(BT_reco);
             Controls.Add(label2);
@@ -192,5 +204,6 @@
         private Button BT_signIn;
         private Label label1;
         public TextBox TB_email;
+        private Button BT_hide;
     }
 }
