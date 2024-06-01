@@ -1,5 +1,6 @@
 ﻿using anonymous_chat.DataBase;
 using Google.Cloud.Firestore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace anonymous_chat.Chat
 {
@@ -23,7 +25,7 @@ namespace anonymous_chat.Chat
         }
 
         private static FirestoreDb db = FireBase.dataBase;
-        public SignIn_SignUp SignIn_SignUp;
+        public SignIn_SignUp signIn_signUp;
 
         public int UID;
         public string UserName;
@@ -79,7 +81,12 @@ namespace anonymous_chat.Chat
                 {
                     UID = user.UID;
                     UserName = user.UserName;
-                    SignIn_SignUp.DialogResult = DialogResult.OK;
+                    if (CB_saveSignIn.Checked)
+                    {
+                        string json = JsonConvert.SerializeObject(user);
+                        await File.WriteAllTextAsync("credentials.json", json);
+                    }
+                    signIn_signUp.DialogResult = DialogResult.OK;
                 }
                 else
                 {

@@ -15,6 +15,7 @@ namespace anonymous_chat
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            this.Send("DISCONNECT=" + this.UID);
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -49,20 +50,22 @@ namespace anonymous_chat
             LB_UID = new Label();
             LB_name = new Label();
             BT_avatar = new Button();
+            mainChat = new Panel();
+            mainLogo = new PictureBox();
+            setting = new Setting();
             topChatPanel = new Panel();
             BT_setting = new Button();
             LB_friendName = new Label();
             PB_friendAvatar = new PictureBox();
             BT_call = new Button();
-            setting = new Setting();
-            mainChat = new Panel();
-            chatBox = new ChatBox(new MessageData());
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             addFriend.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PB_findResult).BeginInit();
+            mainChat.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)mainLogo).BeginInit();
             topChatPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PB_friendAvatar).BeginInit();
             SuspendLayout();
@@ -272,6 +275,34 @@ namespace anonymous_chat
             BT_avatar.TabIndex = 0;
             BT_avatar.UseVisualStyleBackColor = true;
             // 
+            // mainChat
+            // 
+            mainChat.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            mainChat.Controls.Add(mainLogo);
+            mainChat.Controls.Add(setting);
+            mainChat.Location = new Point(3, 59);
+            mainChat.Name = "mainChat";
+            mainChat.Size = new Size(619, 440);
+            mainChat.TabIndex = 0;
+            // 
+            // mainLogo
+            // 
+            mainLogo.Image = Properties.Resources.logo300x300;
+            mainLogo.Location = new Point(160, 70);
+            mainLogo.Name = "mainLogo";
+            mainLogo.Size = new Size(300, 300);
+            mainLogo.TabIndex = 1;
+            mainLogo.TabStop = false;
+            // 
+            // setting
+            // 
+            setting.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            setting.Location = new Point(494, 0);
+            setting.Name = "setting";
+            setting.Size = new Size(125, 147);
+            setting.TabIndex = 0;
+            setting.Visible = false;
+            // 
             // topChatPanel
             // 
             topChatPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -321,33 +352,6 @@ namespace anonymous_chat
             BT_call.Size = new Size(50, 50);
             BT_call.TabIndex = 10;
             BT_call.UseVisualStyleBackColor = true;
-            //
-            // setting
-            // 
-            setting.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            setting.Location = new Point(494, 0);
-            setting.Name = "setting";
-            setting.Size = new Size(125, 147);
-            setting.Visible = false;
-            //
-            // chatBox
-            // 
-            chatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            chatBox.BackColor = SystemColors.Window;
-            chatBox.Location = new Point(0, 0);
-            chatBox.Margin = new Padding(3, 4, 3, 4);
-            chatBox.Name = "chatBox";
-            chatBox.Size = new Size(619, 440);
-            chatBox.TabIndex = 14;
-            // 
-            // mainChat
-            // 
-            mainChat.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            mainChat.Location = new Point(3, 59);
-            mainChat.Name = "mainChat";
-            mainChat.Size = new Size(619, 440);
-            mainChat.Controls.Add(chatBox);
-            mainChat.Controls.Add(setting);
             // 
             // Main
             // 
@@ -365,9 +369,12 @@ namespace anonymous_chat
             addFriend.ResumeLayout(false);
             addFriend.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PB_findResult).EndInit();
+            mainChat.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)mainLogo).EndInit();
             topChatPanel.ResumeLayout(false);
             topChatPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PB_friendAvatar).EndInit();
+            Icon = new Icon("resource\\icon.ico");
             ResumeLayout(false);
         }
 
@@ -398,9 +405,9 @@ namespace anonymous_chat
         private PictureBox PB_findResult;
         private TextBox TB_findResult;
         // main chat
-        private ChatBox chatBox;
         private Panel mainChat;
         private Setting setting;
+        private PictureBox mainLogo;
     }
 
     /*

@@ -40,6 +40,7 @@
             label1 = new Label();
             TB_email = new TextBox();
             BT_hide = new Button();
+            CB_saveSignIn = new CheckBox();
             pictureBox1 = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -60,7 +61,7 @@
             LB_noti.AutoSize = true;
             LB_noti.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             LB_noti.ForeColor = SystemColors.ControlText;
-            LB_noti.Location = new Point(201, 334);
+            LB_noti.Location = new Point(201, 345);
             LB_noti.Name = "LB_noti";
             LB_noti.Size = new Size(0, 25);
             LB_noti.TabIndex = 52;
@@ -169,11 +170,22 @@
             BT_hide.UseVisualStyleBackColor = true;
             BT_hide.Click += BT_hide_Click;
             // 
+            // CB_saveSignIn
+            // 
+            CB_saveSignIn.AutoSize = true;
+            CB_saveSignIn.Location = new Point(292, 315);
+            CB_saveSignIn.Name = "CB_saveSignIn";
+            CB_saveSignIn.Size = new Size(160, 24);
+            CB_saveSignIn.TabIndex = 54;
+            CB_saveSignIn.Text = "Ghi nhớ thiết bị này";
+            CB_saveSignIn.UseVisualStyleBackColor = true;
+            // 
             // SignIn
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
+            Controls.Add(CB_saveSignIn);
             Controls.Add(BT_hide);
             Controls.Add(LB_noti);
             Controls.Add(BT_reco);
@@ -206,5 +218,6 @@
         private Label label1;
         public TextBox TB_email;
         private Button BT_hide;
+        private CheckBox CB_saveSignIn;
     }
 }

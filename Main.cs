@@ -16,6 +16,8 @@ using System.Windows.Forms;
 using Chat_Server.DataBase;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.Windows.Forms.VisualStyles;
 
 namespace anonymous_chat
 {
@@ -26,24 +28,31 @@ namespace anonymous_chat
         public int toUID;
         public string userName;
         private bool addFriendVisible = false;
-        public Dictionary<int, ChatBox> chatBoxes = new Dictionary<int, ChatBox>();
+        private Dictionary<UserData, ChatBox> friendList = new Dictionary<UserData, ChatBox>();
         ChatBox AI = new ChatBox(new MessageData());
 
         public Main()
         {
             InitializeComponent();
 
-            if (SignIn_SignUp.ShowAndTryGetInput(out UID, out userName, this))
+            bool saveLogin = false;
+            if (File.Exists("credentials.json"))
+            {
+                string userJson = File.ReadAllText("credentials.json");
+                UserData user = JsonConvert.DeserializeObject<UserData>(userJson);
+                UID = user.UID;
+                userName = user.UserName;
+                saveLogin = true;
+            }
+            if ((saveLogin == true || SignIn_SignUp.ShowAndTryGetInput(out UID, out userName, this)) && FireBase.setEnironmentVariables())
             {
                 LB_name.Text = userName;
-                chatBox.chatbox_info.User = userName;
                 LB_UID.Text = "UID: " + UID.ToString();
                 isOnline();
                 LoadFriendList();
                 Thread connectThread = new Thread(ConnectToServer);
                 connectThread.IsBackground = true;
                 connectThread.Start();
-                chatBox.main = this;
             }
             else
             {
@@ -75,7 +84,7 @@ namespace anonymous_chat
             isConnected = true;
 
             stream = client.GetStream(); // Get the stream for sending and receiving data
-            Send("UIDCONNECT:" + UID);
+            Send("UIDCONNECT=" + UID);
             Thread receiveThread = new Thread(ReceiveMessages);
             receiveThread.IsBackground = true;
             receiveThread.Start();
@@ -112,7 +121,7 @@ namespace anonymous_chat
                 }
 
                 string receivedMessage = Encoding.ASCII.GetString(data, 0, bytes);
-                MessageBox.Show("Receive:\n" + receivedMessage);
+                //MessageBox.Show("Receive:\n" + receivedMessage);
 
 
                 string[] parts = receivedMessage.Split('=');
@@ -154,14 +163,15 @@ namespace anonymous_chat
                 // Check if the message is sent to you
                 if (receiverID == UID)
                 {
+                    UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
                     // Update TB_remessage on the UI thread
                     if (this.IsHandleCreated) // Check if the handle has been created
                     {
                         this.Invoke((MethodInvoker)delegate
                         {
-                            if (chatBoxes.ContainsKey(senderID) && receivedModel != null)
+                            if (userSender != null && receivedModel != null)
                             {
-                                chatBoxes[senderID].AddMessage(receivedModel);
+                                friendList[userSender].AddMessage(receivedModel);
                             }
                         });
                     }
@@ -196,10 +206,11 @@ namespace anonymous_chat
                 if (selectedFriend == "AI")
                 {
                     // Show the AI ChatBox
-                    foreach (var otherChatBox in chatBoxes.Values)
+                    foreach (var otherChatBox in friendList.Values)
                     {
                         otherChatBox.Visible = false;
                     }
+                    AI.Visible = true;
                     AI.BringToFront();
                     LB_friendName.Text = "AI";
                     toUID = 10000;
@@ -208,45 +219,36 @@ namespace anonymous_chat
                 toUID = int.Parse(selectedFriend);
 
                 // Check if a ChatBox already exists for this friend
-                if (chatBoxes.ContainsKey(toUID))
+                UserData selectedUserData = friendList.Keys.FirstOrDefault(user => user.UID == toUID);
+                if (selectedUserData == null)
                 {
-                    //chatBox.Visible = false;
-                    // Show the existing ChatBox and hide the others
-                    foreach (var otherChatBox in chatBoxes.Values)
-                    {
-                        otherChatBox.Visible = otherChatBox == chatBoxes[toUID];
-                    }
-                    chatBoxes[toUID].BringToFront();
-                    LB_friendName.Text = selectedFriend;
-                }
-                else
-                {
-                    // Create a new ChatBox for this friend
+                    MessageBox.Show("User not found");
+                    // create a new ChatBox for this friend
                     ChatBox newChatBox = new ChatBox(new MessageData());
                     newChatBox.main = this;
-                    chatBoxes.Add(toUID, newChatBox);
 
                     mainChat.Controls.Add(newChatBox);
 
                     newChatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
                     newChatBox.BackColor = SystemColors.Window;
-                    newChatBox.Location = chatBox.Location;
+                    newChatBox.Location = new Point(0, 0);
                     newChatBox.Margin = new Padding(3, 4, 3, 4);
-                    newChatBox.Name = $"newChatBox{toUID}";
-                    newChatBox.Size = chatBox.Size;
+                    newChatBox.Name = $"newChatBox{selectedUserData.UID}";
+                    newChatBox.Size = new Size(619, 440);
+                    newChatBox.Visible = false;
 
-                    // Hide the other newChatBoxes
-                    //chatBox.Visible = false;
-                    foreach (var otherChatBox in chatBoxes.Values)
-                    {
-                        otherChatBox.Visible = otherChatBox == newChatBox;
-                    }
-                    newChatBox.BringToFront();
-                    LB_friendName.Text = selectedFriend;
+                    friendList.Add(selectedUserData, newChatBox);
                 }
+                // Show the existing ChatBox and hide the others
+                foreach (var otherChatBox in friendList.Values)
+                {
+                    otherChatBox.Visible = otherChatBox == friendList[selectedUserData];
+                }
+                friendList[selectedUserData].Visible = true;
+                friendList[selectedUserData].BringToFront();
+                LB_friendName.Text = selectedUserData.UserName;
             }
         }
-
 
         public async Task<string> GetPublicIPAddressAsync()
         {
@@ -278,20 +280,44 @@ namespace anonymous_chat
             var querySnapshot = await query.GetSnapshotAsync();
             //MessageBox.Show($"Number of documents returned by the query: {querySnapshot.Count}");
 
+            foreach (DocumentSnapshot document in querySnapshot.Documents)
+            {
+                // Get the friend's UID and user name
+                Friends friend = document.ConvertTo<Friends>();
+                DocumentSnapshot userSnapshot = await db.Collection("Users").Document(friend.FriendUID.ToString()).GetSnapshotAsync();
+                UserData user = userSnapshot.ConvertTo<UserData>();
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    // create a new ChatBox for each friend
+                    ChatBox newChatBox = new ChatBox(new MessageData());
+                    newChatBox.main = this;
+
+                    mainChat.Controls.Add(newChatBox);
+
+                    newChatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                    newChatBox.BackColor = SystemColors.Window;
+                    newChatBox.Location = new Point(0, 0);
+                    newChatBox.Margin = new Padding(3, 4, 3, 4);
+                    newChatBox.Name = $"newChatBox{user.UID}";
+                    newChatBox.Size = new Size(619, 440);
+                    newChatBox.Visible = false;
+
+                    friendList.Add(user, newChatBox);
+                });
+            }
+
             this.Invoke((MethodInvoker)delegate
             {
                 // Clear the friend list
                 LBox_listFriends.Items.Clear();
 
                 // Add each friend to the friend list
-                foreach (DocumentSnapshot document in querySnapshot.Documents)
+                foreach (UserData user in friendList.Keys)
                 {
                     try
                     {
-                        Friends friend = document.ConvertTo<Friends>();
-                        //MessageBox.Show($"FriendUID: {friend.FriendUID}");
-                        LBox_listFriends.Items.Add(friend.FriendUID);
-                        //MessageBox.Show($"Added {friend.FriendUID} to the ListBox");
+                        LBox_listFriends.Items.Add(user.UID);
                     }
                     catch (Exception ex)
                     {
@@ -346,16 +372,17 @@ namespace anonymous_chat
             }
             // send to server
             string friendRequestMessage = $"FRIENDREQUEST: {UID}=>{TB_friendUID.Text}";
+            Send(friendRequestMessage);
         }
 
         private void BT_refresh_Click(object sender, EventArgs e)
         {
-            LoadFriendList();
-            foreach (var otherChatBox in chatBoxes.Values)
+            foreach (var pair in friendList)
             {
-                otherChatBox.Visible = false;
+                pair.Value.Dispose();
             }
-            chatBox.Visible = true;
+            friendList.Clear();
+            LoadFriendList();
         }
 
         private void BT_AI_Click(object sender, EventArgs e)
@@ -370,10 +397,11 @@ namespace anonymous_chat
 
             AI.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             AI.BackColor = SystemColors.Window;
-            AI.Location = chatBox.Location;
+            AI.Location = new Point(0, 0);
             AI.Margin = new Padding(3, 4, 3, 4);
             AI.Name = "AI";
-            AI.Size = chatBox.Size;
+            AI.Size = new Size(619, 440);
+            AI.Visible = false;
         }
 
         private void BT_setting_Click(object sender, EventArgs e)

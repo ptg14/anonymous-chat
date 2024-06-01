@@ -120,14 +120,18 @@ namespace anonymous_chat.Chat
                 // check file attachment
                 if (chatModel != null)
                 {
-                    AddMessage(chatModel);
 
+                    chatModel.Author = main.userName;
+                    string textJson = main.UID + ">" + main.toUID + "=" + JsonConvert.SerializeObject(chatModel);
+                    //MessageBox.Show(textJson);
+                    main.Send(textJson);
+
+                    AddMessage(chatModel);
                     CancelAttachment(null, null);
                 }
                 // check text message
                 if (textModel != null)
                 {
-                    AddMessage(textModel);
                     if (main.toUID != 0)
                     {
                         if (main.toUID == 10000)
@@ -165,10 +169,10 @@ namespace anonymous_chat.Chat
                         {
                             textModel.Author = main.userName;
                             string textJson = main.UID + ">" + main.toUID + "=" + JsonConvert.SerializeObject(textModel);
-                            //Debug.WriteLine(textJson);
                             main.Send(textJson);
                         }
                     }
+                    AddMessage(textModel);
                     TB_message.Text = string.Empty;
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,9 +37,31 @@ namespace anonymous_chat.Chat
         public DateTime Time { get; set; }
         public string? Author { get; set; }
         public string Type { get; } = "image";
-
-        public Image? Image { get; set; }
         public string? ImageName { get; set; }
+        [JsonIgnore]
+        public Image? Image { get; set; }
+
+        public string Base64Image
+        {
+            get
+            {
+                using (var ms = new MemoryStream())
+                {
+                    Image?.Save(ms, ImageFormat.Png);
+                    byte[] imageBytes = ms.ToArray();
+                    return Convert.ToBase64String(imageBytes);
+                }
+            }
+            set
+            {
+                byte[] imageBytes = Convert.FromBase64String(value);
+                using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
+                {
+                    Image = Image.FromStream(ms, true);
+                }
+            }
+        }
+
 
     }
 

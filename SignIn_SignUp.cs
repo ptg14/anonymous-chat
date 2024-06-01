@@ -18,7 +18,7 @@ namespace anonymous_chat
 
             dangKy.SignIn = dangNhap;
             dangNhap.SignUp = dangKy;
-            dangNhap.SignIn_SignUp = this;
+            dangNhap.signIn_signUp = this;
         }
 
         public static bool ShowAndTryGetInput(out int UID, out string userName, IWin32Window? owner = null)

@@ -123,6 +123,16 @@ namespace anonymous_chat.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap logo300x300 {
+            get {
+                object obj = ResourceManager.GetObject("logo300x300", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap logout20x20 {
             get {
                 object obj = ResourceManager.GetObject("logout20x20", resourceCulture);
