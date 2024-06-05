@@ -58,6 +58,7 @@ namespace anonymous_chat
             LB_friendName = new Label();
             PB_friendAvatar = new PictureBox();
             BT_call = new Button();
+            notiPanel = new NotiPanel();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -91,6 +92,7 @@ namespace anonymous_chat
             splitContainer1.Panel1.Controls.Add(LB_UID);
             splitContainer1.Panel1.Controls.Add(LB_name);
             splitContainer1.Panel1.Controls.Add(BT_avatar);
+            splitContainer1.Panel1.Controls.Add(notiPanel);
             // 
             // splitContainer1.Panel2
             // 
@@ -189,6 +191,7 @@ namespace anonymous_chat
             BT_noti.Size = new Size(30, 30);
             BT_noti.TabIndex = 7;
             BT_noti.UseVisualStyleBackColor = true;
+            BT_noti.Click += BT_noti_Click;
             // 
             // BT_refresh
             // 
@@ -248,6 +251,16 @@ namespace anonymous_chat
             LBox_listFriends.Size = new Size(246, 404);
             LBox_listFriends.TabIndex = 0;
             LBox_listFriends.SelectedIndexChanged += LBox_listFriends_SelectedIndexChanged;
+            //
+            // notiPanel
+            //
+            notiPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            notiPanel.BackColor = SystemColors.Info;
+            notiPanel.Location = new Point(3, 95);
+            notiPanel.Name = "notiPanel";
+            notiPanel.Size = new Size(246, 404);
+            notiPanel.Visible = false;
+            notiPanel.main = this;
             // 
             // LB_UID
             // 
@@ -408,6 +421,7 @@ namespace anonymous_chat
         private Panel mainChat;
         private Setting setting;
         private PictureBox mainLogo;
+        private NotiPanel notiPanel;
     }
 
     /*

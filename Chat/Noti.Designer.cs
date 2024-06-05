@@ -28,56 +28,58 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            button1 = new Button();
-            button2 = new Button();
+            LB_title = new Label();
+            BT_yes = new Button();
+            BT_no = new Button();
             SuspendLayout();
             // 
-            // label1
+            // LB_title
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(24, 27);
-            label1.Name = "label1";
-            label1.Size = new Size(294, 31);
-            label1.TabIndex = 0;
-            label1.Text = "2205 đã gửi lời mời kết bạn";
+            LB_title.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            LB_title.Location = new Point(3, 9);
+            LB_title.Name = "LB_title";
+            LB_title.Size = new Size(218, 46);
+            LB_title.TabIndex = 0;
+            LB_title.Text = "2205 đã gửi lời mời kết bạn";
             // 
-            // button1
+            // BT_yes
             // 
-            button1.Location = new Point(43, 82);
-            button1.Name = "button1";
-            button1.Size = new Size(94, 29);
-            button1.TabIndex = 1;
-            button1.Text = "Đồng ý";
-            button1.UseVisualStyleBackColor = true;
+            BT_yes.Location = new Point(6, 58);
+            BT_yes.Name = "BT_yes";
+            BT_yes.Size = new Size(94, 29);
+            BT_yes.TabIndex = 1;
+            BT_yes.Text = "Đồng ý";
+            BT_yes.UseVisualStyleBackColor = true;
+            BT_yes.Click += BT_yes_Click;
             // 
-            // button2
+            // BT_no
             // 
-            button2.Location = new Point(198, 82);
-            button2.Name = "button2";
-            button2.Size = new Size(94, 29);
-            button2.TabIndex = 2;
-            button2.Text = "Từ chối";
-            button2.UseVisualStyleBackColor = true;
+            BT_no.Location = new Point(127, 58);
+            BT_no.Name = "BT_no";
+            BT_no.Size = new Size(94, 29);
+            BT_no.TabIndex = 2;
+            BT_no.Text = "Từ chối";
+            BT_no.UseVisualStyleBackColor = true;
+            BT_no.Click += BT_no_Click;
             // 
             // Noti
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(button2);
-            Controls.Add(button1);
-            Controls.Add(label1);
+            BackColor = SystemColors.ControlLight;
+            BorderStyle = BorderStyle.FixedSingle;
+            Controls.Add(BT_no);
+            Controls.Add(BT_yes);
+            Controls.Add(LB_title);
             Name = "Noti";
-            Size = new Size(345, 134);
+            Size = new Size(244, 93);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
-        private Label label1;
-        private Button button1;
-        private Button button2;
+        private Label LB_title;
+        private Button BT_yes;
+        private Button BT_no;
     }
 }

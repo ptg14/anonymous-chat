@@ -125,58 +125,67 @@ namespace anonymous_chat
 
 
                 string[] parts = receivedMessage.Split('=');
-                string[] ids = parts[0].Split(">");
-
-                int senderID = int.Parse(ids[0]);
-                int receiverID = int.Parse(ids[1]);
-                string json = parts[1];
-                IChatModel receivedModel = null;
-
-                JObject jObject = JObject.Parse(json);
-                if (jObject.ContainsKey("Type"))
+                
+                if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED")
                 {
-                    string type = (string)jObject["Type"];
-                    switch (type)
-                    {
-                        case "text":
-                            receivedModel = new TextChatModel();
-                            receivedModel = JsonConvert.DeserializeObject<TextChatModel>(json);
-                            receivedModel.Inbound = true;
-                            break;
-                        case "image":
-                            receivedModel = new ImageChatModel();
-                            receivedModel = JsonConvert.DeserializeObject<ImageChatModel>(json);
-                            receivedModel.Inbound = true;
-                            break;
-                        case "attachment":
-                            receivedModel = new AttachmentChatModel();
-                            receivedModel = JsonConvert.DeserializeObject<AttachmentChatModel>(json);
-                            receivedModel.Inbound = true;
-                            break;
-                        default:
-                            // Handle unexpected type
-                            MessageBox.Show($"Received an object of unexpected type: {type}");
-                            break;
-                    }
+                    notiPanel.addNoti(receivedMessage);
+                    BT_noti.BackColor = Color.Red;
                 }
-
-                // Check if the message is sent to you
-                if (receiverID == UID)
+                else
                 {
-                    UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
-                    // Update TB_remessage on the UI thread
-                    if (this.IsHandleCreated) // Check if the handle has been created
+                    string[] ids = parts[0].Split(">");
+
+                    int senderID = int.Parse(ids[0]);
+                    int receiverID = int.Parse(ids[1]);
+
+                    string json = parts[1];
+                    IChatModel receivedModel = null;
+
+                    JObject jObject = JObject.Parse(json);
+                    if (jObject.ContainsKey("Type"))
                     {
-                        this.Invoke((MethodInvoker)delegate
+                        string type = (string)jObject["Type"];
+                        switch (type)
                         {
-                            if (userSender != null && receivedModel != null)
+                            case "text":
+                                receivedModel = new TextChatModel();
+                                receivedModel = JsonConvert.DeserializeObject<TextChatModel>(json);
+                                receivedModel.Inbound = true;
+                                break;
+                            case "image":
+                                receivedModel = new ImageChatModel();
+                                receivedModel = JsonConvert.DeserializeObject<ImageChatModel>(json);
+                                receivedModel.Inbound = true;
+                                break;
+                            case "attachment":
+                                receivedModel = new AttachmentChatModel();
+                                receivedModel = JsonConvert.DeserializeObject<AttachmentChatModel>(json);
+                                receivedModel.Inbound = true;
+                                break;
+                            default:
+                                // Handle unexpected type
+                                MessageBox.Show($"Received an object of unexpected type: {type}");
+                                break;
+                        }
+                    }
+
+                    // Check if the message is sent to you
+                    if (receiverID == UID)
+                    {
+                        UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
+                        // Update TB_remessage on the UI thread
+                        if (this.IsHandleCreated) // Check if the handle has been created
+                        {
+                            this.Invoke((MethodInvoker)delegate
                             {
-                                friendList[userSender].AddMessage(receivedModel);
-                            }
-                        });
+                                if (userSender != null && receivedModel != null)
+                                {
+                                    friendList[userSender].AddMessage(receivedModel);
+                                }
+                            });
+                        }
                     }
                 }
-
             }
         }
 
@@ -371,7 +380,7 @@ namespace anonymous_chat
                 return;
             }
             // send to server
-            string friendRequestMessage = $"FRIENDREQUEST: {UID}=>{TB_friendUID.Text}";
+            string friendRequestMessage = $"FRIENDREQUEST={UID}>{TB_friendUID.Text}";
             Send(friendRequestMessage);
         }
 
@@ -408,6 +417,13 @@ namespace anonymous_chat
         {
             setting.Visible = !setting.Visible;
             setting.BringToFront();
+        }
+
+        private void BT_noti_Click(object sender, EventArgs e)
+        {
+            notiPanel.Visible = !notiPanel.Visible;
+            BT_noti.BackColor = Color.White;
+            notiPanel.BringToFront();
         }
     }
 }
