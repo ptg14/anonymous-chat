@@ -206,29 +206,23 @@ namespace anonymous_chat
             await db.Collection("Online").Document(UID.ToString()).SetAsync(online);
         }
 
-        private void LBox_listFriends_SelectedIndexChanged(object sender, EventArgs e)
+        public void openChat(int chatUID)
         {
-            if (LBox_listFriends.SelectedIndex != -1)
+            toUID = chatUID;
+            if (chatUID == 142)
             {
-                // An item is selected
-                string selectedFriend = LBox_listFriends.SelectedItem.ToString();
-                if (selectedFriend == "AI")
+                foreach (var otherChatBox in friendList.Values)
                 {
-                    // Show the AI ChatBox
-                    foreach (var otherChatBox in friendList.Values)
-                    {
-                        otherChatBox.Visible = false;
-                    }
-                    AI.Visible = true;
-                    AI.BringToFront();
-                    LB_friendName.Text = "AI";
-                    toUID = 10000;
-                    return;
+                    otherChatBox.Visible = false;
                 }
-                toUID = int.Parse(selectedFriend);
-
-                // Check if a ChatBox already exists for this friend
-                UserData selectedUserData = friendList.Keys.FirstOrDefault(user => user.UID == toUID);
+                AI.Visible = true;
+                AI.BringToFront();
+                LB_friendName.Text = "AI";
+                return;
+            }
+            else
+            {
+                UserData selectedUserData = friendList.Keys.FirstOrDefault(user => user.UID == chatUID);
                 if (selectedUserData == null)
                 {
                     MessageBox.Show("User not found");
@@ -318,20 +312,13 @@ namespace anonymous_chat
 
             this.Invoke((MethodInvoker)delegate
             {
-                // Clear the friend list
-                LBox_listFriends.Items.Clear();
-
-                // Add each friend to the friend list
-                foreach (UserData user in friendList.Keys)
+                if (friendPanel.Controls.Count > 0)
                 {
-                    try
-                    {
-                        LBox_listFriends.Items.Add(user.UID);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
+                    friendPanel.Controls.Clear();
+                }
+                foreach (UserData friend in friendList.Keys)
+                {
+                    friendPanel.addFriend(friend.UID, friend.UserName);
                 }
             });
         }
@@ -398,7 +385,7 @@ namespace anonymous_chat
         {
             this.Invoke((MethodInvoker)delegate
             {
-                LBox_listFriends.Items.Insert(0, "AI");
+                friendPanel.addFriend(142, "AI");
             });
 
             AI.main = this;

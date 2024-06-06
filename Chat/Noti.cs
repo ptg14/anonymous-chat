@@ -15,6 +15,15 @@ namespace anonymous_chat.Chat
 {
     public partial class Noti : UserControl
     {
+        private static FirestoreDb db = FireBase.dataBase;
+        public bool friendRequest;
+        public bool friendAccepted;
+        public bool friendRejected;
+        public bool Call;
+        public int senderID;
+        public int receiverID;
+        public Main main;
+
         public Noti(int UID, string receivedMessage)
         {
             InitializeComponent();
@@ -56,15 +65,6 @@ namespace anonymous_chat.Chat
                 BT_no.Visible = false;
             }
         }
-
-        private static FirestoreDb db = FireBase.dataBase;
-        public bool friendRequest;
-        public bool friendAccepted;
-        public bool friendRejected;
-        public bool Call;
-        public int senderID;
-        public int receiverID;
-        public Main main;
 
         private async void BT_yes_Click(object sender, EventArgs e)
         {

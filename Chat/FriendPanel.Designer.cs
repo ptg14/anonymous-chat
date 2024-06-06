@@ -1,6 +1,6 @@
 ﻿namespace anonymous_chat.Chat
 {
-    partial class NotiPanel
+    partial class FriendPanel
     {
         /// <summary> 
         /// Required designer variable.
@@ -30,13 +30,13 @@
         {
             SuspendLayout();
             // 
-            // NotiPanel
+            // FriendPanel
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            BackColor = Color.Turquoise;
-            Name = "NotiPanel";
+            BackColor = Color.Khaki;
+            Name = "FriendPanel";
             Size = new Size(246, 404);
             ResumeLayout(false);
         }

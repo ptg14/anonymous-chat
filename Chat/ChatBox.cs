@@ -132,9 +132,11 @@ namespace anonymous_chat.Chat
                 // check text message
                 if (textModel != null)
                 {
+                    textModel.Author = main.userName;
+                    AddMessage(textModel);
                     if (main.toUID != 0)
                     {
-                        if (main.toUID == 10000)
+                        if (main.toUID == 142)
                         {
                             using (var client = new HttpClient())
                             {
@@ -167,12 +169,10 @@ namespace anonymous_chat.Chat
                         }
                         else
                         {
-                            textModel.Author = main.userName;
                             string textJson = main.UID + ">" + main.toUID + "=" + JsonConvert.SerializeObject(textModel);
                             main.Send(textJson);
                         }
                     }
-                    AddMessage(textModel);
                     TB_message.Text = string.Empty;
                 }
             }

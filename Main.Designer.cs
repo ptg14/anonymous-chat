@@ -46,10 +46,11 @@ namespace anonymous_chat
             BT_AI = new Button();
             BT_listFriends = new Button();
             BT_search = new Button();
-            LBox_listFriends = new ListBox();
             LB_UID = new Label();
             LB_name = new Label();
             BT_avatar = new Button();
+            notiPanel = new NotiPanel();
+            friendPanel = new FriendPanel();
             mainChat = new Panel();
             mainLogo = new PictureBox();
             setting = new Setting();
@@ -59,6 +60,7 @@ namespace anonymous_chat
             PB_friendAvatar = new PictureBox();
             BT_call = new Button();
             notiPanel = new NotiPanel();
+            friendPanel = new FriendPanel();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -88,11 +90,11 @@ namespace anonymous_chat
             splitContainer1.Panel1.Controls.Add(BT_AI);
             splitContainer1.Panel1.Controls.Add(BT_listFriends);
             splitContainer1.Panel1.Controls.Add(BT_search);
-            splitContainer1.Panel1.Controls.Add(LBox_listFriends);
             splitContainer1.Panel1.Controls.Add(LB_UID);
             splitContainer1.Panel1.Controls.Add(LB_name);
             splitContainer1.Panel1.Controls.Add(BT_avatar);
             splitContainer1.Panel1.Controls.Add(notiPanel);
+            splitContainer1.Panel1.Controls.Add(friendPanel);
             // 
             // splitContainer1.Panel2
             // 
@@ -241,27 +243,6 @@ namespace anonymous_chat
             BT_search.UseVisualStyleBackColor = true;
             BT_search.Click += BT_search_Click;
             // 
-            // LBox_listFriends
-            // 
-            LBox_listFriends.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LBox_listFriends.BackColor = SystemColors.Info;
-            LBox_listFriends.FormattingEnabled = true;
-            LBox_listFriends.Location = new Point(3, 95);
-            LBox_listFriends.Name = "LBox_listFriends";
-            LBox_listFriends.Size = new Size(246, 404);
-            LBox_listFriends.TabIndex = 0;
-            LBox_listFriends.SelectedIndexChanged += LBox_listFriends_SelectedIndexChanged;
-            //
-            // notiPanel
-            //
-            notiPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            notiPanel.BackColor = SystemColors.Info;
-            notiPanel.Location = new Point(3, 95);
-            notiPanel.Name = "notiPanel";
-            notiPanel.Size = new Size(246, 404);
-            notiPanel.Visible = false;
-            notiPanel.main = this;
-            // 
             // LB_UID
             // 
             LB_UID.AutoSize = true;
@@ -273,10 +254,10 @@ namespace anonymous_chat
             // 
             // LB_name
             // 
-            LB_name.AutoSize = true;
+            LB_name.AutoEllipsis = true;
             LB_name.Location = new Point(59, 9);
             LB_name.Name = "LB_name";
-            LB_name.Size = new Size(49, 20);
+            LB_name.Size = new Size(187, 20);
             LB_name.TabIndex = 1;
             LB_name.Text = "Name";
             // 
@@ -287,6 +268,29 @@ namespace anonymous_chat
             BT_avatar.Size = new Size(50, 50);
             BT_avatar.TabIndex = 0;
             BT_avatar.UseVisualStyleBackColor = true;
+            // 
+            // notiPanel
+            // 
+            notiPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            notiPanel.AutoScroll = true;
+            notiPanel.BackColor = SystemColors.Info;
+            notiPanel.Location = new Point(3, 95);
+            notiPanel.Name = "notiPanel";
+            notiPanel.Size = new Size(246, 404);
+            notiPanel.TabIndex = 10;
+            notiPanel.Visible = false;
+            notiPanel.main = this;
+            // 
+            // friendPanel
+            // 
+            friendPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            friendPanel.AutoScroll = true;
+            friendPanel.BackColor = SystemColors.Info;
+            friendPanel.Location = new Point(3, 95);
+            friendPanel.Name = "friendPanel";
+            friendPanel.Size = new Size(246, 404);
+            friendPanel.TabIndex = 10;
+            friendPanel.main = this;
             // 
             // mainChat
             // 
@@ -333,6 +337,7 @@ namespace anonymous_chat
             BT_setting.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             BT_setting.Image = Properties.Resources.setting40x40;
             BT_setting.Location = new Point(566, 0);
+            BT_setting.MaximumSize = new Size(450, 50);
             BT_setting.Name = "BT_setting";
             BT_setting.Size = new Size(50, 50);
             BT_setting.TabIndex = 9;
@@ -341,11 +346,11 @@ namespace anonymous_chat
             // 
             // LB_friendName
             // 
-            LB_friendName.AutoSize = true;
+            LB_friendName.AutoEllipsis = true;
             LB_friendName.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             LB_friendName.Location = new Point(59, 6);
             LB_friendName.Name = "LB_friendName";
-            LB_friendName.Size = new Size(0, 41);
+            LB_friendName.Size = new Size(448, 41);
             LB_friendName.TabIndex = 1;
             // 
             // PB_friendAvatar
@@ -374,6 +379,7 @@ namespace anonymous_chat
             Controls.Add(splitContainer1);
             Name = "Main";
             Text = "Anonymous Chat";
+            Icon = new Icon("resource\\icon.ico");
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);
@@ -385,9 +391,7 @@ namespace anonymous_chat
             mainChat.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)mainLogo).EndInit();
             topChatPanel.ResumeLayout(false);
-            topChatPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PB_friendAvatar).EndInit();
-            Icon = new Icon("resource\\icon.ico");
             ResumeLayout(false);
         }
 
@@ -396,7 +400,6 @@ namespace anonymous_chat
         private SplitContainer splitContainer1;
         private Label LB_name;
         private Button BT_avatar;
-        private ListBox LBox_listFriends;
         private Label LB_UID;
         private Button BT_logOut;
         private Button BT_noti;
@@ -422,6 +425,7 @@ namespace anonymous_chat
         private Setting setting;
         private PictureBox mainLogo;
         private NotiPanel notiPanel;
+        private FriendPanel friendPanel;
     }
 
     /*
