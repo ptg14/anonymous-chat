@@ -61,6 +61,7 @@ namespace anonymous_chat
             BT_call = new Button();
             notiPanel = new NotiPanel();
             friendPanel = new FriendPanel();
+            friendListPanel = new FriendListPanel();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -95,6 +96,7 @@ namespace anonymous_chat
             splitContainer1.Panel1.Controls.Add(BT_avatar);
             splitContainer1.Panel1.Controls.Add(notiPanel);
             splitContainer1.Panel1.Controls.Add(friendPanel);
+            splitContainer1.Panel1.Controls.Add(friendListPanel);
             // 
             // splitContainer1.Panel2
             // 
@@ -184,6 +186,7 @@ namespace anonymous_chat
             BT_logOut.Size = new Size(30, 30);
             BT_logOut.TabIndex = 8;
             BT_logOut.UseVisualStyleBackColor = true;
+            BT_logOut.Click += BT_logOut_Click;
             // 
             // BT_noti
             // 
@@ -213,6 +216,7 @@ namespace anonymous_chat
             BT_random.Size = new Size(30, 30);
             BT_random.TabIndex = 5;
             BT_random.UseVisualStyleBackColor = true;
+            BT_random.Click += BT_random_Click;
             // 
             // BT_AI
             // 
@@ -232,6 +236,7 @@ namespace anonymous_chat
             BT_listFriends.Size = new Size(30, 30);
             BT_listFriends.TabIndex = 3;
             BT_listFriends.UseVisualStyleBackColor = true;
+            BT_listFriends.Click += BT_listFriends_Click;
             // 
             // BT_search
             // 
@@ -273,19 +278,28 @@ namespace anonymous_chat
             // 
             notiPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             notiPanel.AutoScroll = true;
-            notiPanel.BackColor = SystemColors.Info;
             notiPanel.Location = new Point(3, 95);
             notiPanel.Name = "notiPanel";
             notiPanel.Size = new Size(246, 404);
             notiPanel.TabIndex = 10;
             notiPanel.Visible = false;
             notiPanel.main = this;
+            //
+            // friendListPanel
+            //
+            friendListPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            friendListPanel.AutoScroll = true;
+            friendListPanel.Location = new Point(3, 95);
+            friendListPanel.Name = "friendListPanel";
+            friendListPanel.Size = new Size(246, 404);
+            friendListPanel.TabIndex = 10;
+            friendListPanel.Visible = false;
+            friendListPanel.main = this;
             // 
             // friendPanel
             // 
             friendPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             friendPanel.AutoScroll = true;
-            friendPanel.BackColor = SystemColors.Info;
             friendPanel.Location = new Point(3, 95);
             friendPanel.Name = "friendPanel";
             friendPanel.Size = new Size(246, 404);
@@ -426,6 +440,7 @@ namespace anonymous_chat
         private PictureBox mainLogo;
         private NotiPanel notiPanel;
         private FriendPanel friendPanel;
+        private FriendListPanel friendListPanel;
     }
 
     /*

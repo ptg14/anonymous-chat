@@ -75,6 +75,7 @@ namespace anonymous_chat.Chat
             }
             if (friendAccepted || friendRejected)
             {
+                main.LoadFriendList();
                 Dispose();
             }
             else if (Call)

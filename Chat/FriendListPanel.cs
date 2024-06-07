@@ -10,27 +10,22 @@ using System.Windows.Forms;
 
 namespace anonymous_chat.Chat
 {
-    public partial class FriendPanel : UserControl
+    public partial class FriendListPanel : UserControl
     {
         public Main main;
 
-        public FriendPanel()
+        public FriendListPanel()
         {
             InitializeComponent();
         }
 
         public void addFriend(int UID, string username)
         {
-            AFriend newFriend = new AFriend(UID, username);
+            FriendSetting newFriend = new FriendSetting(UID, username);
             newFriend.main = main;
             newFriend.Dock = DockStyle.Top;
             Controls.Add(newFriend);
             newFriend.BringToFront();
-            if (UID == 142)
-            {
-                ScrollControlIntoView(newFriend);
-            }
         }
     }
-
 }

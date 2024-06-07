@@ -1,25 +1,28 @@
 ﻿using anonymous_chat.DataBase;
 using Google.Cloud.Firestore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace anonymous_chat.Chat
 {
-    public partial class AFriend : UserControl
+    public partial class FriendSetting : UserControl
     {
         private static FirestoreDb db = FireBase.dataBase;
         public Main main;
         public int friendUID;
         public bool online;
 
-        public AFriend(int UID, string username)
+        public FriendSetting(int UID, string username)
         {
             InitializeComponent();
 
@@ -31,12 +34,6 @@ namespace anonymous_chat.Chat
             {
                 LB_online.ForeColor = Color.Green;
                 LB_online.Text = "Online";
-            }
-            else if (friendUID == 142)
-            {
-                LB_online.ForeColor = Color.Green;
-                LB_online.Text = "Online";
-                LB_UID.Text = "AI";
             }
             else
             {
@@ -51,14 +48,22 @@ namespace anonymous_chat.Chat
             online = snapshot.Exists;
         }
 
-        private void mainFriend_Click(object sender, EventArgs e)
+        private async void BT_deleteFriend_Click(object sender, EventArgs e)
         {
-            main.openChat(friendUID);
-        }
-
-        private void PB_avatar_Click(object sender, EventArgs e)
-        {
-            main.openChat(friendUID);
+            CollectionReference friendsRef = db.Collection("Friends");
+            Query query = friendsRef.WhereEqualTo("UID", main.UID).WhereEqualTo("FriendUID", friendUID);
+            QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+            foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+            {
+                await documentSnapshot.Reference.DeleteAsync();
+            }
+            query = friendsRef.WhereEqualTo("UID", friendUID).WhereEqualTo("FriendUID", main.UID);
+            querySnapshot = await query.GetSnapshotAsync();
+            foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+            {
+                await documentSnapshot.Reference.DeleteAsync();
+            }
+            main.LoadFriendList();
         }
     }
 }

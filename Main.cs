@@ -125,7 +125,7 @@ namespace anonymous_chat
 
 
                 string[] parts = receivedMessage.Split('=');
-                
+
                 if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED")
                 {
                     notiPanel.addNoti(receivedMessage);
@@ -217,7 +217,7 @@ namespace anonymous_chat
                 }
                 AI.Visible = true;
                 AI.BringToFront();
-                LB_friendName.Text = "AI";
+                LB_friendName.Text = "Simsimi";
                 return;
             }
             else
@@ -275,7 +275,7 @@ namespace anonymous_chat
             }
         }
 
-        private async void LoadFriendList()
+        public async void LoadFriendList()
         {
             // Query the database for the user's friend list
             Query query = db.Collection("Friends").WhereEqualTo("UID", UID).WhereEqualTo("isFriend", true);
@@ -319,6 +319,7 @@ namespace anonymous_chat
                 foreach (UserData friend in friendList.Keys)
                 {
                     friendPanel.addFriend(friend.UID, friend.UserName);
+                    friendListPanel.addFriend(friend.UID, friend.UserName);
                 }
             });
         }
@@ -385,7 +386,7 @@ namespace anonymous_chat
         {
             this.Invoke((MethodInvoker)delegate
             {
-                friendPanel.addFriend(142, "AI");
+                friendPanel.addFriend(142, "Simsimi");
             });
 
             AI.main = this;
@@ -395,7 +396,7 @@ namespace anonymous_chat
             AI.BackColor = SystemColors.Window;
             AI.Location = new Point(0, 0);
             AI.Margin = new Padding(3, 4, 3, 4);
-            AI.Name = "AI";
+            AI.Name = "Simsimi";
             AI.Size = new Size(619, 440);
             AI.Visible = false;
         }
@@ -411,6 +412,22 @@ namespace anonymous_chat
             notiPanel.Visible = !notiPanel.Visible;
             BT_noti.BackColor = Color.White;
             notiPanel.BringToFront();
+        }
+
+        private void BT_listFriends_Click(object sender, EventArgs e)
+        {
+            friendListPanel.Visible = !friendListPanel.Visible;
+            friendListPanel.BringToFront();
+        }
+
+        private void BT_random_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BT_logOut_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
