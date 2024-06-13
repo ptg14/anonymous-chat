@@ -47,8 +47,11 @@ namespace anonymous_chat.Chat
 
         private async void isOnline()
         {
-            DocumentSnapshot snapshot = await db.Collection("Online").Document(LB_UID.Text).GetSnapshotAsync();
-            online = snapshot.Exists;
+            if (friendUID < 10000 && friendUID != 142)
+            {
+                DocumentSnapshot snapshot = await db.Collection("Online").Document(LB_UID.Text).GetSnapshotAsync();
+                online = snapshot.Exists;
+            }
         }
 
         private void mainFriend_Click(object sender, EventArgs e)

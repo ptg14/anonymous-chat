@@ -8,17 +8,19 @@ using System.Threading.Tasks;
 namespace anonymous_chat.DataBase
 {
     [FirestoreData]
-    internal class UserData
+    public class GroupChat
     {
         [FirestoreProperty]
-        public int UID { get; set; }
+        public int GroupUID { get; set; }
         [FirestoreProperty]
-        public string? Email { get; set; }
-        [FirestoreProperty]
-        public string? UserName { get; set; }
+        public string? GroupName { get; set; }
         [FirestoreProperty]
         public string? Password { get; set; }
         [FirestoreProperty]
-        public string? ResetToken { get; set; }
+        public int AdminUID { get; set; }
+        [FirestoreProperty]
+        public List<int>? MemberUID { get; set; }
+        [FirestoreProperty]
+        public List<int>? BanUID { get; set; }
     }
 }

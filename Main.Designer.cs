@@ -333,6 +333,7 @@ namespace anonymous_chat
             setting.Size = new Size(125, 147);
             setting.TabIndex = 0;
             setting.Visible = false;
+            setting.main = this;
             // 
             // topChatPanel
             // 
@@ -384,6 +385,7 @@ namespace anonymous_chat
             BT_call.Size = new Size(50, 50);
             BT_call.TabIndex = 10;
             BT_call.UseVisualStyleBackColor = true;
+            BT_call.Visible = false;
             // 
             // Main
             // 

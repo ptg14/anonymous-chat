@@ -28,30 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            button2 = new Button();
+            BT_group = new Button();
+            BT_findGroup = new Button();
             button3 = new Button();
             button4 = new Button();
             SuspendLayout();
             // 
-            // button1
+            // BT_group
             // 
-            button1.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button1.Location = new Point(3, 3);
-            button1.Name = "button1";
-            button1.Size = new Size(119, 30);
-            button1.TabIndex = 0;
-            button1.Text = "Dark Mode";
-            button1.UseVisualStyleBackColor = true;
+            BT_group.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            BT_group.Location = new Point(3, 3);
+            BT_group.Name = "BT_group";
+            BT_group.Size = new Size(119, 30);
+            BT_group.TabIndex = 0;
+            BT_group.Text = "Tạo nhóm";
+            BT_group.UseVisualStyleBackColor = true;
+            BT_group.Click += BT_group_Click;
             // 
-            // button2
+            // BT_findGroup
             // 
-            button2.Location = new Point(3, 39);
-            button2.Name = "button2";
-            button2.Size = new Size(119, 30);
-            button2.TabIndex = 1;
-            button2.Text = "Trợ giúp";
-            button2.UseVisualStyleBackColor = true;
+            BT_findGroup.Location = new Point(3, 39);
+            BT_findGroup.Name = "BT_findGroup";
+            BT_findGroup.Size = new Size(119, 30);
+            BT_findGroup.TabIndex = 1;
+            BT_findGroup.Text = "Tìm nhóm";
+            BT_findGroup.UseVisualStyleBackColor = true;
+            BT_findGroup.Click += BT_findGroup_Click;
             // 
             // button3
             // 
@@ -68,7 +70,7 @@
             button4.Name = "button4";
             button4.Size = new Size(119, 30);
             button4.TabIndex = 3;
-            button4.Text = "Xoá tài khoản";
+            button4.Text = "Trợ giúp";
             button4.UseVisualStyleBackColor = true;
             // 
             // Setting
@@ -77,8 +79,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(button4);
             Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(BT_findGroup);
+            Controls.Add(BT_group);
             Name = "Setting";
             Size = new Size(125, 147);
             ResumeLayout(false);
@@ -86,8 +88,8 @@
 
         #endregion
 
-        private Button button1;
-        private Button button2;
+        private Button BT_group;
+        private Button BT_findGroup;
         private Button button3;
         private Button button4;
     }

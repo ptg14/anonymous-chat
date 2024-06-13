@@ -29,6 +29,7 @@ namespace anonymous_chat
         public string userName;
         private bool addFriendVisible = false;
         private Dictionary<UserData, ChatBox> friendList = new Dictionary<UserData, ChatBox>();
+        private Dictionary<GroupChat, ChatBox> groupList = new Dictionary<GroupChat, ChatBox>();
         ChatBox AI = new ChatBox(new MessageData());
 
         public Main()
@@ -49,7 +50,7 @@ namespace anonymous_chat
                 LB_name.Text = userName;
                 LB_UID.Text = "UID: " + UID.ToString();
                 isOnline();
-                LoadFriendList();
+                LoadList();
                 Thread connectThread = new Thread(ConnectToServer);
                 connectThread.IsBackground = true;
                 connectThread.Start();
@@ -103,7 +104,7 @@ namespace anonymous_chat
         {
             while (isConnected)
             {
-                byte[] data = new byte[256];
+                byte[] data = new byte[1024];
                 int bytes = 0;
                 try
                 {
@@ -126,7 +127,7 @@ namespace anonymous_chat
 
                 string[] parts = receivedMessage.Split('=');
 
-                if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED")
+                if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED" || parts[0] == "GROUPREQUEST")
                 {
                     notiPanel.addNoti(receivedMessage);
                     BT_noti.BackColor = Color.Red;
@@ -220,12 +221,11 @@ namespace anonymous_chat
                 LB_friendName.Text = "Simsimi";
                 return;
             }
-            else
+            else if (toUID < 10000)
             {
                 UserData selectedUserData = friendList.Keys.FirstOrDefault(user => user.UID == chatUID);
                 if (selectedUserData == null)
                 {
-                    MessageBox.Show("User not found");
                     // create a new ChatBox for this friend
                     ChatBox newChatBox = new ChatBox(new MessageData());
                     newChatBox.main = this;
@@ -247,9 +247,47 @@ namespace anonymous_chat
                 {
                     otherChatBox.Visible = otherChatBox == friendList[selectedUserData];
                 }
+                foreach (var otherChatBox in groupList.Values)
+                {
+                    otherChatBox.Visible = false;
+                }
                 friendList[selectedUserData].Visible = true;
                 friendList[selectedUserData].BringToFront();
                 LB_friendName.Text = selectedUserData.UserName;
+            }
+            else if (toUID > 10000)
+            {
+                GroupChat selectedGroup = groupList.Keys.FirstOrDefault(group => group.GroupUID == chatUID);
+                if (selectedGroup == null)
+                {
+                    // create a new ChatBox for this group
+                    ChatBox newChatBox = new ChatBox(new MessageData());
+                    newChatBox.main = this;
+
+                    mainChat.Controls.Add(newChatBox);
+
+                    newChatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                    newChatBox.BackColor = SystemColors.Window;
+                    newChatBox.Location = new Point(0, 0);
+                    newChatBox.Margin = new Padding(3, 4, 3, 4);
+                    newChatBox.Name = $"newChatBox{selectedGroup.GroupUID}";
+                    newChatBox.Size = new Size(619, 440);
+                    newChatBox.Visible = false;
+
+                    groupList.Add(selectedGroup, newChatBox);
+                }
+                // Show the existing ChatBox and hide the others
+                foreach (var otherChatBox in groupList.Values)
+                {
+                    otherChatBox.Visible = otherChatBox == groupList[selectedGroup];
+                }
+                foreach (var otherChatBox in friendList.Values)
+                {
+                    otherChatBox.Visible = false;
+                }
+                groupList[selectedGroup].Visible = true;
+                groupList[selectedGroup].BringToFront();
+                LB_friendName.Text = selectedGroup.GroupName;
             }
         }
 
@@ -312,16 +350,62 @@ namespace anonymous_chat
 
             this.Invoke((MethodInvoker)delegate
             {
-                if (friendPanel.Controls.Count > 0)
-                {
-                    friendPanel.Controls.Clear();
-                }
                 foreach (UserData friend in friendList.Keys)
                 {
                     friendPanel.addFriend(friend.UID, friend.UserName);
                     friendListPanel.addFriend(friend.UID, friend.UserName);
                 }
             });
+        }
+
+        public async void LoadGroupList()
+        {
+            // Query the database for the user's group list
+            Query query = db.Collection("Group").WhereArrayContains("MemberUID", UID);
+
+            var querySnapshot = await query.GetSnapshotAsync();
+            //MessageBox.Show($"Number of documents returned by the query: {querySnapshot.Count}");
+
+            foreach (DocumentSnapshot document in querySnapshot.Documents)
+            {
+                // Get the group's UID and group name
+                GroupChat group = document.ConvertTo<GroupChat>();
+
+                this.Invoke((MethodInvoker)delegate
+                {
+                    // create a new ChatBox for each group
+                    ChatBox newChatBox = new ChatBox(new MessageData());
+                    newChatBox.main = this;
+
+                    mainChat.Controls.Add(newChatBox);
+
+                    newChatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                    newChatBox.BackColor = SystemColors.Window;
+                    newChatBox.Location = new Point(0, 0);
+                    newChatBox.Margin = new Padding(3, 4, 3, 4);
+                    newChatBox.Name = $"newChatBox{group.GroupUID}";
+                    newChatBox.Size = new Size(619, 440);
+                    newChatBox.Visible = false;
+
+                    groupList.Add(group, newChatBox);
+                });
+            }
+
+            this.Invoke((MethodInvoker)delegate
+            {
+                foreach (GroupChat group in groupList.Keys)
+                {
+                    friendPanel.addFriend(group.GroupUID, group.GroupName);
+                    friendListPanel.addFriend(group.GroupUID, group.GroupName);
+                }
+            });
+        }
+
+        public void LoadList()
+        {
+            friendPanel.Controls.Clear();
+            LoadFriendList();
+            LoadGroupList();
         }
 
         private async void BT_findFriend_Click(object sender, EventArgs e)
@@ -378,8 +462,13 @@ namespace anonymous_chat
             {
                 pair.Value.Dispose();
             }
+            foreach (var pair in groupList)
+            {
+                pair.Value.Dispose();
+            }
             friendList.Clear();
-            LoadFriendList();
+            groupList.Clear();
+            LoadList();
         }
 
         private void BT_AI_Click(object sender, EventArgs e)

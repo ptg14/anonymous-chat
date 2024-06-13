@@ -34,6 +34,12 @@
     <Compile Update="Chat\SignUp.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Group.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="JoinGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Main.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -75,6 +75,7 @@
             // 
             // BT_deleteFriend
             // 
+            BT_deleteFriend.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             BT_deleteFriend.Location = new Point(169, 7);
             BT_deleteFriend.Name = "BT_deleteFriend";
             BT_deleteFriend.Size = new Size(51, 65);

@@ -77,6 +77,7 @@
             // 
             // mainFriend
             // 
+            mainFriend.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             mainFriend.BorderStyle = BorderStyle.FixedSingle;
             mainFriend.Controls.Add(PB_avatar);
             mainFriend.Controls.Add(LB_online);
