@@ -169,6 +169,11 @@ namespace anonymous_chat
                     break;
                 }
 
+                if (bytes == 0)
+                {
+                    break;
+                }
+
                 string receivedMessage = Encoding.UTF8.GetString(data, 0, bytes);
                 //MessageBox.Show("Receive:\n" + receivedMessage);
 
@@ -239,6 +244,7 @@ namespace anonymous_chat
                     if (dowhat != "SETAVATAR")
                     {
                         IChatModel chatModel;
+                        IChatModel saveChatModel;
                         byte[] fileContent = File.ReadAllBytes(filePath);
                         string author = "";
                         string attachmentName = "";
@@ -252,7 +258,17 @@ namespace anonymous_chat
                                 {
                                     Author = author,
                                     Time = datetime,
+                                    ImageName = attachmentName,
                                     Image = Image.FromFile(filePath),
+                                    path = filePath,
+                                    Inbound = true,
+                                };
+                                saveChatModel = new ImageChatModel()
+                                {
+                                    Author = author,
+                                    Time = datetime,
+                                    ImageName = attachmentName,
+                                    path = filePath,
                                     Inbound = true,
                                 };
                                 break;
@@ -263,6 +279,15 @@ namespace anonymous_chat
                                     Filename = attachmentName,
                                     Time = datetime,
                                     Attachment = fileContent,
+                                    path = filePath,
+                                    Inbound = true,
+                                };
+                                saveChatModel = new AttachmentChatModel()
+                                {
+                                    Author = author,
+                                    Filename = attachmentName,
+                                    Time = datetime,
+                                    path = filePath,
                                     Inbound = true,
                                 };
                                 break;
@@ -301,6 +326,9 @@ namespace anonymous_chat
                                 }
                             }
                         }
+
+                        string json = JsonConvert.SerializeObject(saveChatModel);
+                        saveChat(senderID, receiverID, json);
                     }
                     else
                     {
@@ -331,14 +359,25 @@ namespace anonymous_chat
                 }
                 else
                 {
-                    string[] ids = parts[0].Split(">");
+                    int senderID = 0;
+                    int receiverID = 0;
+                    TextChatModel textMessage = null;
+                    string json = "";
+                    try
+                    {
+                        string[] ids = parts[0].Split(">");
 
-                    int senderID = int.Parse(ids[0]);
-                    int receiverID = int.Parse(ids[1]);
+                        senderID = int.Parse(ids[0]);
+                        receiverID = int.Parse(ids[1]);
 
-                    string json = parts[1];
-                    TextChatModel textMessage = JsonConvert.DeserializeObject<TextChatModel>(json);
-                    textMessage.Inbound = true;
+                        json = parts[1];
+                        textMessage = JsonConvert.DeserializeObject<TextChatModel>(json);
+                        textMessage.Inbound = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show(ex.Message, "ERROR");
+                    }
 
                     // Check if the message is sent to you
                     if (receiverID == UID)
@@ -382,6 +421,8 @@ namespace anonymous_chat
                             }
                         }
                     }
+
+                    saveChat(senderID, receiverID, json);
                 }
             }
         }
@@ -396,6 +437,43 @@ namespace anonymous_chat
             attachmentName = nameAndAttach[1];
             string[] noExtension = nameAndDateTime[1].Split('.');
             DateTime.TryParseExact(noExtension[0], "d_M_yyyy_H_m_s", null, System.Globalization.DateTimeStyles.None, out datetime);
+        }
+
+        public void saveChat(int senderID, int receiverID, string json)
+        {
+            string folderPath;
+            if (receiverID >= 10000)
+            {
+                folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                folderPath = Path.Combine(folderPath, receiverID.ToString());
+            }
+            else
+            {
+                folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, receiverID.ToString());
+                folderPath = Path.Combine(folderPath, senderID.ToString());
+            }
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            string filePath;
+            if (receiverID < 10000)
+            {
+                filePath = Path.Combine(folderPath, $"{senderID}-{receiverID}~history.txt");
+            }
+            else
+            {
+                filePath = Path.Combine(folderPath, $"{receiverID}~history.txt");
+            }
+
+            // Ensure newline for each entry if the file already exists
+            if (File.Exists(filePath))
+            {
+                json = Environment.NewLine + json;
+            }
+
+            // Append the JSON string to the specified file
+            File.AppendAllText(filePath, json);
         }
 
         private async void isOnline()  // Create a new async method
@@ -587,6 +665,7 @@ namespace anonymous_chat
                     friendListPanel.addFriend(friend.UID, friend.UserName);
 
                     string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                    folderPath = Path.Combine(folderPath, friend.UID.ToString());
                     string fileName = $"SETAVATAR~{friend.UID}.png";
                     string filePath = Path.Combine(folderPath, fileName);
                     if (File.Exists(filePath))
@@ -600,6 +679,44 @@ namespace anonymous_chat
                     else
                     {
                         Send("GETAVATAR=" + UID + ">" + friend.UID);
+                    }
+
+                    filePath = Path.Combine(folderPath, $"{UID}-{friend.UID}~history.txt");
+                    if (File.Exists(filePath))
+                    {
+                        IChatModel chatModel;
+                        foreach (string line in File.ReadLines(filePath))
+                        {
+                            // Deserialize the line to a JObject for inspection
+                            var jObject = JObject.Parse(line);
+
+                            // Determine the type based on a property, e.g., "Type"
+                            string type = jObject["Type"]?.ToString();
+
+                            switch (type)
+                            {
+                                case "text":
+                                    chatModel = new TextChatModel();
+                                    chatModel = JsonConvert.DeserializeObject<TextChatModel>(line);
+                                    break;
+                                case "image":
+                                    chatModel = new ImageChatModel();
+                                    chatModel = JsonConvert.DeserializeObject<ImageChatModel>(line);
+                                    (chatModel as ImageChatModel).Image = Image.FromFile((chatModel as ImageChatModel).path);
+                                    break;
+                                case "attachment":
+                                    chatModel = new AttachmentChatModel();
+                                    chatModel = JsonConvert.DeserializeObject<AttachmentChatModel>(line);
+                                    (chatModel as AttachmentChatModel).Attachment = File.ReadAllBytes((chatModel as AttachmentChatModel).path);
+                                    break;
+                                default:
+                                    chatModel = null;
+                                    Debug.WriteLine("Unknown type or type property missing");
+                                    break;
+                            }
+
+                            friendList[friend].AddMessage(chatModel);
+                        }
                     }
                 }
             });
@@ -646,6 +763,7 @@ namespace anonymous_chat
                     friendListPanel.addFriend(group.GroupUID, group.GroupName);
 
                     string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                    folderPath = Path.Combine(folderPath, group.GroupUID.ToString());
                     string fileName = $"SETAVATAR~{group.GroupUID}.png";
                     string filePath = Path.Combine(folderPath, fileName);
                     if (File.Exists(filePath))
@@ -659,6 +777,44 @@ namespace anonymous_chat
                     else
                     {
                         Send("GETAVATAR=" + UID + ">" + group.GroupUID);
+                    }
+
+                    filePath = Path.Combine(folderPath, $"{group.GroupUID}~history.txt");
+                    if (File.Exists(filePath))
+                    {
+                        IChatModel chatModel;
+                        foreach (string line in File.ReadLines(filePath))
+                        {
+                            // Deserialize the line to a JObject for inspection
+                            var jObject = JObject.Parse(line);
+
+                            // Determine the type based on a property, e.g., "Type"
+                            string type = jObject["Type"]?.ToString();
+
+                            switch (type)
+                            {
+                                case "text":
+                                    chatModel = new TextChatModel();
+                                    chatModel = JsonConvert.DeserializeObject<TextChatModel>(line);
+                                    break;
+                                case "image":
+                                    chatModel = new ImageChatModel();
+                                    chatModel = JsonConvert.DeserializeObject<ImageChatModel>(line);
+                                    (chatModel as ImageChatModel).Image = Image.FromFile((chatModel as ImageChatModel).path);
+                                    break;
+                                case "attachment":
+                                    chatModel = new AttachmentChatModel();
+                                    chatModel = JsonConvert.DeserializeObject<AttachmentChatModel>(line);
+                                    (chatModel as AttachmentChatModel).Attachment = File.ReadAllBytes((chatModel as AttachmentChatModel).path);
+                                    break;
+                                default:
+                                    chatModel = null;
+                                    Debug.WriteLine("Unknown type or type property missing");
+                                    break;
+                            }
+
+                            groupList[group].AddMessage(chatModel);
+                        }
                     }
                 }
             });

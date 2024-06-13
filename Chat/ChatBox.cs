@@ -76,6 +76,7 @@ namespace anonymous_chat.Chat
             string chatmessage = TB_message.Text;
 
             IChatModel chatModel = null;
+            IChatModel saveChatModel = null;
             TextChatModel textModel = null;
 
             if (chatbox_info.Attachment != null && chatbox_info.AttachmentType.Contains("image"))
@@ -90,7 +91,15 @@ namespace anonymous_chat.Chat
                     Read = true,
                     Time = DateTime.Now,
                 };
-
+                saveChatModel = new ImageChatModel()
+                {
+                    Author = chatbox_info.User,
+                    path = filePath,
+                    ImageName = chatbox_info.AttachmentName,
+                    Inbound = false,
+                    Read = true,
+                    Time = DateTime.Now,
+                };
             }
             else if (chatbox_info.Attachment != null)
             {
@@ -98,6 +107,15 @@ namespace anonymous_chat.Chat
                 {
                     Author = chatbox_info.User,
                     Attachment = chatbox_info.Attachment,
+                    path = filePath,
+                    Filename = chatbox_info.AttachmentName,
+                    Read = true,
+                    Inbound = false,
+                    Time = DateTime.Now
+                };
+                saveChatModel = new AttachmentChatModel()
+                {
+                    Author = chatbox_info.User,
                     path = filePath,
                     Filename = chatbox_info.AttachmentName,
                     Read = true,
@@ -135,7 +153,6 @@ namespace anonymous_chat.Chat
                     {
                         textJson = main.UID + "-" + main.toUID + "~" + chatModel.Author + $"+{(chatModel as AttachmentChatModel).Filename},{chatModel.Type};{chatModel.Time.Day}_{chatModel.Time.Month}_{chatModel.Time.Year}_{chatModel.Time.Hour}_{chatModel.Time.Minute}_{chatModel.Time.Second}" + fileInfo.Extension;
                     }
-                    Debug.WriteLine(textJson);
                     string folderPathroot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, main.UID.ToString());
                     string folderPath = Path.Combine(folderPathroot, main.toUID.ToString());
                     string destinationFilePath = Path.Combine(folderPath, textJson);
@@ -151,9 +168,20 @@ namespace anonymous_chat.Chat
                     }
                     catch (IOException ex)
                     {
-                        Debug.WriteLine(ex.Message);
                         MessageBox.Show(ex.Message, "ERROR");
                     }
+
+                    saveChatModel.Author = main.userName;
+                    if (saveChatModel.Type == "image")
+                    {
+                        (saveChatModel as ImageChatModel).path = destinationFilePath;
+                    }
+                    else
+                    {
+                        (saveChatModel as AttachmentChatModel).path = destinationFilePath;
+                    }
+                    string json = JsonConvert.SerializeObject(saveChatModel);
+                    main.saveChat(main.toUID, main.UID, json);
                     //MessageBox.Show(textJson);
                     main.SendFile(destinationFilePath);
 
@@ -199,7 +227,9 @@ namespace anonymous_chat.Chat
                         }
                         else
                         {
-                            string textJson = main.UID + ">" + main.toUID + "=" + JsonConvert.SerializeObject(textModel);
+                            string json = JsonConvert.SerializeObject(textModel);
+                            main.saveChat(main.toUID, main.UID, json);
+                            string textJson = main.UID + ">" + main.toUID + "=" + json;
                             main.Send(textJson);
                         }
                     }
