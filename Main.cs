@@ -18,6 +18,8 @@ using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.Windows.Forms.VisualStyles;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace anonymous_chat
 {
@@ -47,6 +49,20 @@ namespace anonymous_chat
             }
             if ((saveLogin == true || SignIn_SignUp.ShowAndTryGetInput(out UID, out userName, this)) && FireBase.setEnironmentVariables())
             {
+                string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                string fileName = $"SETAVATAR~{UID}.png";
+                string filePath = Path.Combine(folderPath, fileName);
+                if (File.Exists(filePath))
+                {
+                    using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                    {
+                        BT_avatar.Image = Image.FromStream(ms);
+                    }
+                }
                 LB_name.Text = userName;
                 LB_UID.Text = "UID: " + UID.ToString();
                 isOnline();
@@ -100,11 +116,40 @@ namespace anonymous_chat
             }
         }
 
+        public async void SendFile(string filePath)
+        {
+            if (isConnected && stream != null)
+            {
+                try
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    string header = $"FILE={fileInfo.Name}:{fileInfo.Length}";
+                    byte[] headerBytes = Encoding.ASCII.GetBytes(header);
+                    await stream.WriteAsync(headerBytes, 0, headerBytes.Length);
+
+                    // Now send the file
+                    byte[] fileBuffer = new byte[100 * 1024 * 1024];
+                    using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    {
+                        int bytesRead;
+                        while ((bytesRead = await fileStream.ReadAsync(fileBuffer, 0, fileBuffer.Length)) > 0)
+                        {
+                            await stream.WriteAsync(fileBuffer, 0, bytesRead);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error sending file: {ex.Message}", "ERROR");
+                }
+            }
+        }
+
         private void ReceiveMessages()
         {
             while (isConnected)
             {
-                byte[] data = new byte[1024];
+                byte[] data = new byte[100 * 1024 * 1024];
                 int bytes = 0;
                 try
                 {
@@ -184,6 +229,25 @@ namespace anonymous_chat
                                     friendList[userSender].AddMessage(receivedModel);
                                 }
                             });
+                        }
+
+                    }
+                    else
+                    {
+                        GroupChat groupSender = groupList.Keys.FirstOrDefault(group => group.GroupUID == receiverID);
+                        if (groupSender != null)
+                        {
+                            // Update TB_remessage on the UI thread
+                            if (this.IsHandleCreated) // Check if the handle has been created
+                            {
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    if (receivedModel != null)
+                                    {
+                                        groupList[groupSender].AddMessage(receivedModel);
+                                    }
+                                });
+                            }
                         }
                     }
                 }
@@ -517,6 +581,62 @@ namespace anonymous_chat
         private void BT_logOut_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void BT_avatar_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Title = "Select an image";
+                openFileDialog.Filter = "Image files (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Define the folder path and the file name
+                    string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                    string fileName = $"SETAVATAR~{UID}.png";
+                    string filePath = Path.Combine(folderPath, fileName);
+
+                    // Ensure the directory exists
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+
+                    // Resize and save the selected image
+                    ResizeImage(openFileDialog.FileName, filePath, 50, 50);
+
+                    // Load the resized image into a MemoryStream to avoid locking the file
+                    using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                    {
+                        BT_avatar.Image = Image.FromStream(ms);
+                    }
+
+                    SendFile(filePath);
+                }
+            }
+        }
+
+        public void ResizeImage(string originalFile, string newFile, int width, int height)
+        {
+            using (Image originalImage = Image.FromFile(originalFile))
+            {
+                using (Bitmap newImage = new Bitmap(width, height))
+                {
+                    using (Graphics graphics = Graphics.FromImage(newImage))
+                    {
+                        graphics.CompositingQuality = CompositingQuality.HighQuality;
+                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        graphics.SmoothingMode = SmoothingMode.HighQuality;
+                        graphics.DrawImage(originalImage, 0, 0, width, height);
+                    }
+                    if (File.Exists(newFile))
+                    {
+                        File.Delete(newFile);
+                    }
+                    newImage.Save(newFile, ImageFormat.Png);
+                }
+            }
         }
     }
 }

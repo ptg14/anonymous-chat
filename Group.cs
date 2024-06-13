@@ -51,7 +51,7 @@ namespace anonymous_chat
                 bool isUnique = false;
                 do
                 {
-                    groupUID = random.Next(10000, 11000);
+                    groupUID = random.Next(10000, 20000);
 
                     QuerySnapshot snapshot = await groupsRef.WhereEqualTo("GroupUID", groupUID).GetSnapshotAsync();
                     isUnique = snapshot.Count == 0;

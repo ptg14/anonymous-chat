@@ -51,6 +51,7 @@ namespace anonymous_chat
             BT_avatar = new Button();
             notiPanel = new NotiPanel();
             friendPanel = new FriendPanel();
+            friendListPanel = new FriendListPanel();
             mainChat = new Panel();
             mainLogo = new PictureBox();
             setting = new Setting();
@@ -273,22 +274,35 @@ namespace anonymous_chat
             BT_avatar.Size = new Size(50, 50);
             BT_avatar.TabIndex = 0;
             BT_avatar.UseVisualStyleBackColor = true;
+            BT_avatar.Click += BT_avatar_Click;
             // 
             // notiPanel
             // 
             notiPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             notiPanel.AutoScroll = true;
+            notiPanel.BackColor = Color.Turquoise;
             notiPanel.Location = new Point(3, 95);
             notiPanel.Name = "notiPanel";
             notiPanel.Size = new Size(246, 404);
             notiPanel.TabIndex = 10;
             notiPanel.Visible = false;
             notiPanel.main = this;
-            //
+            // 
+            // friendPanel
+            // 
+            friendPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            friendPanel.AutoScroll = true;
+            friendPanel.BackColor = Color.Khaki;
+            friendPanel.Location = new Point(3, 95);
+            friendPanel.Name = "friendPanel";
+            friendPanel.Size = new Size(246, 404);
+            friendPanel.TabIndex = 10;
+            // 
             // friendListPanel
-            //
+            // 
             friendListPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             friendListPanel.AutoScroll = true;
+            friendListPanel.BackColor = Color.Gray;
             friendListPanel.Location = new Point(3, 95);
             friendListPanel.Name = "friendListPanel";
             friendListPanel.Size = new Size(246, 404);
