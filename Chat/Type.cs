@@ -9,7 +9,7 @@ namespace anonymous_chat.Chat
     public static class Type
     {
         static IDictionary<string, string> _mappings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
-        #region Big freaking list of mime types: See this post for original reference.
+        #region Type list
         {".323", "text/h323"},
         {".3g2", "video/3gpp2"},
         {".3gp", "video/3gpp"},

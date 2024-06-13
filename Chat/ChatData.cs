@@ -40,29 +40,7 @@ namespace anonymous_chat.Chat
         public string? ImageName { get; set; }
         [JsonIgnore]
         public Image? Image { get; set; }
-
-        public string Base64Image
-        {
-            get
-            {
-                using (var ms = new MemoryStream())
-                {
-                    Image?.Save(ms, ImageFormat.Png);
-                    byte[] imageBytes = ms.ToArray();
-                    return Convert.ToBase64String(imageBytes);
-                }
-            }
-            set
-            {
-                byte[] imageBytes = Convert.FromBase64String(value);
-                using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
-                {
-                    Image = Image.FromStream(ms, true);
-                }
-            }
-        }
-
-
+        public string? path { get; set; }
     }
 
     public class AttachmentChatModel : IChatModel
@@ -74,15 +52,16 @@ namespace anonymous_chat.Chat
         public string Type { get; } = "attachment";
 
         public byte[]? Attachment { get; set; }
+        public string? path { get; set; }
         public string? Filename { get; set; }
+    }
 
-        public class SimsimiResponse
-        {
-            public string text { get; set; }
-            public string message { get; set; }
-            public string id { get; set; }
-            public string status { get; set; }
-            public string language { get; set; }
-        }
+    public class SimsimiResponse
+    {
+        public string text { get; set; }
+        public string message { get; set; }
+        public string id { get; set; }
+        public string status { get; set; }
+        public string language { get; set; }
     }
 }

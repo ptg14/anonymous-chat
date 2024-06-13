@@ -20,6 +20,7 @@ namespace anonymous_chat.Chat
         public OpenFileDialog fileDialog = new OpenFileDialog();
         public string initialdirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         public Main main;
+        public string filePath;
 
         public ChatBox(MessageData input_info)
         {
@@ -83,6 +84,7 @@ namespace anonymous_chat.Chat
                 {
                     Author = chatbox_info.User,
                     Image = Image.FromStream(new MemoryStream(chatbox_info.Attachment)),
+                    path = filePath,
                     ImageName = chatbox_info.AttachmentName,
                     Inbound = false,
                     Read = true,
@@ -96,6 +98,7 @@ namespace anonymous_chat.Chat
                 {
                     Author = chatbox_info.User,
                     Attachment = chatbox_info.Attachment,
+                    path = filePath,
                     Filename = chatbox_info.AttachmentName,
                     Read = true,
                     Inbound = false,
@@ -120,13 +123,40 @@ namespace anonymous_chat.Chat
                 // check file attachment
                 if (chatModel != null)
                 {
-
                     chatModel.Author = main.userName;
-                    string textJson = main.UID + ">" + main.toUID + "=" + JsonConvert.SerializeObject(chatModel);
-                    //MessageBox.Show(textJson);
-                    main.Send(textJson);
-
                     AddMessage(chatModel);
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    string textJson;
+                    if (chatModel.Type == "image")
+                    {
+                        textJson = main.UID + "-" + main.toUID + "~" + chatModel.Author + $"+{(chatModel as ImageChatModel).ImageName},{chatModel.Type};{chatModel.Time.Day}_{chatModel.Time.Month}_{chatModel.Time.Year}_{chatModel.Time.Hour}_{chatModel.Time.Minute}_{chatModel.Time.Second}" + fileInfo.Extension;
+                    }
+                    else
+                    {
+                        textJson = main.UID + "-" + main.toUID + "~" + chatModel.Author + $"+{(chatModel as AttachmentChatModel).Filename},{chatModel.Type};{chatModel.Time.Day}_{chatModel.Time.Month}_{chatModel.Time.Year}_{chatModel.Time.Hour}_{chatModel.Time.Minute}_{chatModel.Time.Second}" + fileInfo.Extension;
+                    }
+                    Debug.WriteLine(textJson);
+                    string folderPathroot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, main.UID.ToString());
+                    string folderPath = Path.Combine(folderPathroot, main.toUID.ToString());
+                    string destinationFilePath = Path.Combine(folderPath, textJson);
+
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    try
+                    {
+                        // Copy the file
+                        File.Copy(filePath, destinationFilePath, overwrite: true);
+                    }
+                    catch (IOException ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                        MessageBox.Show(ex.Message, "ERROR");
+                    }
+                    //MessageBox.Show(textJson);
+                    main.SendFile(destinationFilePath);
+
                     CancelAttachment(null, null);
                 }
                 // check text message
@@ -201,6 +231,7 @@ namespace anonymous_chat.Chat
             if (result == DialogResult.OK)
             {
                 string selected = fileDialog.FileName;
+                filePath = selected;
                 try
                 {
                     var file = File.ReadAllBytes(selected);

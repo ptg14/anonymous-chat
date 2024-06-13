@@ -29,19 +29,37 @@ namespace anonymous_chat.Chat
             isOnline();
             if (online)
             {
-                LB_online.ForeColor = Color.Green;
-                LB_online.Text = "Online";
+                if (this.IsHandleCreated)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        LB_online.ForeColor = Color.Green;
+                        LB_online.Text = "Online";
+                    });
+                }
             }
             else if (friendUID == 142)
             {
-                LB_online.ForeColor = Color.Green;
-                LB_online.Text = "Online";
-                LB_UID.Text = "AI";
+                if (this.IsHandleCreated)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        LB_online.ForeColor = Color.Green;
+                        LB_online.Text = "Online";
+                        LB_UID.Text = "AI";
+                    });
+                }
             }
             else
             {
-                LB_online.ForeColor = Color.Red;
-                LB_online.Text = "Offline";
+                if (this.IsHandleCreated)
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        LB_online.ForeColor = Color.Red;
+                        LB_online.Text = "Offline";
+                    });
+                }
             }
         }
 
