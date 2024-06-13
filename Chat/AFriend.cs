@@ -26,6 +26,22 @@ namespace anonymous_chat.Chat
             LB_name.Text = username;
             LB_UID.Text = UID.ToString();
             friendUID = UID;
+            if (UID < 10000)
+            {
+                PB_avatar.Image = Properties.Resources.user70x70;
+            }
+            else if (UID == 142)
+            {
+                PB_avatar.Image = Properties.Resources.Simsimi70x70;
+            }
+            else if (UID == 9999)
+            {
+                PB_avatar.Image = Properties.Resources.random70x70;
+            }
+            else
+            {
+                PB_avatar.Image = Properties.Resources.friend70x70;
+            }
             isOnline();
         }
 
@@ -62,22 +78,31 @@ namespace anonymous_chat.Chat
 
         public void hasMessage()
         {
-            ForeColor = Color.Red;
+            PB_noti.Image = Properties.Resources.exclamation34x30;
         }
 
         private void mainFriend_Click(object sender, EventArgs e)
         {
             main.openChat(friendUID);
+            PB_noti.Image = null;
         }
 
         private void PB_avatar_Click(object sender, EventArgs e)
         {
             main.openChat(friendUID);
+            PB_noti.Image = null;
         }
 
         private void LB_name_Click(object sender, EventArgs e)
         {
             main.openChat(friendUID);
+            PB_noti.Image = null;
+        }
+
+        private void PB_noti_Click(object sender, EventArgs e)
+        {
+            main.openChat(friendUID);
+            PB_noti.Image = null;
         }
     }
 }

@@ -121,8 +121,11 @@
   <data name="logo150x150" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resource\logo150x150.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="folder20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resource\folder20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Simsimi70x70" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resource\Simsimi70x70.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="logo300x300" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resource\logo300x300.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="friend20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resource\friend20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -139,6 +142,9 @@
   <data name="noti20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resource\noti20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="user70x70" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resource\user70x70.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="AI30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resource\AI30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -148,8 +154,8 @@
   <data name="setting40x40" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resource\setting40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="refresh20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resource\refresh20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="folder20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resource\folder20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="eye20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resource\eye20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -157,7 +163,16 @@
   <data name="logout20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resource\logout20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="logo300x300" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resource\logo300x300.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="friend70x70" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resource\friend70x70.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="refresh20x20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resource\refresh20x20.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="random70x70" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resource\random70x70.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="exclamation34x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resource\exclamation34x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

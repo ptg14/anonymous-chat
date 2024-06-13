@@ -33,8 +33,10 @@
             LB_UID = new Label();
             LB_online = new Label();
             mainFriend = new Panel();
+            PB_noti = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)PB_avatar).BeginInit();
             mainFriend.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)PB_noti).BeginInit();
             SuspendLayout();
             // 
             // PB_avatar
@@ -80,6 +82,7 @@
             // 
             mainFriend.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             mainFriend.BorderStyle = BorderStyle.FixedSingle;
+            mainFriend.Controls.Add(PB_noti);
             mainFriend.Controls.Add(PB_avatar);
             mainFriend.Controls.Add(LB_online);
             mainFriend.Controls.Add(LB_name);
@@ -89,6 +92,15 @@
             mainFriend.Size = new Size(244, 77);
             mainFriend.TabIndex = 4;
             mainFriend.Click += mainFriend_Click;
+            // 
+            // PB_noti
+            // 
+            PB_noti.Location = new Point(179, 31);
+            PB_noti.Name = "PB_noti";
+            PB_noti.Size = new Size(34, 30);
+            PB_noti.TabIndex = 4;
+            PB_noti.TabStop = false;
+            PB_noti.Click += PB_noti_Click;
             // 
             // AFriend
             // 
@@ -100,6 +112,7 @@
             ((System.ComponentModel.ISupportInitialize)PB_avatar).EndInit();
             mainFriend.ResumeLayout(false);
             mainFriend.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)PB_noti).EndInit();
             ResumeLayout(false);
         }
 
@@ -110,5 +123,6 @@
         private Label LB_UID;
         private Label LB_online;
         private Panel mainFriend;
+        public PictureBox PB_noti;
     }
 }

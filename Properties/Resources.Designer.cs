@@ -83,6 +83,16 @@ namespace anonymous_chat.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap exclamation34x30 {
+            get {
+                object obj = ResourceManager.GetObject("exclamation34x30", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap eye20x20 {
             get {
                 object obj = ResourceManager.GetObject("eye20x20", resourceCulture);
@@ -106,6 +116,16 @@ namespace anonymous_chat.Properties {
         internal static System.Drawing.Bitmap friend20x20 {
             get {
                 object obj = ResourceManager.GetObject("friend20x20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap friend70x70 {
+            get {
+                object obj = ResourceManager.GetObject("friend70x70", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,6 +193,16 @@ namespace anonymous_chat.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap random70x70 {
+            get {
+                object obj = ResourceManager.GetObject("random70x70", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap refresh20x20 {
             get {
                 object obj = ResourceManager.GetObject("refresh20x20", resourceCulture);
@@ -196,6 +226,26 @@ namespace anonymous_chat.Properties {
         internal static System.Drawing.Bitmap setting40x40 {
             get {
                 object obj = ResourceManager.GetObject("setting40x40", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Simsimi70x70 {
+            get {
+                object obj = ResourceManager.GetObject("Simsimi70x70", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap user70x70 {
+            get {
+                object obj = ResourceManager.GetObject("user70x70", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -35,6 +35,7 @@ namespace anonymous_chat
         private Dictionary<UserData, ChatBox> friendList = new Dictionary<UserData, ChatBox>();
         private Dictionary<GroupChat, ChatBox> groupList = new Dictionary<GroupChat, ChatBox>();
         ChatBox AI = new ChatBox(new MessageData());
+        ChatBox Random = new ChatBox(new MessageData());
 
         public Main()
         {
@@ -308,8 +309,10 @@ namespace anonymous_chat
                         string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
                         folderPath = Path.Combine(folderPathRoot, nameAndEx[0]);
                         filePath = Path.Combine(folderPath, fileName);
+                        string newFilePath = Path.Combine(folderPath, "SETAVATAR~" + nameAndEx[0] + "50x50.png");
                         if (File.Exists(filePath))
                         {
+                            ResizeImage(filePath, newFilePath, 50, 50);
                             this.Invoke((MethodInvoker)delegate
                             {
                                 using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
@@ -349,6 +352,10 @@ namespace anonymous_chat
                                 if (userSender != null && textMessage != null)
                                 {
                                     friendList[userSender].AddMessage(textMessage);
+                                    if (userSender.UID != toUID)
+                                    {
+                                        friendPanel.friendList[userSender.UID].hasMessage();
+                                    }
                                 }
                             });
                         }
@@ -366,6 +373,10 @@ namespace anonymous_chat
                                     if (textMessage != null)
                                     {
                                         groupList[groupSender].AddMessage(textMessage);
+                                        if (receiverID != toUID)
+                                        {
+                                            friendPanel.friendList[groupSender.GroupUID].hasMessage();
+                                        }
                                     }
                                 });
                             }
@@ -416,6 +427,19 @@ namespace anonymous_chat
                 AI.Visible = true;
                 AI.BringToFront();
                 LB_friendName.Text = "Simsimi";
+                PB_friendAvatar.Image = Properties.Resources.Simsimi70x70;
+                return;
+            }
+            if (chatUID == 999)
+            {
+                foreach (var otherChatBox in friendList.Values)
+                {
+                    otherChatBox.Visible = false;
+                }
+                Random.Visible = true;
+                Random.BringToFront();
+                LB_friendName.Text = "Random";
+                PB_friendAvatar.Image = Properties.Resources.random70x70;
                 return;
             }
             else if (toUID < 10000)
@@ -485,6 +509,16 @@ namespace anonymous_chat
                 groupList[selectedGroup].Visible = true;
                 groupList[selectedGroup].BringToFront();
                 LB_friendName.Text = selectedGroup.GroupName;
+            }
+            string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+            string folderPath = Path.Combine(folderPathRoot, toUID.ToString());
+            string filePath = Path.Combine(folderPath, "SETAVATAR~" + toUID + "50x50.png");
+            if (File.Exists(filePath)){
+                PB_friendAvatar.Image = Image.FromFile(filePath);
+            }
+            else
+            {
+                Send("GETAVATAR=" + UID + ">" + toUID);
             }
         }
 
@@ -633,7 +667,9 @@ namespace anonymous_chat
         public void LoadList()
         {
             friendPanel.Controls.Clear();
+            friendPanel.friendList.Clear();
             friendListPanel.Controls.Clear();
+            friendListPanel.friendList.Clear();
             LoadFriendList();
             LoadGroupList();
         }
@@ -741,7 +777,21 @@ namespace anonymous_chat
 
         private void BT_random_Click(object sender, EventArgs e)
         {
+            this.Invoke((MethodInvoker)delegate
+            {
+                friendPanel.addFriend(999, "Random");
+            });
 
+            Random.main = this;
+            mainChat.Controls.Add(AI);
+
+            Random.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Random.BackColor = SystemColors.Window;
+            Random.Location = new Point(0, 0);
+            Random.Margin = new Padding(3, 4, 3, 4);
+            Random.Name = "Random";
+            Random.Size = new Size(619, 440);
+            Random.Visible = false;
         }
 
         private void BT_logOut_Click(object sender, EventArgs e)
