@@ -106,7 +106,7 @@
 
         #endregion
 
-        private PictureBox PB_avatar;
+        public PictureBox PB_avatar;
         private Label LB_online;
         private Label LB_name;
         private Label LB_UID;

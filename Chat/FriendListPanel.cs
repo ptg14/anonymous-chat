@@ -13,6 +13,7 @@ namespace anonymous_chat.Chat
     public partial class FriendListPanel : UserControl
     {
         public Main main;
+        public Dictionary<int, FriendSetting> friendList = new Dictionary<int, FriendSetting>();
 
         public FriendListPanel()
         {
@@ -26,6 +27,7 @@ namespace anonymous_chat.Chat
             newFriend.Dock = DockStyle.Top;
             Controls.Add(newFriend);
             newFriend.BringToFront();
+            friendList.Add(UID, newFriend);
         }
     }
 }

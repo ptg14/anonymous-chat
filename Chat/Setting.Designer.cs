@@ -70,7 +70,7 @@
             button4.Name = "button4";
             button4.Size = new Size(119, 30);
             button4.TabIndex = 3;
-            button4.Text = "Trợ giúp";
+            button4.Text = "Hướng dẫn";
             button4.UseVisualStyleBackColor = true;
             // 
             // Setting

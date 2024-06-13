@@ -21,6 +21,7 @@ using System.Windows.Forms.VisualStyles;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
+using Google.Protobuf.WellKnownTypes;
 
 namespace anonymous_chat
 {
@@ -188,7 +189,9 @@ namespace anonymous_chat
                     string filePath;
                     if (dowhat == "SETAVATAR")
                     {
-                        folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, content);
+                        string[] nameAndEx = content.Split(".");
+                        string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                        folderPath = Path.Combine(folderPathRoot, nameAndEx[0]);
                         if (!Directory.Exists(folderPath))
                         {
                             Directory.CreateDirectory(folderPath);
@@ -232,67 +235,89 @@ namespace anonymous_chat
                         }
                     }
 
-                    IChatModel chatModel;
-                    byte[] fileContent = File.ReadAllBytes(filePath);
-                    string author = "";
-                    string attachmentName = "";
-                    string type = "";
-                    DateTime datetime = DateTime.Now;
-                    nameConvert(ref author, ref attachmentName, ref type, ref datetime, content);
-                    switch (type)
+                    if (dowhat != "SETAVATAR")
                     {
-                        case "image":
-                            chatModel = new ImageChatModel()
-                            {
-                                Author = author,
-                                Time = datetime,
-                                Image = Image.FromFile(filePath),
-                                Inbound = true,
-                            };
-                            break;
-                        default:
-                            chatModel = new AttachmentChatModel()
-                            {
-                                Author = author,
-                                Filename = attachmentName,
-                                Time = datetime,
-                                Attachment = fileContent,
-                                Inbound = true,
-                            };
-                            break;
-                    }
-
-                    if (receiverID == UID)
-                    {
-                        UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
-                        // Update TB_remessage on the UI thread
-                        if (this.IsHandleCreated) // Check if the handle has been created
+                        IChatModel chatModel;
+                        byte[] fileContent = File.ReadAllBytes(filePath);
+                        string author = "";
+                        string attachmentName = "";
+                        string type = "";
+                        DateTime datetime = DateTime.Now;
+                        nameConvert(ref author, ref attachmentName, ref type, ref datetime, content);
+                        switch (type)
                         {
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                if (userSender != null && chatModel != null)
+                            case "image":
+                                chatModel = new ImageChatModel()
                                 {
-                                    friendList[userSender].AddMessage(chatModel);
-                                }
-                            });
+                                    Author = author,
+                                    Time = datetime,
+                                    Image = Image.FromFile(filePath),
+                                    Inbound = true,
+                                };
+                                break;
+                            default:
+                                chatModel = new AttachmentChatModel()
+                                {
+                                    Author = author,
+                                    Filename = attachmentName,
+                                    Time = datetime,
+                                    Attachment = fileContent,
+                                    Inbound = true,
+                                };
+                                break;
                         }
-                    }
-                    else
-                    {
-                        GroupChat groupSender = groupList.Keys.FirstOrDefault(group => group.GroupUID == receiverID);
-                        if (groupSender != null)
+
+                        if (receiverID == UID)
                         {
+                            UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
                             // Update TB_remessage on the UI thread
                             if (this.IsHandleCreated) // Check if the handle has been created
                             {
                                 this.Invoke((MethodInvoker)delegate
                                 {
-                                    if (chatModel != null)
+                                    if (userSender != null && chatModel != null)
                                     {
-                                        groupList[groupSender].AddMessage(chatModel);
+                                        friendList[userSender].AddMessage(chatModel);
                                     }
                                 });
                             }
+                        }
+                        else
+                        {
+                            GroupChat groupSender = groupList.Keys.FirstOrDefault(group => group.GroupUID == receiverID);
+                            if (groupSender != null)
+                            {
+                                // Update TB_remessage on the UI thread
+                                if (this.IsHandleCreated) // Check if the handle has been created
+                                {
+                                    this.Invoke((MethodInvoker)delegate
+                                    {
+                                        if (chatModel != null)
+                                        {
+                                            groupList[groupSender].AddMessage(chatModel);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string[] nameAndEx = content.Split(".");
+                        int avatarUID = int.Parse(nameAndEx[0]);
+                        string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                        folderPath = Path.Combine(folderPathRoot, nameAndEx[0]);
+                        filePath = Path.Combine(folderPath, fileName);
+                        if (File.Exists(filePath))
+                        {
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                                {
+                                    friendPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
+                                    friendListPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
+                                }
+                            });
                         }
                     }
                 }
@@ -526,6 +551,22 @@ namespace anonymous_chat
                 {
                     friendPanel.addFriend(friend.UID, friend.UserName);
                     friendListPanel.addFriend(friend.UID, friend.UserName);
+
+                    string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                    string fileName = $"SETAVATAR~{friend.UID}.png";
+                    string filePath = Path.Combine(folderPath, fileName);
+                    if (File.Exists(filePath))
+                    {
+                        using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                        {
+                            friendPanel.friendList[friend.UID].PB_avatar.Image = Image.FromStream(ms);
+                            friendListPanel.friendList[friend.UID].PB_avatar.Image = Image.FromStream(ms);
+                        }
+                    }
+                    else
+                    {
+                        Send("GETAVATAR=" + UID + ">" + friend.UID);
+                    }
                 }
             });
         }
@@ -569,6 +610,22 @@ namespace anonymous_chat
                 {
                     friendPanel.addFriend(group.GroupUID, group.GroupName);
                     friendListPanel.addFriend(group.GroupUID, group.GroupName);
+
+                    string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                    string fileName = $"SETAVATAR~{group.GroupUID}.png";
+                    string filePath = Path.Combine(folderPath, fileName);
+                    if (File.Exists(filePath))
+                    {
+                        using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                        {
+                            friendPanel.friendList[group.GroupUID].PB_avatar.Image = Image.FromStream(ms);
+                            friendListPanel.friendList[group.GroupUID].PB_avatar.Image = Image.FromStream(ms);
+                        }
+                    }
+                    else
+                    {
+                        Send("GETAVATAR=" + UID + ">" + group.GroupUID);
+                    }
                 }
             });
         }
@@ -728,22 +785,22 @@ namespace anonymous_chat
 
         public void ResizeImage(string originalFile, string newFile, int width, int height)
         {
-            using (Image originalImage = Image.FromFile(originalFile))
+            using (var ms = new MemoryStream(File.ReadAllBytes(originalFile))) // Read the original file into a MemoryStream.
             {
-                using (Bitmap newImage = new Bitmap(width, height))
+                using (Bitmap originalBitmap = new Bitmap(ms)) // Create a Bitmap from the MemoryStream.
                 {
-                    using (Graphics graphics = Graphics.FromImage(newImage))
+                    using (Bitmap newImage = new Bitmap(width, height))
                     {
-                        graphics.CompositingQuality = CompositingQuality.HighQuality;
-                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        graphics.SmoothingMode = SmoothingMode.HighQuality;
-                        graphics.DrawImage(originalImage, 0, 0, width, height);
+                        using (Graphics graphics = Graphics.FromImage(newImage))
+                        {
+                            graphics.CompositingQuality = CompositingQuality.HighQuality;
+                            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            graphics.SmoothingMode = SmoothingMode.HighQuality;
+                            graphics.DrawImage(originalBitmap, 0, 0, width, height);
+                        }
+
+                        newImage.Save(newFile, ImageFormat.Png);
                     }
-                    if (File.Exists(newFile))
-                    {
-                        File.Delete(newFile);
-                    }
-                    newImage.Save(newFile, ImageFormat.Png);
                 }
             }
         }

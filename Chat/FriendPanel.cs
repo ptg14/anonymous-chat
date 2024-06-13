@@ -1,4 +1,5 @@
-﻿using System;
+﻿using anonymous_chat.DataBase;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +14,7 @@ namespace anonymous_chat.Chat
     public partial class FriendPanel : UserControl
     {
         public Main main;
+        public Dictionary<int, AFriend> friendList = new Dictionary<int, AFriend>();
 
         public FriendPanel()
         {
@@ -30,6 +32,7 @@ namespace anonymous_chat.Chat
             {
                 ScrollControlIntoView(newFriend);
             }
+            friendList.Add(UID, newFriend);
         }
     }
 

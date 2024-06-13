@@ -1,4 +1,5 @@
 ﻿using anonymous_chat.Chat;
+using Google.Cloud.Firestore;
 
 namespace anonymous_chat
 {
@@ -13,9 +14,11 @@ namespace anonymous_chat
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        protected async override void Dispose(bool disposing)
         {
-            this.Send("DISCONNECT=" + this.UID);
+            Send("DISCONNECT=" + UID);
+            DocumentReference docRef = db.Collection("Online").Document(UID.ToString());
+            await docRef.DeleteAsync();
             if (disposing && (components != null))
             {
                 components.Dispose();
