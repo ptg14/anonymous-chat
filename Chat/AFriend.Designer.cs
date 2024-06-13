@@ -55,6 +55,7 @@
             LB_name.Size = new Size(133, 28);
             LB_name.TabIndex = 1;
             LB_name.Text = "thang";
+            LB_name.Click += LB_name_Click;
             // 
             // LB_UID
             // 

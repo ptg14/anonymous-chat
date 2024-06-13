@@ -576,6 +576,7 @@ namespace anonymous_chat
         public void LoadList()
         {
             friendPanel.Controls.Clear();
+            friendListPanel.Controls.Clear();
             LoadFriendList();
             LoadGroupList();
         }

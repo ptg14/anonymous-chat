@@ -57,25 +57,28 @@
             // LB_name
             // 
             LB_name.AutoEllipsis = true;
-            LB_name.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            LB_name.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             LB_name.Location = new Point(80, 3);
             LB_name.Name = "LB_name";
-            LB_name.Size = new Size(83, 28);
+            LB_name.Size = new Size(83, 31);
             LB_name.TabIndex = 5;
-            LB_name.Text = "thang";
+            LB_name.Text = "name";
+            LB_name.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // LB_UID
             // 
             LB_UID.AutoSize = true;
-            LB_UID.Location = new Point(80, 31);
+            LB_UID.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            LB_UID.Location = new Point(80, 34);
             LB_UID.Name = "LB_UID";
-            LB_UID.Size = new Size(73, 20);
+            LB_UID.Size = new Size(64, 17);
             LB_UID.TabIndex = 6;
             LB_UID.Text = "UID: 1234";
             // 
             // BT_deleteFriend
             // 
             BT_deleteFriend.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BT_deleteFriend.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             BT_deleteFriend.Location = new Point(169, 7);
             BT_deleteFriend.Name = "BT_deleteFriend";
             BT_deleteFriend.Size = new Size(51, 65);

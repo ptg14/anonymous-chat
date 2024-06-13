@@ -27,40 +27,6 @@ namespace anonymous_chat.Chat
             LB_UID.Text = UID.ToString();
             friendUID = UID;
             isOnline();
-            if (online)
-            {
-                if (this.IsHandleCreated)
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        LB_online.ForeColor = Color.Green;
-                        LB_online.Text = "Online";
-                    });
-                }
-            }
-            else if (friendUID == 142)
-            {
-                if (this.IsHandleCreated)
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        LB_online.ForeColor = Color.Green;
-                        LB_online.Text = "Online";
-                        LB_UID.Text = "AI";
-                    });
-                }
-            }
-            else
-            {
-                if (this.IsHandleCreated)
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        LB_online.ForeColor = Color.Red;
-                        LB_online.Text = "Offline";
-                    });
-                }
-            }
         }
 
         private async void isOnline()
@@ -69,7 +35,34 @@ namespace anonymous_chat.Chat
             {
                 DocumentSnapshot snapshot = await db.Collection("Online").Document(LB_UID.Text).GetSnapshotAsync();
                 online = snapshot.Exists;
+                UpdateOnlineStatusUI();
             }
+        }
+
+        private void UpdateOnlineStatusUI()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate { UpdateOnlineStatusUI(); });
+            }
+            else
+            {
+                if (online)
+                {
+                    LB_online.ForeColor = Color.Lime;
+                    LB_online.Text = "Online";
+                }
+                else
+                {
+                    LB_online.ForeColor = Color.Red;
+                    LB_online.Text = "Offline";
+                }
+            }
+        }
+
+        public void hasMessage()
+        {
+            ForeColor = Color.Red;
         }
 
         private void mainFriend_Click(object sender, EventArgs e)
@@ -78,6 +71,11 @@ namespace anonymous_chat.Chat
         }
 
         private void PB_avatar_Click(object sender, EventArgs e)
+        {
+            main.openChat(friendUID);
+        }
+
+        private void LB_name_Click(object sender, EventArgs e)
         {
             main.openChat(friendUID);
         }

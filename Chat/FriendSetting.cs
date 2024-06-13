@@ -29,39 +29,75 @@ namespace anonymous_chat.Chat
             LB_name.Text = username;
             LB_UID.Text = UID.ToString();
             friendUID = UID;
+            if (UID >= 10000)
+            {
+                BT_deleteFriend.Text = "Rời nhóm";
+            }
             isOnline();
-            if (online)
-            {
-                LB_online.ForeColor = Color.Green;
-                LB_online.Text = "Online";
-            }
-            else
-            {
-                LB_online.ForeColor = Color.Red;
-                LB_online.Text = "Offline";
-            }
         }
 
         private async void isOnline()
         {
-            DocumentSnapshot snapshot = await db.Collection("Online").Document(LB_UID.Text).GetSnapshotAsync();
-            online = snapshot.Exists;
+            if (friendUID < 10000 && friendUID != 142)
+            {
+                DocumentSnapshot snapshot = await db.Collection("Online").Document(LB_UID.Text).GetSnapshotAsync();
+                online = snapshot.Exists;
+                UpdateOnlineStatusUI();
+            }
+        }
+
+        private void UpdateOnlineStatusUI()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate { UpdateOnlineStatusUI(); });
+            }
+            else
+            {
+                if (online)
+                {
+                    LB_online.ForeColor = Color.Lime;
+                    LB_online.Text = "Online";
+                }
+                else
+                {
+                    LB_online.ForeColor = Color.Red;
+                    LB_online.Text = "Offline";
+                }
+            }
         }
 
         private async void BT_deleteFriend_Click(object sender, EventArgs e)
         {
-            CollectionReference friendsRef = db.Collection("Friends");
-            Query query = friendsRef.WhereEqualTo("UID", main.UID).WhereEqualTo("FriendUID", friendUID);
-            QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
-            foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+            if (friendUID < 10000)
             {
-                await documentSnapshot.Reference.DeleteAsync();
+                CollectionReference friendsRef = db.Collection("Friends");
+                Query query = friendsRef.WhereEqualTo("UID", main.UID).WhereEqualTo("FriendUID", friendUID);
+                QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+                foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+                {
+                    await documentSnapshot.Reference.DeleteAsync();
+                }
+                query = friendsRef.WhereEqualTo("UID", friendUID).WhereEqualTo("FriendUID", main.UID);
+                querySnapshot = await query.GetSnapshotAsync();
+                foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+                {
+                    await documentSnapshot.Reference.DeleteAsync();
+                }
             }
-            query = friendsRef.WhereEqualTo("UID", friendUID).WhereEqualTo("FriendUID", main.UID);
-            querySnapshot = await query.GetSnapshotAsync();
-            foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+            else
             {
-                await documentSnapshot.Reference.DeleteAsync();
+                DocumentReference groupDocRef = db.Collection("Group").Document(friendUID.ToString());
+                DocumentSnapshot groupDocSnapshot = await groupDocRef.GetSnapshotAsync();
+                if (groupDocSnapshot.Exists)
+                {
+                    GroupChat groupChat = groupDocSnapshot.ConvertTo<GroupChat>();
+                    if (groupChat.MemberUID.Contains(main.UID))
+                    {
+                        groupChat.MemberUID.Remove(main.UID);
+                        await groupDocRef.SetAsync(groupChat, SetOptions.MergeAll);
+                    }
+                }
             }
             main.LoadFriendList();
         }
