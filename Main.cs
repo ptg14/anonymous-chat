@@ -293,8 +293,24 @@ namespace anonymous_chat
                                 };
                                 break;
                         }
-
-                        if (receiverID == UID)
+                        if (receiverID == 999)
+                        {
+                            if (this.IsHandleCreated) // Check if the handle has been created
+                            {
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    if (chatModel != null)
+                                    {
+                                        Random.AddMessage(chatModel);
+                                        if (toUID != 999)
+                                        {
+                                            friendPanel.friendList[999].hasMessage();
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                        else if (receiverID == UID)
                         {
                             UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
                             // Update TB_remessage on the UI thread
@@ -308,6 +324,8 @@ namespace anonymous_chat
                                     }
                                 });
                             }
+                            string json = JsonConvert.SerializeObject(saveChatModel);
+                            saveChat(senderID, receiverID, json);
                         }
                         else
                         {
@@ -326,10 +344,9 @@ namespace anonymous_chat
                                     });
                                 }
                             }
+                            string json = JsonConvert.SerializeObject(saveChatModel);
+                            saveChat(senderID, receiverID, json);
                         }
-
-                        string json = JsonConvert.SerializeObject(saveChatModel);
-                        saveChat(senderID, receiverID, json);
                     }
                     else
                     {
@@ -356,7 +373,19 @@ namespace anonymous_chat
                 else if (parts[0] == "RANDOMACCEPTED")
                 {
                     random = true;
-                    Random.BT_send.Enabled = true;
+                    TextChatModel system = new TextChatModel()
+                    {
+                        Author = "System",
+                        Time = DateTime.Now,
+                        Body = "Người nhắn ngẫu nhiên đã tham gia cuộc trò chuyện.",
+                        Inbound = true
+                    };
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        Random.AddMessage(system);
+                        Random.BT_send.Enabled = true;
+                        friendPanel.friendList[999].changeOnlineStatus(true);
+                    });
                 }
                 else if (parts[0] == "RANDOMCANCELLED")
                 {
@@ -371,8 +400,9 @@ namespace anonymous_chat
                     this.Invoke((MethodInvoker)delegate
                     {
                         Random.AddMessage(system);
+                        Random.BT_send.Enabled = false;
+                        friendPanel.friendList[999].changeOnlineStatus(false);
                     });
-                    Random.BT_send.Enabled = false;
                 }
                 else if (parts[0] == "RANDOMREJECTED")
                 {
@@ -380,12 +410,13 @@ namespace anonymous_chat
                     {
                         Author = "System",
                         Time = DateTime.Now,
-                        Body = "Hiện tại không tìm thấy ai, xin thử lại sau.",
+                        Body = "Hiện tại không tìm thấy ai, xin đợi.",
                         Inbound = true
                     };
                     this.Invoke((MethodInvoker)delegate
                     {
                         Random.AddMessage(system);
+                        friendPanel.friendList[999].changeOnlineStatus(false);
                     });
                 }
                 else if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED" || parts[0] == "GROUPREQUEST")
@@ -412,11 +443,28 @@ namespace anonymous_chat
                     }
                     catch (Exception ex)
                     {
-                        //MessageBox.Show(ex.Message, "ERROR");
+                        MessageBox.Show(ex.Message, "ERROR");
                     }
 
                     // Check if the message is sent to you
-                    if (receiverID == UID)
+                    if (receiverID == 999)
+                    {
+                        if (this.IsHandleCreated) // Check if the handle has been created
+                        {
+                            this.Invoke((MethodInvoker)delegate
+                            {
+                                if (textMessage != null)
+                                {
+                                    Random.AddMessage(textMessage);
+                                    if (toUID != 999)
+                                    {
+                                        friendPanel.friendList[999].hasMessage();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    else if (receiverID == UID)
                     {
                         UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
                         // Update TB_remessage on the UI thread
@@ -427,6 +475,7 @@ namespace anonymous_chat
                                 if (userSender != null && textMessage != null)
                                 {
                                     friendList[userSender].AddMessage(textMessage);
+                                    friendPanel.friendList[userSender.UID].changeOnlineStatus(true);
                                     if (userSender.UID != toUID)
                                     {
                                         friendPanel.friendList[userSender.UID].hasMessage();
@@ -434,6 +483,7 @@ namespace anonymous_chat
                                 }
                             });
                         }
+                        saveChat(senderID, receiverID, json);
                     }
                     else
                     {
@@ -456,9 +506,8 @@ namespace anonymous_chat
                                 });
                             }
                         }
+                        saveChat(senderID, receiverID, json);
                     }
-
-                    saveChat(senderID, receiverID, json);
                 }
             }
         }

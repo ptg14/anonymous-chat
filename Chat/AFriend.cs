@@ -47,10 +47,15 @@ namespace anonymous_chat.Chat
 
         private async void isOnline()
         {
-            if (friendUID < 10000 && friendUID != 142 && friendUID != 999)
+            if (friendUID < 10000 && friendUID != 142)
             {
                 DocumentSnapshot snapshot = await db.Collection("Online").Document(LB_UID.Text).GetSnapshotAsync();
                 online = snapshot.Exists;
+                UpdateOnlineStatusUI();
+            }
+            else if (friendUID == 999)
+            {
+                online = false;
                 UpdateOnlineStatusUI();
             }
         }
@@ -74,6 +79,12 @@ namespace anonymous_chat.Chat
                     LB_online.Text = "Offline";
                 }
             }
+        }
+
+        public void changeOnlineStatus(bool status)
+        {
+            online = status;
+            UpdateOnlineStatusUI();
         }
 
         public void hasMessage()
