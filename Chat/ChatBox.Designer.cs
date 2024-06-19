@@ -151,11 +151,11 @@ namespace anonymous_chat.Chat
         }
 
         #endregion
-        private Panel ChatPanel;
+        public Panel ChatPanel;
         private Panel bottomPanel;
 
         private System.Windows.Forms.Button BT_clear;
-        private System.Windows.Forms.Button BT_send;
+        public System.Windows.Forms.Button BT_send;
         private System.Windows.Forms.Button BT_file;
         private System.Windows.Forms.TextBox TB_message;
         private Label LB_fileName;

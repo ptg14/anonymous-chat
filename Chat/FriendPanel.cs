@@ -28,7 +28,7 @@ namespace anonymous_chat.Chat
             newFriend.Dock = DockStyle.Top;
             Controls.Add(newFriend);
             newFriend.BringToFront();
-            if (UID == 142)
+            if (UID == 142 || UID == 999)
             {
                 ScrollControlIntoView(newFriend);
             }

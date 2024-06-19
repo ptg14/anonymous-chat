@@ -30,6 +30,7 @@ namespace anonymous_chat
         private static FirestoreDb db = FireBase.dataBase;
         public int UID;
         public int toUID;
+        public bool random = false;
         public string userName;
         private bool addFriendVisible = false;
         private Dictionary<UserData, ChatBox> friendList = new Dictionary<UserData, ChatBox>();
@@ -114,7 +115,7 @@ namespace anonymous_chat
         {
             if (isConnected)
             {
-                byte[] message = Encoding.ASCII.GetBytes(text);
+                byte[] message = Encoding.UTF8.GetBytes(text);
                 stream.Write(message, 0, message.Length); // Send the message to the server
             }
         }
@@ -352,6 +353,41 @@ namespace anonymous_chat
                         }
                     }
                 }
+                else if (parts[0] == "RANDOMACCEPTED")
+                {
+                    random = true;
+                    Random.BT_send.Enabled = true;
+                }
+                else if (parts[0] == "RANDOMCANCELLED")
+                {
+                    random = false;
+                    TextChatModel system = new TextChatModel()
+                    {
+                        Author = "System",
+                        Time = DateTime.Now,
+                        Body = "Người nhắn ngẫu nhiên đã thoát cuộc trò chuyện.",
+                        Inbound = true
+                    };
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        Random.AddMessage(system);
+                    });
+                    Random.BT_send.Enabled = false;
+                }
+                else if (parts[0] == "RANDOMREJECTED")
+                {
+                    TextChatModel system = new TextChatModel()
+                    {
+                        Author = "System",
+                        Time = DateTime.Now,
+                        Body = "Hiện tại không tìm thấy ai, xin thử lại sau.",
+                        Inbound = true
+                    };
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        Random.AddMessage(system);
+                    });
+                }
                 else if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED" || parts[0] == "GROUPREQUEST")
                 {
                     notiPanel.addNoti(receivedMessage);
@@ -505,7 +541,7 @@ namespace anonymous_chat
                 AI.Visible = true;
                 AI.BringToFront();
                 LB_friendName.Text = "Simsimi";
-                PB_friendAvatar.Image = Properties.Resources.Simsimi70x70;
+                PB_friendAvatar.Image = Properties.Resources.Simsimi50x50;
                 return;
             }
             if (chatUID == 999)
@@ -517,7 +553,7 @@ namespace anonymous_chat
                 Random.Visible = true;
                 Random.BringToFront();
                 LB_friendName.Text = "Random";
-                PB_friendAvatar.Image = Properties.Resources.random70x70;
+                PB_friendAvatar.Image = Properties.Resources.random50x50;
                 return;
             }
             else if (toUID < 10000)
@@ -895,21 +931,28 @@ namespace anonymous_chat
 
         private void BT_AI_Click(object sender, EventArgs e)
         {
-            this.Invoke((MethodInvoker)delegate
+            if (!friendPanel.friendList.ContainsKey(142))
             {
-                friendPanel.addFriend(142, "Simsimi");
-            });
+                this.Invoke((MethodInvoker)delegate
+                {
+                    friendPanel.addFriend(142, "Simsimi");
+                });
 
-            AI.main = this;
-            mainChat.Controls.Add(AI);
+                AI.main = this;
+                mainChat.Controls.Add(AI);
 
-            AI.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            AI.BackColor = SystemColors.Window;
-            AI.Location = new Point(0, 0);
-            AI.Margin = new Padding(3, 4, 3, 4);
-            AI.Name = "Simsimi";
-            AI.Size = new Size(619, 440);
-            AI.Visible = false;
+                AI.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                AI.BackColor = SystemColors.Window;
+                AI.Location = new Point(0, 0);
+                AI.Margin = new Padding(3, 4, 3, 4);
+                AI.Name = "Simsimi";
+                AI.Size = new Size(619, 440);
+                AI.Visible = false;
+            }
+            else
+            {
+                friendPanel.ScrollControlIntoView(friendPanel.friendList[142]);
+            }
         }
 
         private void BT_setting_Click(object sender, EventArgs e)
@@ -933,21 +976,32 @@ namespace anonymous_chat
 
         private void BT_random_Click(object sender, EventArgs e)
         {
-            this.Invoke((MethodInvoker)delegate
+            if (!friendPanel.friendList.ContainsKey(999))
             {
-                friendPanel.addFriend(999, "Random");
-            });
+                this.Invoke((MethodInvoker)delegate
+                {
+                    friendPanel.addFriend(999, "Random");
+                });
 
-            Random.main = this;
-            mainChat.Controls.Add(AI);
+                Random.main = this;
+                mainChat.Controls.Add(Random);
 
-            Random.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            Random.BackColor = SystemColors.Window;
-            Random.Location = new Point(0, 0);
-            Random.Margin = new Padding(3, 4, 3, 4);
-            Random.Name = "Random";
-            Random.Size = new Size(619, 440);
-            Random.Visible = false;
+                Random.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                Random.BackColor = SystemColors.Window;
+                Random.Location = new Point(0, 0);
+                Random.Margin = new Padding(3, 4, 3, 4);
+                Random.Name = "Random";
+                Random.Size = new Size(619, 440);
+                Random.Visible = false;
+                Random.BT_send.Enabled = false;
+            }
+            else
+            {
+                friendPanel.ScrollControlIntoView(friendPanel.friendList[999]);
+            }
+            Random.ChatPanel.Controls.Clear();
+            random = false;
+            Send("RANDOMREQUEST=" + UID);
         }
 
         private void BT_logOut_Click(object sender, EventArgs e)

@@ -153,6 +153,7 @@ namespace anonymous_chat.Chat
                     {
                         textJson = main.UID + "-" + main.toUID + "~" + chatModel.Author + $"+{(chatModel as AttachmentChatModel).Filename},{chatModel.Type};{chatModel.Time.Day}_{chatModel.Time.Month}_{chatModel.Time.Year}_{chatModel.Time.Hour}_{chatModel.Time.Minute}_{chatModel.Time.Second}" + fileInfo.Extension;
                     }
+
                     string folderPathroot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, main.UID.ToString());
                     string folderPath = Path.Combine(folderPathroot, main.toUID.ToString());
                     string destinationFilePath = Path.Combine(folderPath, textJson);
@@ -228,7 +229,9 @@ namespace anonymous_chat.Chat
                         else
                         {
                             string json = JsonConvert.SerializeObject(textModel);
-                            main.saveChat(main.toUID, main.UID, json);
+                            if (main.toUID != 999){
+                                main.saveChat(main.toUID, main.UID, json);
+                            }
                             string textJson = main.UID + ">" + main.toUID + "=" + json;
                             main.Send(textJson);
                         }

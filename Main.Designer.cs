@@ -16,9 +16,13 @@ namespace anonymous_chat
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected async override void Dispose(bool disposing)
         {
-            Send("DISCONNECT=" + UID);
-            DocumentReference docRef = db.Collection("Online").Document(UID.ToString());
-            await docRef.DeleteAsync();
+            if (UID != -1)
+            {
+                Send("DISCONNECT=" + UID);
+                DocumentReference docRef = db.Collection("Online").Document(UID.ToString());
+                await docRef.DeleteAsync();
+            }
+            
             if (disposing && (components != null))
             {
                 components.Dispose();

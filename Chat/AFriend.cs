@@ -26,17 +26,17 @@ namespace anonymous_chat.Chat
             LB_name.Text = username;
             LB_UID.Text = UID.ToString();
             friendUID = UID;
-            if (UID < 10000)
-            {
-                PB_avatar.Image = Properties.Resources.user70x70;
-            }
-            else if (UID == 142)
+            if (UID == 142)
             {
                 PB_avatar.Image = Properties.Resources.Simsimi70x70;
             }
-            else if (UID == 9999)
+            else if (UID == 999)
             {
                 PB_avatar.Image = Properties.Resources.random70x70;
+            }
+            else if (UID < 10000)
+            {
+                PB_avatar.Image = Properties.Resources.user70x70;
             }
             else
             {
@@ -47,7 +47,7 @@ namespace anonymous_chat.Chat
 
         private async void isOnline()
         {
-            if (friendUID < 10000 && friendUID != 142)
+            if (friendUID < 10000 && friendUID != 142 && friendUID != 999)
             {
                 DocumentSnapshot snapshot = await db.Collection("Online").Document(LB_UID.Text).GetSnapshotAsync();
                 online = snapshot.Exists;
