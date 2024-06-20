@@ -301,6 +301,7 @@ namespace anonymous_chat
             groupSetting.Size = new Size(544, 295);
             groupSetting.TabIndex = 0;
             groupSetting.Visible = false;
+            groupSetting.groupPanel = this;
             // 
             // Group
             // 

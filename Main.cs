@@ -70,10 +70,10 @@ namespace anonymous_chat
                 LB_name.Text = userName;
                 LB_UID.Text = "UID: " + UID.ToString();
                 isOnline();
-                LoadList();
                 Thread connectThread = new Thread(ConnectToServer);
                 connectThread.IsBackground = true;
                 connectThread.Start();
+                LoadList();
             }
             else
             {
@@ -151,15 +151,15 @@ namespace anonymous_chat
 
         private async void ReceiveMessages()
         {
+            byte[] data = new byte[100 * 1024 * 1024];
             while (isConnected)
             {
-                byte[] data = new byte[100 * 1024 * 1024];
                 int bytes = 0;
                 try
                 {
                     bytes = await stream.ReadAsync(data, 0, data.Length);
                 }
-                catch (IOException ex)
+                catch (Exception ex)
                 {
                     // Handle the exception here
                     MessageBox.Show(ex.Message, "ERROR");
@@ -176,6 +176,7 @@ namespace anonymous_chat
                 }
 
                 string receivedMessage = Encoding.UTF8.GetString(data, 0, bytes);
+                Debug.WriteLine(receivedMessage);
                 //MessageBox.Show("Receive:\n" + receivedMessage);
 
 
@@ -186,7 +187,12 @@ namespace anonymous_chat
                     // Extract file name and size from the header
                     string[] fileInfo = parts[1].Split(':');
                     string fileName = fileInfo[0];
-                    long fileSize = long.Parse(fileInfo[1]);
+                    long fileSize;
+                    if (!long.TryParse(fileInfo[1], out fileSize))
+                    {
+                        Debug.WriteLine("Invalid file size: " + fileInfo[1]);
+                        continue;
+                    }
                     string[] mode = fileName.Split("~");
                     string dowhat = mode[0];
                     string content = mode[1];
@@ -355,16 +361,23 @@ namespace anonymous_chat
                         string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
                         folderPath = Path.Combine(folderPathRoot, nameAndEx[0]);
                         filePath = Path.Combine(folderPath, fileName);
-                        string newFilePath = Path.Combine(folderPath, "SETAVATAR~" + nameAndEx[0] + "50x50.png");
+                        string newFilePath = Path.Combine(folderPath, "SETAVATAR~" + nameAndEx[0] + "70x70.png");
                         if (File.Exists(filePath))
                         {
-                            ResizeImage(filePath, newFilePath, 50, 50);
+                            ResizeImage(filePath, newFilePath, 70, 70);
                             this.Invoke((MethodInvoker)delegate
                             {
-                                using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                                try
                                 {
-                                    friendPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
-                                    friendListPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
+                                    using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                                    {
+                                        friendPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
+                                        friendListPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show("Change avatar: " + ex.Message, "ERROR");
                                 }
                             });
                         }
@@ -678,12 +691,20 @@ namespace anonymous_chat
             }
             string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
             string folderPath = Path.Combine(folderPathRoot, toUID.ToString());
-            string filePath = Path.Combine(folderPath, "SETAVATAR~" + toUID + "50x50.png");
+            string filePath = Path.Combine(folderPath, "SETAVATAR~" + toUID + ".png");
             if (File.Exists(filePath)){
                 PB_friendAvatar.Image = Image.FromFile(filePath);
             }
             else
             {
+                if (toUID < 10000)
+                {
+                    PB_friendAvatar.Image = Properties.Resources.user50x50;
+                }
+                else
+                {
+                    PB_friendAvatar.Image = Properties.Resources.friend50x50;
+                }
                 Send("GETAVATAR=" + UID + ">" + toUID);
             }
         }
@@ -710,7 +731,7 @@ namespace anonymous_chat
             }
         }
 
-        public async void LoadFriendList()
+        public async Task LoadFriendList()
         {
             // Query the database for the user's friend list
             Query query = db.Collection("Friends").WhereEqualTo("UID", UID).WhereEqualTo("isFriend", true);
@@ -754,17 +775,23 @@ namespace anonymous_chat
 
                     string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
                     folderPath = Path.Combine(folderPath, friend.UID.ToString());
-                    string fileName = $"SETAVATAR~{friend.UID}.png";
+                    string fileName = $"SETAVATAR~{friend.UID}70x70.png";
                     string filePath = Path.Combine(folderPath, fileName);
                     if (File.Exists(filePath))
                     {
-                        using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                        try
                         {
-                            friendPanel.friendList[friend.UID].PB_avatar.Image = Image.FromStream(ms);
-                            friendListPanel.friendList[friend.UID].PB_avatar.Image = Image.FromStream(ms);
+                            using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                            {
+                                friendPanel.friendList[friend.UID].PB_avatar.Image = Image.FromStream(ms);
+                                friendListPanel.friendList[friend.UID].PB_avatar.Image = Image.FromStream(ms);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Load friend: " + ex.Message, "ERROR");
                         }
                     }
-                    Send("GETAVATAR=" + UID + ">" + friend.UID);
 
                     filePath = Path.Combine(folderPath, $"{UID}-{friend.UID}~history.txt");
                     if (File.Exists(filePath))
@@ -807,7 +834,7 @@ namespace anonymous_chat
             });
         }
 
-        public async void LoadGroupList()
+        public async Task LoadGroupList()
         {
             // Query the database for the user's group list
             Query query = db.Collection("Group").WhereArrayContains("MemberUID", UID);
@@ -849,17 +876,23 @@ namespace anonymous_chat
 
                     string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
                     folderPath = Path.Combine(folderPath, group.GroupUID.ToString());
-                    string fileName = $"SETAVATAR~{group.GroupUID}.png";
+                    string fileName = $"SETAVATAR~{group.GroupUID}70x70.png";
                     string filePath = Path.Combine(folderPath, fileName);
                     if (File.Exists(filePath))
                     {
-                        using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                        try
                         {
-                            friendPanel.friendList[group.GroupUID].PB_avatar.Image = Image.FromStream(ms);
-                            friendListPanel.friendList[group.GroupUID].PB_avatar.Image = Image.FromStream(ms);
+                            using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                            {
+                                friendPanel.friendList[group.GroupUID].PB_avatar.Image = Image.FromStream(ms);
+                                friendListPanel.friendList[group.GroupUID].PB_avatar.Image = Image.FromStream(ms);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Load group: " + ex.Message, "ERROR");
                         }
                     }
-                    Send("GETAVATAR=" + UID + ">" + group.GroupUID);
 
                     filePath = Path.Combine(folderPath, $"{group.GroupUID}~history.txt");
                     if (File.Exists(filePath))
@@ -902,14 +935,31 @@ namespace anonymous_chat
             });
         }
 
-        public void LoadList()
+        public async void LoadList()
         {
             friendPanel.Controls.Clear();
             friendPanel.friendList.Clear();
             friendListPanel.Controls.Clear();
             friendListPanel.friendList.Clear();
-            LoadFriendList();
-            LoadGroupList();
+            await LoadFriendList();
+            await LoadGroupList();
+            Thread avatar = new Thread(LoadAvatar);
+            avatar.IsBackground = true;
+            avatar.Start();
+        }
+
+        private async void LoadAvatar()
+        {
+            foreach (UserData friend in friendList.Keys)
+            {
+                Send("GETAVATAR=" + UID + ">" + friend.UID);
+                await Task.Delay(100);
+            }
+            foreach (GroupChat group in groupList.Keys)
+            {
+                Send("GETAVATAR=" + UID + ">" + group.GroupUID);
+                await Task.Delay(100);
+            }
         }
 
         private async void BT_findFriend_Click(object sender, EventArgs e)
@@ -1091,23 +1141,30 @@ namespace anonymous_chat
 
         public void ResizeImage(string originalFile, string newFile, int width, int height)
         {
-            using (var ms = new MemoryStream(File.ReadAllBytes(originalFile))) // Read the original file into a MemoryStream.
+            try
             {
-                using (Bitmap originalBitmap = new Bitmap(ms)) // Create a Bitmap from the MemoryStream.
+                using (var ms = new MemoryStream(File.ReadAllBytes(originalFile))) // Read the original file into a MemoryStream.
                 {
-                    using (Bitmap newImage = new Bitmap(width, height))
+                    using (Bitmap originalBitmap = new Bitmap(ms)) // Create a Bitmap from the MemoryStream.
                     {
-                        using (Graphics graphics = Graphics.FromImage(newImage))
+                        using (Bitmap newImage = new Bitmap(width, height))
                         {
-                            graphics.CompositingQuality = CompositingQuality.HighQuality;
-                            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                            graphics.SmoothingMode = SmoothingMode.HighQuality;
-                            graphics.DrawImage(originalBitmap, 0, 0, width, height);
-                        }
+                            using (Graphics graphics = Graphics.FromImage(newImage))
+                            {
+                                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                                graphics.DrawImage(originalBitmap, 0, 0, width, height);
+                            }
 
-                        newImage.Save(newFile, ImageFormat.Png);
+                            newImage.Save(newFile, ImageFormat.Png);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error resizing image: {ex.Message}", "ERROR");
             }
         }
     }

@@ -123,6 +123,16 @@ namespace anonymous_chat.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap friend50x50 {
+            get {
+                object obj = ResourceManager.GetObject("friend50x50", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap friend70x70 {
             get {
                 object obj = ResourceManager.GetObject("friend70x70", resourceCulture);
@@ -256,6 +266,16 @@ namespace anonymous_chat.Properties {
         internal static System.Drawing.Bitmap Simsimi70x70 {
             get {
                 object obj = ResourceManager.GetObject("Simsimi70x70", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap user50x50 {
+            get {
+                object obj = ResourceManager.GetObject("user50x50", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
