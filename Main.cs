@@ -383,6 +383,22 @@ namespace anonymous_chat
                         }
                     }
                 }
+                else if (parts[0] == "DISCONNECT")
+                {
+                    int disconnectUID = int.Parse(parts[1]);
+                    if (friendPanel.friendList.ContainsKey(disconnectUID))
+                    {
+                        friendPanel.friendList[disconnectUID].changeOnlineStatus(false);
+                    }
+                }
+                else if (parts[0] == "UIDCONNECT")
+                {
+                    int connectUID = int.Parse(parts[1]);
+                    if (friendPanel.friendList.ContainsKey(connectUID))
+                    {
+                        friendPanel.friendList[connectUID].changeOnlineStatus(true);
+                    }
+                }
                 else if (parts[0] == "RANDOMACCEPTED")
                 {
                     random = true;
@@ -395,6 +411,7 @@ namespace anonymous_chat
                     };
                     this.Invoke((MethodInvoker)delegate
                     {
+                        Random.ChatPanel.Controls.Clear();
                         Random.AddMessage(system);
                         Random.BT_send.Enabled = true;
                         friendPanel.friendList[999].changeOnlineStatus(true);
@@ -428,6 +445,7 @@ namespace anonymous_chat
                     };
                     this.Invoke((MethodInvoker)delegate
                     {
+                        Random.ChatPanel.Controls.Clear();
                         Random.AddMessage(system);
                         friendPanel.friendList[999].changeOnlineStatus(false);
                     });
@@ -692,20 +710,28 @@ namespace anonymous_chat
             string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
             string folderPath = Path.Combine(folderPathRoot, toUID.ToString());
             string filePath = Path.Combine(folderPath, "SETAVATAR~" + toUID + ".png");
-            if (File.Exists(filePath)){
-                PB_friendAvatar.Image = Image.FromFile(filePath);
-            }
-            else
+            try
             {
-                if (toUID < 10000)
+                if (File.Exists(filePath))
                 {
-                    PB_friendAvatar.Image = Properties.Resources.user50x50;
+                    PB_friendAvatar.Image = Image.FromFile(filePath);
                 }
                 else
                 {
-                    PB_friendAvatar.Image = Properties.Resources.friend50x50;
+                    if (toUID < 10000)
+                    {
+                        PB_friendAvatar.Image = Properties.Resources.user50x50;
+                    }
+                    else
+                    {
+                        PB_friendAvatar.Image = Properties.Resources.friend50x50;
+                    }
+                    Send("GETAVATAR=" + UID + ">" + toUID);
                 }
-                Send("GETAVATAR=" + UID + ">" + toUID);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Set chat avatar: " + ex.Message, "ERROR");
             }
         }
 
