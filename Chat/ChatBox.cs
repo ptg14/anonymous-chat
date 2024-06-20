@@ -229,8 +229,13 @@ namespace anonymous_chat.Chat
                         else
                         {
                             string json = JsonConvert.SerializeObject(textModel);
-                            if (main.toUID != 999){
+                            if (main.toUID != 999 && main.toUID < 10000)
+                            {
                                 main.saveChat(main.toUID, main.UID, json);
+                            }
+                            else if (main.toUID != 999 && main.toUID >= 10000)
+                            {
+                                main.saveChat(main.UID, main.toUID, json);
                             }
                             string textJson = main.UID + ">" + main.toUID + "=" + json;
                             main.Send(textJson);

@@ -459,7 +459,7 @@ namespace anonymous_chat
                 {
                     int senderID = 0;
                     int receiverID = 0;
-                    TextChatModel textMessage = null;
+                    TextChatModel? textMessage = new TextChatModel();
                     string json = "";
                     try
                     {
@@ -471,6 +471,7 @@ namespace anonymous_chat
                         json = parts[1];
                         textMessage = JsonConvert.DeserializeObject<TextChatModel>(json);
                         textMessage.Inbound = true;
+                        json = JsonConvert.SerializeObject(textMessage);
                     }
                     catch (Exception ex)
                     {
@@ -506,10 +507,6 @@ namespace anonymous_chat
                                 if (userSender != null && textMessage != null)
                                 {
                                     friendList[userSender].AddMessage(textMessage);
-                                    if (friendPanel.friendList[userSender.UID].online == false)
-                                    {
-                                        friendPanel.friendList[userSender.UID].changeOnlineStatus(true);
-                                    }
                                     if (userSender.UID != toUID)
                                     {
                                         friendPanel.friendList[userSender.UID].hasMessage();
@@ -819,7 +816,7 @@ namespace anonymous_chat
                         }
                     }
 
-                    filePath = Path.Combine(folderPath, $"{UID}-{friend.UID}~history.txt");
+                    filePath = Path.Combine(folderPath, $"{friend.UID}-{UID}~history.txt");
                     if (File.Exists(filePath))
                     {
                         IChatModel chatModel;
