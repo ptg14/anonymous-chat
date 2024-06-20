@@ -62,7 +62,7 @@ namespace anonymous_chat.Chat
             if (group.AdminUID != main.UID)
             {
                 LB_log.ForeColor = Color.Red;
-                LB_log.Text = "Bạn không phải là admin của nhóm này";
+                LB_log.Text = "Bạn không phải là trưởng nhóm của nhóm này";
                 groupBox1.Enabled = false;
                 groupBox2.Enabled = false;
                 panel1.Enabled = false;
@@ -189,6 +189,30 @@ namespace anonymous_chat.Chat
             LB_log.Text = "Đã cấm " + TB_kickbanUID.Text + " tham gia nhóm";
         }
 
+        private async void BT_unBan_Click(object sender, EventArgs e)
+        {
+            if (TB_kickbanUID.Text == "")
+            {
+                LB_log.ForeColor = Color.Red;
+                LB_log.Text = "Nhập UID người dùng cần bỏ cấm tham gia nhóm";
+                return;
+            }
+
+            if (!group.BanUID.Contains(int.Parse(TB_kickbanUID.Text)))
+            {
+                LB_log.ForeColor = Color.Green;
+                LB_log.Text = "Người dùng không bị cấm tham gia nhóm";
+                return;
+            }
+
+            DocumentReference groupDocRef = db.Collection("Group").Document(group.GroupUID.ToString());
+            await groupDocRef.UpdateAsync("BanUID", FieldValue.ArrayRemove(int.Parse(TB_kickbanUID.Text)));
+
+            group.BanUID.Remove(int.Parse(TB_kickbanUID.Text));
+            LB_log.ForeColor = Color.Green;
+            LB_log.Text = "Đã bỏ cấm " + TB_kickbanUID.Text + " tham gia nhóm";
+        }
+
         private void BT_hide_Click(object sender, EventArgs e)
         {
             TB_password.PasswordChar = TB_password.PasswordChar == '\0' ? '*' : '\0';
@@ -271,6 +295,9 @@ namespace anonymous_chat.Chat
                     }
 
                     main.SendFile(filePath);
+
+                    LB_log.ForeColor = Color.Green;
+                    LB_log.Text = "Đổi ảnh đại diện nhóm thành công";
                 }
             }
         }

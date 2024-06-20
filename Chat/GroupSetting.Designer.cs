@@ -38,6 +38,7 @@
             BT_rename = new Button();
             TB_groupName = new TextBox();
             groupBox2 = new GroupBox();
+            BT_unBan = new Button();
             rTB_list = new RichTextBox();
             BT_ban = new Button();
             BT_kick = new Button();
@@ -62,7 +63,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(11, 16);
+            label1.Location = new Point(11, 7);
             label1.Name = "label1";
             label1.Size = new Size(76, 20);
             label1.TabIndex = 0;
@@ -71,7 +72,7 @@
             // TB_groupUID
             // 
             TB_groupUID.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            TB_groupUID.Location = new Point(93, 13);
+            TB_groupUID.Location = new Point(93, 4);
             TB_groupUID.Name = "TB_groupUID";
             TB_groupUID.Size = new Size(144, 27);
             TB_groupUID.TabIndex = 1;
@@ -79,7 +80,7 @@
             // BT_find
             // 
             BT_find.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            BT_find.Location = new Point(243, 12);
+            BT_find.Location = new Point(243, 3);
             BT_find.Name = "BT_find";
             BT_find.Size = new Size(117, 29);
             BT_find.TabIndex = 2;
@@ -104,9 +105,9 @@
             groupBox1.Controls.Add(BT_rename);
             groupBox1.Controls.Add(TB_groupName);
             groupBox1.Enabled = false;
-            groupBox1.Location = new Point(3, 46);
+            groupBox1.Location = new Point(3, 37);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(234, 212);
+            groupBox1.Size = new Size(234, 221);
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
             groupBox1.Text = "Đổi tên, mô tả";
@@ -114,7 +115,7 @@
             // BT_description
             // 
             BT_description.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            BT_description.Location = new Point(8, 177);
+            BT_description.Location = new Point(8, 186);
             BT_description.Name = "BT_description";
             BT_description.Size = new Size(220, 29);
             BT_description.TabIndex = 3;
@@ -127,13 +128,13 @@
             rTB_description.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             rTB_description.Location = new Point(8, 61);
             rTB_description.Name = "rTB_description";
-            rTB_description.Size = new Size(220, 110);
+            rTB_description.Size = new Size(220, 119);
             rTB_description.TabIndex = 2;
             rTB_description.Text = "";
             // 
             // BT_rename
             // 
-            BT_rename.Location = new Point(137, 26);
+            BT_rename.Location = new Point(137, 25);
             BT_rename.Name = "BT_rename";
             BT_rename.Size = new Size(91, 29);
             BT_rename.TabIndex = 1;
@@ -144,7 +145,7 @@
             // TB_groupName
             // 
             TB_groupName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            TB_groupName.Location = new Point(6, 26);
+            TB_groupName.Location = new Point(8, 26);
             TB_groupName.Name = "TB_groupName";
             TB_groupName.Size = new Size(125, 27);
             TB_groupName.TabIndex = 0;
@@ -152,17 +153,29 @@
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(BT_unBan);
             groupBox2.Controls.Add(rTB_list);
             groupBox2.Controls.Add(BT_ban);
             groupBox2.Controls.Add(BT_kick);
             groupBox2.Controls.Add(TB_kickbanUID);
             groupBox2.Enabled = false;
-            groupBox2.Location = new Point(243, 47);
+            groupBox2.Location = new Point(243, 38);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(123, 211);
+            groupBox2.Size = new Size(123, 220);
             groupBox2.TabIndex = 7;
             groupBox2.TabStop = false;
             groupBox2.Text = "Đuổi, Cấm";
+            // 
+            // BT_unBan
+            // 
+            BT_unBan.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            BT_unBan.Location = new Point(6, 185);
+            BT_unBan.Name = "BT_unBan";
+            BT_unBan.Size = new Size(111, 29);
+            BT_unBan.TabIndex = 5;
+            BT_unBan.Text = "Bỏ cấm";
+            BT_unBan.UseVisualStyleBackColor = true;
+            BT_unBan.Click += BT_unBan_Click;
             // 
             // rTB_list
             // 
@@ -171,14 +184,14 @@
             rTB_list.Location = new Point(6, 26);
             rTB_list.Name = "rTB_list";
             rTB_list.ReadOnly = true;
-            rTB_list.Size = new Size(111, 76);
+            rTB_list.Size = new Size(111, 60);
             rTB_list.TabIndex = 4;
             rTB_list.Text = "";
             // 
             // BT_ban
             // 
             BT_ban.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            BT_ban.Location = new Point(6, 176);
+            BT_ban.Location = new Point(6, 150);
             BT_ban.Name = "BT_ban";
             BT_ban.Size = new Size(111, 29);
             BT_ban.TabIndex = 3;
@@ -189,7 +202,7 @@
             // BT_kick
             // 
             BT_kick.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            BT_kick.Location = new Point(6, 141);
+            BT_kick.Location = new Point(6, 115);
             BT_kick.Name = "BT_kick";
             BT_kick.Size = new Size(111, 29);
             BT_kick.TabIndex = 1;
@@ -200,7 +213,7 @@
             // TB_kickbanUID
             // 
             TB_kickbanUID.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            TB_kickbanUID.Location = new Point(6, 108);
+            TB_kickbanUID.Location = new Point(6, 89);
             TB_kickbanUID.Name = "TB_kickbanUID";
             TB_kickbanUID.Size = new Size(111, 27);
             TB_kickbanUID.TabIndex = 0;
@@ -374,5 +387,6 @@
         private PictureBox PB_avatar;
         private RichTextBox rTB_list;
         private Button BT_group;
+        private Button BT_unBan;
     }
 }

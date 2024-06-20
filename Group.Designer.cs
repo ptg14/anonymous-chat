@@ -224,7 +224,7 @@ namespace anonymous_chat
             BT_add.Name = "BT_add";
             BT_add.Size = new Size(150, 29);
             BT_add.TabIndex = 2;
-            BT_add.Text = "Mời";
+            BT_add.Text = "Mời bạn";
             BT_add.UseVisualStyleBackColor = true;
             BT_add.Click += BT_add_Click;
             BT_add.Enabled = false;

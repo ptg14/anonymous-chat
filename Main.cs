@@ -389,6 +389,7 @@ namespace anonymous_chat
                     if (friendPanel.friendList.ContainsKey(disconnectUID))
                     {
                         friendPanel.friendList[disconnectUID].changeOnlineStatus(false);
+                        friendListPanel.friendList[disconnectUID].changeOnlineStatus(false);
                     }
                 }
                 else if (parts[0] == "UIDCONNECT")
@@ -397,6 +398,7 @@ namespace anonymous_chat
                     if (friendPanel.friendList.ContainsKey(connectUID))
                     {
                         friendPanel.friendList[connectUID].changeOnlineStatus(true);
+                        friendListPanel.friendList[connectUID].changeOnlineStatus(true);
                     }
                 }
                 else if (parts[0] == "RANDOMACCEPTED")
@@ -1035,6 +1037,11 @@ namespace anonymous_chat
 
         private void BT_refresh_Click(object sender, EventArgs e)
         {
+            reLoadList();
+        }
+
+        public void reLoadList()
+        {
             foreach (var pair in friendList)
             {
                 pair.Value.Dispose();
@@ -1045,6 +1052,7 @@ namespace anonymous_chat
             }
             friendList.Clear();
             groupList.Clear();
+
             LoadList();
         }
 

@@ -152,7 +152,8 @@ namespace anonymous_chat
                 LB_log.ForeColor = Color.Green;
                 LB_log.Text = "Tạo nhóm thành công";
                 BT_add.Enabled = true;
-                main.LoadList();
+
+                main.reLoadList();
             }
             else
             {

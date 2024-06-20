@@ -92,7 +92,7 @@ namespace anonymous_chat.Chat
             }
             else if (friendAccepted)
             {
-                main.LoadList();
+                main.reLoadList();
                 Dispose();
             }
             else if (friendRejected)

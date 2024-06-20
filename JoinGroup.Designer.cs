@@ -37,20 +37,22 @@
             TB_UID = new TextBox();
             label1 = new Label();
             groupBox1 = new GroupBox();
-            LB_addNoti = new Label();
             BT_add = new Button();
             label3 = new Label();
             TB_addUID = new TextBox();
             BT_join = new Button();
             BT_find = new Button();
             LB_log = new Label();
+            PB_avatar = new PictureBox();
             panel1.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)PB_avatar).BeginInit();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(PB_avatar);
             panel1.Controls.Add(groupBox3);
             panel1.Controls.Add(BT_hide);
             panel1.Controls.Add(TB_password);
@@ -69,9 +71,9 @@
             // groupBox3
             // 
             groupBox3.Controls.Add(rTB_info);
-            groupBox3.Location = new Point(11, 72);
+            groupBox3.Location = new Point(199, 72);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(329, 189);
+            groupBox3.Size = new Size(334, 189);
             groupBox3.TabIndex = 70;
             groupBox3.TabStop = false;
             groupBox3.Text = "Thông tin";
@@ -82,7 +84,7 @@
             rTB_info.Location = new Point(6, 26);
             rTB_info.Name = "rTB_info";
             rTB_info.ReadOnly = true;
-            rTB_info.Size = new Size(317, 157);
+            rTB_info.Size = new Size(322, 157);
             rTB_info.TabIndex = 0;
             rTB_info.Text = "";
             // 
@@ -131,32 +133,24 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(LB_addNoti);
             groupBox1.Controls.Add(BT_add);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(TB_addUID);
-            groupBox1.Location = new Point(346, 72);
+            groupBox1.Location = new Point(12, 72);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(181, 140);
+            groupBox1.Size = new Size(181, 117);
             groupBox1.TabIndex = 73;
             groupBox1.TabStop = false;
             groupBox1.Text = "Mời thành viên";
             // 
-            // LB_addNoti
-            // 
-            LB_addNoti.AutoSize = true;
-            LB_addNoti.Location = new Point(6, 76);
-            LB_addNoti.Name = "LB_addNoti";
-            LB_addNoti.Size = new Size(0, 20);
-            LB_addNoti.TabIndex = 3;
-            // 
             // BT_add
             // 
-            BT_add.Location = new Point(6, 105);
+            BT_add.Enabled = false;
+            BT_add.Location = new Point(6, 82);
             BT_add.Name = "BT_add";
             BT_add.Size = new Size(168, 29);
             BT_add.TabIndex = 2;
-            BT_add.Text = "Mời";
+            BT_add.Text = "Mời bạn";
             BT_add.UseVisualStyleBackColor = true;
             BT_add.Click += BT_add_Click;
             // 
@@ -171,16 +165,17 @@
             // 
             // TB_addUID
             // 
-            TB_addUID.Location = new Point(6, 46);
+            TB_addUID.Location = new Point(6, 49);
             TB_addUID.Name = "TB_addUID";
             TB_addUID.Size = new Size(168, 27);
             TB_addUID.TabIndex = 0;
             // 
             // BT_join
             // 
-            BT_join.Location = new Point(446, 226);
+            BT_join.Enabled = false;
+            BT_join.Location = new Point(59, 232);
             BT_join.Name = "BT_join";
-            BT_join.Size = new Size(81, 29);
+            BT_join.Size = new Size(134, 29);
             BT_join.TabIndex = 72;
             BT_join.Text = "Tham gia";
             BT_join.UseVisualStyleBackColor = true;
@@ -188,21 +183,30 @@
             // 
             // BT_find
             // 
-            BT_find.Location = new Point(346, 226);
+            BT_find.Location = new Point(12, 195);
             BT_find.Name = "BT_find";
-            BT_find.Size = new Size(94, 29);
+            BT_find.Size = new Size(181, 29);
             BT_find.TabIndex = 71;
-            BT_find.Text = "Tìm";
+            BT_find.Text = "Tìm nhóm";
             BT_find.UseVisualStyleBackColor = true;
             BT_find.Click += BT_find_Click;
             // 
             // LB_log
             // 
             LB_log.AutoEllipsis = true;
-            LB_log.Location = new Point(11, 264);
+            LB_log.Location = new Point(59, 264);
             LB_log.Name = "LB_log";
-            LB_log.Size = new Size(522, 25);
+            LB_log.Size = new Size(474, 25);
             LB_log.TabIndex = 74;
+            // 
+            // PB_avatar
+            // 
+            PB_avatar.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            PB_avatar.Location = new Point(3, 242);
+            PB_avatar.Name = "PB_avatar";
+            PB_avatar.Size = new Size(50, 50);
+            PB_avatar.TabIndex = 75;
+            PB_avatar.TabStop = false;
             // 
             // JoinGroup
             // 
@@ -218,6 +222,7 @@
             groupBox3.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)PB_avatar).EndInit();
             ResumeLayout(false);
         }
 
@@ -232,12 +237,12 @@
         private TextBox TB_UID;
         private Label label1;
         private GroupBox groupBox1;
-        private Label LB_addNoti;
         private Button BT_add;
         private Label label3;
         private TextBox TB_addUID;
         private Button BT_join;
         private Button BT_find;
         private Label LB_log;
+        private PictureBox PB_avatar;
     }
 }

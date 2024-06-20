@@ -67,6 +67,12 @@ namespace anonymous_chat.Chat
             }
         }
 
+        public void changeOnlineStatus(bool status)
+        {
+            online = status;
+            UpdateOnlineStatusUI();
+        }
+
         private async void BT_deleteFriend_Click(object sender, EventArgs e)
         {
             if (friendUID < 10000)
@@ -99,7 +105,8 @@ namespace anonymous_chat.Chat
                     }
                 }
             }
-            main.LoadFriendList();
+
+            main.reLoadList();
         }
     }
 }
