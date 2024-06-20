@@ -21,9 +21,9 @@ namespace anonymous_chat
         private GroupChat? groupChat;
         private static FirestoreDb db = FireBase.dataBase;
         private int groupUID;
-        private string groupName;
         private List<int> groupInviteUID = new List<int>();
         private List<int> groupBanUID = new List<int>();
+
         public Group()
         {
             InitializeComponent();
@@ -106,6 +106,7 @@ namespace anonymous_chat
                 LB_addNoti.Text = "UID không tồn tại";
                 return;
             }
+
             LB_addNoti.Text = "Đã mời " + TB_addUID.Text;
             groupInviteUID.Add(int.Parse(TB_addUID.Text));
             string groupRequestMessage = $"GROUPREQUEST={main.UID}>{TB_addUID.Text}#{groupUID}&{TB_Name.Text}";
@@ -163,6 +164,13 @@ namespace anonymous_chat
         private void BT_hide_Click(object sender, EventArgs e)
         {
             TB_password.PasswordChar = TB_password.PasswordChar == '*' ? '\0' : '*';
+        }
+
+        private void BT_modify_Click(object sender, EventArgs e)
+        {
+            groupSetting.main = main;
+            taoNhom.Visible = false;
+            groupSetting.Visible = true;
         }
     }
 }

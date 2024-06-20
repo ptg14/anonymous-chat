@@ -17,6 +17,8 @@ namespace anonymous_chat.DataBase
         [FirestoreProperty]
         public string? Password { get; set; }
         [FirestoreProperty]
+        public string? Description { get; set; }
+        [FirestoreProperty]
         public int AdminUID { get; set; }
         [FirestoreProperty]
         public List<int>? MemberUID { get; set; }

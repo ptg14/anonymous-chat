@@ -1,4 +1,6 @@
-﻿namespace anonymous_chat
+﻿using anonymous_chat.Chat;
+
+namespace anonymous_chat
 {
     partial class Group
     {
@@ -50,6 +52,7 @@
             label2 = new Label();
             TB_Name = new TextBox();
             label1 = new Label();
+            groupSetting = new GroupSetting();
             taoNhom.SuspendLayout();
             groupBox3.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -58,7 +61,7 @@
             // 
             // taoNhom
             // 
-            taoNhom.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            taoNhom.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             taoNhom.Controls.Add(LB_log);
             taoNhom.Controls.Add(BT_group);
             taoNhom.Controls.Add(BT_modify);
@@ -87,7 +90,7 @@
             // 
             // BT_group
             // 
-            BT_group.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            BT_group.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             BT_group.Enabled = false;
             BT_group.Location = new Point(218, 224);
             BT_group.Name = "BT_group";
@@ -99,17 +102,18 @@
             // 
             // BT_modify
             // 
-            BT_modify.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            BT_modify.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             BT_modify.Location = new Point(118, 224);
             BT_modify.Name = "BT_modify";
             BT_modify.Size = new Size(94, 29);
             BT_modify.TabIndex = 59;
             BT_modify.Text = "Chỉnh sửa";
             BT_modify.UseVisualStyleBackColor = true;
+            BT_modify.Click += BT_modify_Click;
             // 
             // BT_review
             // 
-            BT_review.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            BT_review.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             BT_review.Location = new Point(18, 224);
             BT_review.Name = "BT_review";
             BT_review.Size = new Size(94, 29);
@@ -142,7 +146,7 @@
             // 
             // groupBox2
             // 
-            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             groupBox2.Controls.Add(LB_banNoti);
             groupBox2.Controls.Add(BT_ban);
             groupBox2.Controls.Add(label5);
@@ -192,7 +196,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             groupBox1.Controls.Add(LB_addNoti);
             groupBox1.Controls.Add(BT_add);
             groupBox1.Controls.Add(label3);
@@ -215,6 +219,7 @@
             // BT_add
             // 
             BT_add.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            BT_add.Enabled = false;
             BT_add.Location = new Point(6, 105);
             BT_add.Name = "BT_add";
             BT_add.Size = new Size(150, 29);
@@ -287,12 +292,23 @@
             label1.TabIndex = 0;
             label1.Text = "Tên nhóm";
             // 
+            // groupSetting
+            // 
+            groupSetting.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupSetting.groupPanel = null;
+            groupSetting.Location = new Point(0, 0);
+            groupSetting.Name = "groupSetting";
+            groupSetting.Size = new Size(544, 295);
+            groupSetting.TabIndex = 0;
+            groupSetting.Visible = false;
+            // 
             // Group
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(544, 296);
             Controls.Add(taoNhom);
+            Controls.Add(groupSetting);
             Name = "Group";
             Text = "Group";
             Icon = new Icon("resource\\icon.ico");
@@ -308,7 +324,7 @@
 
         #endregion
 
-        private Panel taoNhom;
+        public Panel taoNhom;
         private TextBox TB_password;
         private Label label2;
         private TextBox TB_Name;
@@ -330,5 +346,6 @@
         private Button BT_review;
         private RichTextBox rTB_info;
         private Label LB_log;
+        private GroupSetting groupSetting;
     }
 }

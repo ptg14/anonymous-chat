@@ -19,6 +19,9 @@
     <Compile Update="Chat\FriendSetting.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Chat\GroupSetting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Chat\Noti.cs">
       <SubType>UserControl</SubType>
     </Compile>

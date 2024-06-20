@@ -16,7 +16,7 @@ namespace anonymous_chat
     {
         public Main? main;
         private static FirestoreDb db = FireBase.dataBase;
-        GroupChat group;
+        private GroupChat group;
 
         public JoinGroup()
         {
@@ -50,10 +50,11 @@ namespace anonymous_chat
 
             group = snapshot.ConvertTo<GroupChat>();
 
-            rTB_info.Text = "";
-            rTB_info.Text += "GroupUID: " + group.GroupUID + "\n";
-            rTB_info.Text += "GroupName: " + group.GroupName + "\n";
-            rTB_info.Text += "BanUID: " + string.Join(", ", group.BanUID) + "\n";
+            rTB_info.Clear();
+            rTB_info.Text += "UID nhóm: " + group.GroupUID + "\n";
+            rTB_info.Text += "Tên nhóm: " + group.GroupName + "\n";
+            rTB_info.Text += "Mô tả: " + group.Description + "\n";
+            rTB_info.Text += "Cấm UID: " + string.Join(", ", group.BanUID) + "\n";
         }
 
         private async void BT_add_Click(object sender, EventArgs e)
@@ -84,6 +85,27 @@ namespace anonymous_chat
                 LB_addNoti.Text = "UID không tồn tại";
                 return;
             }
+
+            DocumentSnapshot snapshotGroup = await db.Collection("Group").Document(TB_UID.Text).GetSnapshotAsync();
+
+            if (!snapshotGroup.Exists)
+            {
+                LB_addNoti.ForeColor = Color.Red;
+                LB_addNoti.Text = "UID nhóm không tồn tại";
+                return;
+            }
+
+            group = snapshotGroup.ConvertTo<GroupChat>();
+
+            // Check if the user is already in the group
+            if (group.MemberUID != null && group.MemberUID.Contains(int.Parse(TB_UID.Text)))
+            {
+                LB_addNoti.ForeColor = Color.Red;
+                LB_addNoti.Text = "Người dùng đã là thành viên của nhóm";
+                return;
+            }
+
+            LB_addNoti.ForeColor = Color.Green;
             LB_addNoti.Text = "Đã mời " + TB_addUID.Text;
             string groupRequestMessage = $"GROUPREQUEST={main.UID}>{TB_addUID.Text}#{group.GroupUID}&{group.GroupName}";
             main.Send(groupRequestMessage);

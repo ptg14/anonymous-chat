@@ -475,7 +475,10 @@ namespace anonymous_chat
                                 if (userSender != null && textMessage != null)
                                 {
                                     friendList[userSender].AddMessage(textMessage);
-                                    friendPanel.friendList[userSender.UID].changeOnlineStatus(true);
+                                    if (friendPanel.friendList[userSender.UID].online == false)
+                                    {
+                                        friendPanel.friendList[userSender.UID].changeOnlineStatus(true);
+                                    }
                                     if (userSender.UID != toUID)
                                     {
                                         friendPanel.friendList[userSender.UID].hasMessage();
@@ -761,10 +764,7 @@ namespace anonymous_chat
                             friendListPanel.friendList[friend.UID].PB_avatar.Image = Image.FromStream(ms);
                         }
                     }
-                    else
-                    {
-                        Send("GETAVATAR=" + UID + ">" + friend.UID);
-                    }
+                    Send("GETAVATAR=" + UID + ">" + friend.UID);
 
                     filePath = Path.Combine(folderPath, $"{UID}-{friend.UID}~history.txt");
                     if (File.Exists(filePath))
@@ -859,10 +859,7 @@ namespace anonymous_chat
                             friendListPanel.friendList[group.GroupUID].PB_avatar.Image = Image.FromStream(ms);
                         }
                     }
-                    else
-                    {
-                        Send("GETAVATAR=" + UID + ">" + group.GroupUID);
-                    }
+                    Send("GETAVATAR=" + UID + ">" + group.GroupUID);
 
                     filePath = Path.Combine(folderPath, $"{group.GroupUID}~history.txt");
                     if (File.Exists(filePath))

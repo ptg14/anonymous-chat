@@ -12,7 +12,7 @@ namespace anonymous_chat.Chat
 {
     public partial class Setting : UserControl
     {
-        public Main main;
+        public Main? main;
 
         public Setting()
         {
