@@ -671,6 +671,7 @@ namespace anonymous_chat
                 friendList[selectedUserData].Visible = true;
                 friendList[selectedUserData].BringToFront();
                 LB_friendName.Text = selectedUserData.UserName;
+                BT_call.Visible = true;
             }
             else if (toUID > 10000)
             {
@@ -705,6 +706,7 @@ namespace anonymous_chat
                 groupList[selectedGroup].Visible = true;
                 groupList[selectedGroup].BringToFront();
                 LB_friendName.Text = selectedGroup.GroupName;
+                BT_call.Visible = false;
             }
             string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
             string folderPath = Path.Combine(folderPathRoot, toUID.ToString());
