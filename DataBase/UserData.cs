@@ -19,6 +19,10 @@ namespace anonymous_chat.DataBase
         [FirestoreProperty]
         public string? Password { get; set; }
         [FirestoreProperty]
+        public int ReportCount { get; set; }
+        [FirestoreProperty]
         public string? ResetToken { get; set; }
+        [FirestoreProperty]
+        public bool isBanned { get; set; }
     }
 }

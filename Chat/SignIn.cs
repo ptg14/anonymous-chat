@@ -78,6 +78,13 @@ namespace anonymous_chat.Chat
                 DocumentSnapshot userDocument = snapshot.Documents[0];
                 UserData user = userDocument.ConvertTo<UserData>();
 
+                if (user.isBanned)
+                {
+                    LB_noti.ForeColor = Color.Red;
+                    LB_noti.Text = "Tài khoản của bạn đã bị vô hiệu hoá";
+                    return;
+                }
+
                 // Check the password
                 if (user.Password == TB_password.Text || user.ResetToken == TB_password.Text)
                 {

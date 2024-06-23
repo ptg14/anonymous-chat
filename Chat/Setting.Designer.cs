@@ -30,8 +30,8 @@
         {
             BT_group = new Button();
             BT_findGroup = new Button();
-            button3 = new Button();
-            button4 = new Button();
+            BT_report = new Button();
+            BT_guide = new Button();
             SuspendLayout();
             // 
             // BT_group
@@ -55,30 +55,31 @@
             BT_findGroup.UseVisualStyleBackColor = true;
             BT_findGroup.Click += BT_findGroup_Click;
             // 
-            // button3
+            // BT_report
             // 
-            button3.Location = new Point(3, 75);
-            button3.Name = "button3";
-            button3.Size = new Size(119, 30);
-            button3.TabIndex = 2;
-            button3.Text = "Báo cáo";
-            button3.UseVisualStyleBackColor = true;
+            BT_report.Location = new Point(3, 75);
+            BT_report.Name = "BT_report";
+            BT_report.Size = new Size(119, 30);
+            BT_report.TabIndex = 2;
+            BT_report.Text = "Báo cáo";
+            BT_report.UseVisualStyleBackColor = true;
+            BT_report.Click += BT_report_Click;
             // 
-            // button4
+            // BT_guide
             // 
-            button4.Location = new Point(3, 111);
-            button4.Name = "button4";
-            button4.Size = new Size(119, 30);
-            button4.TabIndex = 3;
-            button4.Text = "Hướng dẫn";
-            button4.UseVisualStyleBackColor = true;
+            BT_guide.Location = new Point(3, 111);
+            BT_guide.Name = "BT_guide";
+            BT_guide.Size = new Size(119, 30);
+            BT_guide.TabIndex = 3;
+            BT_guide.Text = "Hướng dẫn";
+            BT_guide.UseVisualStyleBackColor = true;
             // 
             // Setting
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(button4);
-            Controls.Add(button3);
+            Controls.Add(BT_guide);
+            Controls.Add(BT_report);
             Controls.Add(BT_findGroup);
             Controls.Add(BT_group);
             Name = "Setting";
@@ -90,7 +91,7 @@
 
         private Button BT_group;
         private Button BT_findGroup;
-        private Button button3;
-        private Button button4;
+        private Button BT_report;
+        private Button BT_guide;
     }
 }

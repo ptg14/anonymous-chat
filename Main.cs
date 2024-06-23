@@ -163,7 +163,7 @@ namespace anonymous_chat
                 catch (Exception ex)
                 {
                     // Handle the exception here
-                    Debug.WriteLine("False connectto server");
+                    Debug.WriteLine("False connect to server: " + ex);
                     isConnected = false;
                     Thread connectThread = new Thread(ConnectToServer);
                     connectThread.IsBackground = true;
