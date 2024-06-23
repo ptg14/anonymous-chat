@@ -48,12 +48,14 @@ namespace anonymous_chat.Chat
             if (snapshot.Exists)
             {
                 UserData user = snapshot.ConvertTo<UserData>();
-                user.ReportCount++;
-                if (user.ReportCount >= 5)
+                if (!user.ReportCount.Contains(main.UID))
                 {
-                    await db.Collection("Users").Document(UIDreport.ToString()).UpdateAsync("isBanned", true);
+                    await db.Collection("Users").Document(UIDreport.ToString()).UpdateAsync("ReportCount", FieldValue.ArrayUnion(main.UID));
+                    if (user.ReportCount.Count >= 5)
+                    {
+                        await db.Collection("Users").Document(UIDreport.ToString()).UpdateAsync("isBanned", true);
+                    }
                 }
-                await db.Collection("Users").Document(UIDreport.ToString()).UpdateAsync("ReportCount", user.ReportCount);
             }
         }
     }
