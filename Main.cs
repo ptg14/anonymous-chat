@@ -327,6 +327,10 @@ namespace anonymous_chat
                                     if (userSender != null && chatModel != null)
                                     {
                                         friendList[userSender].AddMessage(chatModel);
+                                        if (receiverID != toUID)
+                                        {
+                                            friendPanel.friendList[receiverID].hasMessage();
+                                        }
                                     }
                                 });
                             }
@@ -346,6 +350,10 @@ namespace anonymous_chat
                                         if (chatModel != null)
                                         {
                                             groupList[groupSender].AddMessage(chatModel);
+                                            if (groupSender.GroupUID != toUID)
+                                            {
+                                                friendPanel.friendList[groupSender.GroupUID].hasMessage();
+                                            }
                                         }
                                     });
                                 }
@@ -369,7 +377,7 @@ namespace anonymous_chat
                             {
                                 try
                                 {
-                                    using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                                    using (var ms = new MemoryStream(File.ReadAllBytes(newFilePath)))
                                     {
                                         friendPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
                                         friendListPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
