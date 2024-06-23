@@ -81,6 +81,17 @@ namespace anonymous_chat.Chat
                     LB_title.Text = senderID + " mời bạn tham gia nhóm " + groupName;
                 }
             }
+            else if (parts[0] == "CALLREQUEST")
+            {
+                string[] ids = parts[1].Split(">");
+                senderID = int.Parse(ids[0]);
+                receiverID = int.Parse(ids[1]);
+                if (receiverID == UID)
+                {
+                    Call = true;
+                    LB_title.Text = senderID + " muốn gọi cho bạn";
+                }
+            }
         }
 
         private async void BT_yes_Click(object sender, EventArgs e)
@@ -124,6 +135,12 @@ namespace anonymous_chat.Chat
             }
             else if (Call)
             {
+                main.call = new Call();
+                main.call.main = main;
+                main.call.Show();
+                main.Send("CALLACCEPTED=" + receiverID + ">" + senderID);
+                main.call.Start();
+                Dispose();
             }
             else
             {
@@ -140,6 +157,8 @@ namespace anonymous_chat.Chat
             }
             else if (Call)
             {
+                main.Send("CALLREJECTED=" + receiverID + ">" + senderID);
+                Dispose();
             }
             else
             {

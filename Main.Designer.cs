@@ -407,6 +407,7 @@ namespace anonymous_chat
             BT_call.TabIndex = 10;
             BT_call.UseVisualStyleBackColor = true;
             BT_call.Visible = false;
+            BT_call.Click += BT_call_Click;
             // 
             // Main
             // 
@@ -439,7 +440,7 @@ namespace anonymous_chat
         private Button BT_avatar;
         private Label LB_UID;
         private Button BT_logOut;
-        private Button BT_noti;
+        public Button BT_noti;
         private Button BT_refresh;
         private Button BT_random;
         private Button BT_AI;

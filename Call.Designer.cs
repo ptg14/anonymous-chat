@@ -37,6 +37,8 @@
             tableLayoutPanel1 = new TableLayoutPanel();
             CB_cam = new ComboBox();
             PBar_sound = new ProgressBar();
+            PBar_resound = new ProgressBar();
+            LB_log = new Label();
             ((System.ComponentModel.ISupportInitialize)PB_me).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PB_you).BeginInit();
             tableLayoutPanel1.SuspendLayout();
@@ -63,12 +65,13 @@
             // BT_cam
             // 
             BT_cam.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            BT_cam.BackColor = Color.Red;
             BT_cam.Image = Properties.Resources.cam55x55;
             BT_cam.Location = new Point(261, 373);
             BT_cam.Name = "BT_cam";
             BT_cam.Size = new Size(65, 65);
             BT_cam.TabIndex = 2;
-            BT_cam.UseVisualStyleBackColor = true;
+            BT_cam.UseVisualStyleBackColor = false;
             BT_cam.Click += BT_cam_Click;
             // 
             // BT_sound
@@ -80,16 +83,19 @@
             BT_sound.Size = new Size(65, 65);
             BT_sound.TabIndex = 3;
             BT_sound.UseVisualStyleBackColor = true;
+            BT_sound.Click += BT_sound_Click;
             // 
             // BT_mic
             // 
             BT_mic.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            BT_mic.BackColor = Color.Red;
+            BT_mic.ForeColor = SystemColors.ControlText;
             BT_mic.Image = Properties.Resources.mic60x60;
             BT_mic.Location = new Point(403, 373);
             BT_mic.Name = "BT_mic";
             BT_mic.Size = new Size(65, 65);
             BT_mic.TabIndex = 4;
-            BT_mic.UseVisualStyleBackColor = true;
+            BT_mic.UseVisualStyleBackColor = false;
             BT_mic.Click += BT_mic_Click;
             // 
             // BT_exit
@@ -101,6 +107,7 @@
             BT_exit.Size = new Size(65, 65);
             BT_exit.TabIndex = 5;
             BT_exit.UseVisualStyleBackColor = true;
+            BT_exit.Click += BT_exit_Click;
             // 
             // tableLayoutPanel1
             // 
@@ -122,23 +129,42 @@
             CB_cam.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             CB_cam.DropDownStyle = ComboBoxStyle.DropDownList;
             CB_cam.FormattingEnabled = true;
-            CB_cam.Location = new Point(15, 392);
+            CB_cam.Location = new Point(12, 374);
             CB_cam.Name = "CB_cam";
             CB_cam.Size = new Size(240, 28);
             CB_cam.TabIndex = 7;
             // 
             // PBar_sound
             // 
-            PBar_sound.Location = new Point(545, 392);
+            PBar_sound.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            PBar_sound.Location = new Point(545, 373);
             PBar_sound.Name = "PBar_sound";
             PBar_sound.Size = new Size(243, 29);
             PBar_sound.TabIndex = 8;
+            // 
+            // PBar_resound
+            // 
+            PBar_resound.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            PBar_resound.Location = new Point(545, 409);
+            PBar_resound.Name = "PBar_resound";
+            PBar_resound.Size = new Size(243, 29);
+            PBar_resound.TabIndex = 9;
+            // 
+            // LB_log
+            // 
+            LB_log.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            LB_log.Location = new Point(15, 413);
+            LB_log.Name = "LB_log";
+            LB_log.Size = new Size(237, 25);
+            LB_log.TabIndex = 10;
             // 
             // Call
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(LB_log);
+            Controls.Add(PBar_resound);
             Controls.Add(PBar_sound);
             Controls.Add(CB_cam);
             Controls.Add(tableLayoutPanel1);
@@ -165,5 +191,7 @@
         private TableLayoutPanel tableLayoutPanel1;
         private ComboBox CB_cam;
         private ProgressBar PBar_sound;
+        private ProgressBar PBar_resound;
+        public Label LB_log;
     }
 }

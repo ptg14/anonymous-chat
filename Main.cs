@@ -35,8 +35,9 @@ namespace anonymous_chat
         private bool addFriendVisible = false;
         private Dictionary<UserData, ChatBox> friendList = new Dictionary<UserData, ChatBox>();
         private Dictionary<GroupChat, ChatBox> groupList = new Dictionary<GroupChat, ChatBox>();
-        ChatBox AI = new ChatBox(new MessageData());
-        ChatBox Random = new ChatBox(new MessageData());
+        private ChatBox AI = new ChatBox(new MessageData());
+        private ChatBox Random = new ChatBox(new MessageData());
+        public Call call;
 
         public Main()
         {
@@ -116,7 +117,7 @@ namespace anonymous_chat
             if (isConnected)
             {
                 byte[] message = Encoding.UTF8.GetBytes(text);
-                stream.Write(message, 0, message.Length); // Send the message to the server
+                stream.Write(message, 0, message.Length);
             }
         }
 
@@ -162,12 +163,11 @@ namespace anonymous_chat
                 catch (Exception ex)
                 {
                     // Handle the exception here
-                    MessageBox.Show(ex.Message, "ERROR");
+                    Debug.WriteLine("False connectto server");
                     isConnected = false;
                     Thread connectThread = new Thread(ConnectToServer);
                     connectThread.IsBackground = true;
                     connectThread.Start();
-                    break;
                 }
 
                 if (bytes == 0)
@@ -452,10 +452,35 @@ namespace anonymous_chat
                         friendPanel.friendList[999].changeOnlineStatus(false);
                     });
                 }
-                else if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED" || parts[0] == "GROUPREQUEST")
+                else if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED" || parts[0] == "GROUPREQUEST" || parts[0] == "CALLREQUEST")
                 {
                     notiPanel.addNoti(receivedMessage);
                     BT_noti.BackColor = Color.Red;
+                }
+                else if (parts[0] == "CALLACCEPTED")
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        call.LB_log.ForeColor = Color.Green;
+                        call.LB_log.Text = "Cuộc gọi được chấp nhận";
+                    });
+                    call.Start();
+                }
+                else if (parts[0] == "CALLREJECTED")
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        call.LB_log.ForeColor = Color.Red;
+                        call.LB_log.Text = "Cuộc gọi bị từ chối";
+                    });
+                }
+                else if (parts[0] == "ENDCALL")
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        call.LB_log.ForeColor = Color.Red;
+                        call.LB_log.Text = "Cuộc gọi đã kết thúc";
+                    });
                 }
                 else
                 {
@@ -1199,6 +1224,14 @@ namespace anonymous_chat
             {
                 Debug.WriteLine($"Error resizing image: {ex.Message}", "ERROR");
             }
+        }
+
+        private void BT_call_Click(object sender, EventArgs e)
+        {
+            call = new Call();
+            call.main = this;
+            call.Show();
+            Send("CALLREQUEST=" + UID + ">" + toUID);
         }
     }
 }
