@@ -1168,6 +1168,11 @@ namespace anonymous_chat
 
         private void BT_logOut_Click(object sender, EventArgs e)
         {
+            if (File.Exists("credentials.json"))
+            {
+                File.Delete("credentials.json");
+            }
+            Program.RestartApplication();
             this.Close();
         }
 
