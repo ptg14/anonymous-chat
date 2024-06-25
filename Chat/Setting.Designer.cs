@@ -31,7 +31,7 @@
             BT_group = new Button();
             BT_findGroup = new Button();
             BT_report = new Button();
-            BT_guide = new Button();
+            BT_password = new Button();
             SuspendLayout();
             // 
             // BT_group
@@ -65,23 +65,24 @@
             BT_report.UseVisualStyleBackColor = true;
             BT_report.Click += BT_report_Click;
             // 
-            // BT_guide
+            // BT_password
             // 
-            BT_guide.Location = new Point(3, 111);
-            BT_guide.Name = "BT_guide";
-            BT_guide.Size = new Size(119, 30);
-            BT_guide.TabIndex = 3;
-            BT_guide.Text = "Hướng dẫn";
-            BT_guide.UseVisualStyleBackColor = true;
+            BT_password.Location = new Point(3, 111);
+            BT_password.Name = "BT_password";
+            BT_password.Size = new Size(119, 30);
+            BT_password.TabIndex = 3;
+            BT_password.Text = "Chỉnh sửa";
+            BT_password.UseVisualStyleBackColor = true;
+            BT_password.Click += BT_password_Click;
             // 
             // Setting
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(BT_guide);
-            Controls.Add(BT_report);
-            Controls.Add(BT_findGroup);
             Controls.Add(BT_group);
+            Controls.Add(BT_password);
+            Controls.Add(BT_findGroup);
+            Controls.Add(BT_report);
             Name = "Setting";
             Size = new Size(125, 147);
             ResumeLayout(false);
@@ -92,6 +93,6 @@
         private Button BT_group;
         private Button BT_findGroup;
         private Button BT_report;
-        private Button BT_guide;
+        private Button BT_password;
     }
 }

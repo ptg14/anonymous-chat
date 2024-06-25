@@ -58,5 +58,12 @@ namespace anonymous_chat.Chat
                 }
             }
         }
+
+        private void BT_password_Click(object sender, EventArgs e)
+        {
+            UserModify userModify = new UserModify();
+            userModify.main = main;
+            userModify.Show();
+        }
     }
 }

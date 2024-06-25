@@ -436,7 +436,7 @@ namespace anonymous_chat
         #endregion
 
         private SplitContainer splitContainer1;
-        private Label LB_name;
+        public Label LB_name;
         private Button BT_avatar;
         private Label LB_UID;
         private Button BT_logOut;
@@ -466,38 +466,4 @@ namespace anonymous_chat
         private FriendPanel friendPanel;
         private FriendListPanel friendListPanel;
     }
-
-    /*
-    setting = new Setting();
-    mainChat = new Panel();
-    chatBox = new ChatBox(new MessageData());
-    splitContainer1.Panel2.Controls.Add(mainChat);
-    //
-    // setting
-    // 
-    setting.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-    setting.Location = new Point(494, 0);
-    setting.Name = "setting";
-    setting.Size = new Size(125, 147);
-    setting.Visible = false;
-    //
-    // chatBox
-    // 
-    chatBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-    chatBox.BackColor = SystemColors.Window;
-    chatBox.Location = new Point(0, 0);
-    chatBox.Margin = new Padding(3, 4, 3, 4);
-    chatBox.Name = "chatBox";
-    chatBox.Size = new Size(619, 440);
-    chatBox.TabIndex = 14;
-    // 
-    // mainChat
-    // 
-    mainChat.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-    mainChat.Location = new Point(3, 59);
-    mainChat.Name = "mainChat";
-    mainChat.Size = new Size(619, 440);
-    mainChat.Controls.Add(chatBox);
-    mainChat.Controls.Add(setting);
-    */
 }

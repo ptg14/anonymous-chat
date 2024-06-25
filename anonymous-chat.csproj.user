@@ -52,6 +52,9 @@
     <Compile Update="SignIn_SignUp.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="UserModify.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">

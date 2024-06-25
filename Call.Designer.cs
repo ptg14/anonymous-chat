@@ -174,6 +174,7 @@
             Controls.Add(BT_cam);
             Name = "Call";
             Text = "Anonymous Chat";
+            Icon = new Icon("resource\\icon.ico");
             ((System.ComponentModel.ISupportInitialize)PB_me).EndInit();
             ((System.ComponentModel.ISupportInitialize)PB_you).EndInit();
             tableLayoutPanel1.ResumeLayout(false);

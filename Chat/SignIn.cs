@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.Diagnostics;
 
 namespace anonymous_chat.Chat
 {
@@ -147,11 +148,6 @@ namespace anonymous_chat.Chat
 
             // Send the token to the user's email
             SendToken(TB_email.Text, token);
-
-            // Show a message to the user
-            LB_noti.ForeColor = Color.Green;
-            LB_noti.Text = "Dùng token thay cho mật khẩu của bạn";
-
         }
 
         private string GenerateToken()
@@ -161,28 +157,57 @@ namespace anonymous_chat.Chat
 
         private void SendToken(string email, string token)
         {
-            var fromAddress = new MailAddress("auto@chat.test", "chat");
+            if (!IsValidEmail(email))
+            {
+                LB_noti.ForeColor = Color.Red;
+                LB_noti.Text = "Email không hợp lệ";
+                return;
+            }
+
+            var fromAddress = new MailAddress("auto@chat.test");
             var toAddress = new MailAddress(email);
             const string fromPassword = "@Thang140204";
             const string subject = "Password Reset Token";
             string body = $"Your password reset token is: {token}";
 
-            var smtp = new SmtpClient
+            try
             {
-                Host = "localhost",
-                Port = 1000,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-            using (var message = new MailMessage(fromAddress, toAddress)
+                ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+                using (var smtp = new SmtpClient
+                {
+                    Host = "localhost",
+                    Port = 25,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                })
+                {
+                    using (var message = new MailMessage(fromAddress, toAddress)
+                    {
+                        Subject = subject,
+                        Body = body
+                    })
+                    {
+                        var id = Guid.NewGuid().ToString();
+                        message.Headers.Add("Message-ID", $"<{id}@chat.test>");
+                        smtp.Send(message);
+                    }
+                }
+
+                // If the email is sent successfully, you can notify the user
+                LB_noti.Invoke((MethodInvoker)delegate
+                {
+                    LB_noti.ForeColor = Color.Green;
+                    LB_noti.Text = "Dùng token thay cho mật khẩu của bạn";
+                });
+            }
+            catch (Exception ex)
             {
-                Subject = subject,
-                Body = body
-            })
-            {
-                smtp.Send(message);
+                // Handle the connection error
+                LB_noti.ForeColor = Color.Red;
+                Debug.WriteLine(ex.Message);
+                LB_noti.Text = "Không thể gửi email";
             }
         }
 
