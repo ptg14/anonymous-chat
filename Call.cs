@@ -138,53 +138,65 @@ namespace anonymous_chat
 
                 if (bytesRead == dataSize)
                 {
-                    // Ensure the wave provider and wave out are initialized
-                    if (bufferedWaveProvider == null)
+                    try
                     {
-                        WaveFormat waveFormat = new WaveFormat(44100, 1); // Match the format used for recording
-                        bufferedWaveProvider = new BufferedWaveProvider(waveFormat);
-                        bufferedWaveProvider.BufferLength = 20 * 1024 * 1024;
-                        bufferedWaveProvider.DiscardOnBufferOverflow = true;
-                        waveOut = new WaveOut();
-                        waveOut.Init(bufferedWaveProvider);
-                        waveOut.Play();
+                        // Ensure the wave provider and wave out are initialized
+                        if (bufferedWaveProvider == null)
+                        {
+                            WaveFormat waveFormat = new WaveFormat(44100, 1); // Match the format used for recording
+                            bufferedWaveProvider = new BufferedWaveProvider(waveFormat);
+                            bufferedWaveProvider.BufferLength = 20 * 1024 * 1024;
+                            bufferedWaveProvider.DiscardOnBufferOverflow = true;
+                            waveOut = new WaveOut();
+                            waveOut.Init(bufferedWaveProvider);
+                            waveOut.Play();
+                        }
+
+                        // Add the received audio data to the buffered wave provider
+                        bufferedWaveProvider?.AddSamples(dataBytes, 0, bytesRead);
+
+                        // Calculate the max amplitude from the buffer for UI update
+                        int max = 0;
+                        for (int index = 0; index < bytesRead; index += 2)
+                        {
+                            short sample = (short)((dataBytes[index + 1] << 8) | dataBytes[index]);
+                            var absSample = Math.Abs(sample);
+                            if (absSample > max) max = absSample;
+                        }
+
+                        // Convert to a percentage of the maximum value of a 16-bit audio sample
+                        double percent = (double)max / short.MaxValue;
+
+                        // Add the current level to the queue and remove the oldest if necessary
+                        soundLevels.Enqueue(percent);
+                        if (soundLevels.Count > soundLevelAverageCount)
+                        {
+                            soundLevels.Dequeue();
+                        }
+
+                        // Calculate the average sound level
+                        double averagePercent = soundLevels.Average();
+
+                        // Amplify the average sound level to make the bar move more
+                        double amplifiedAveragePercent = averagePercent * 2; // Amplification factor of 2
+                                                                             // Ensure the amplified value does not exceed 1
+                        amplifiedAveragePercent = Math.Min(amplifiedAveragePercent, 1);
+
+                        // Update PBar_resound based on the received audio data
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            PBar_resound.Value = (int)(amplifiedAveragePercent * PBar_resound.Maximum);
+                        });
                     }
-
-                    // Add the received audio data to the buffered wave provider
-                    bufferedWaveProvider?.AddSamples(dataBytes, 0, bytesRead);
-
-                    // Calculate the max amplitude from the buffer for UI update
-                    int max = 0;
-                    for (int index = 0; index < bytesRead; index += 2)
+                    catch (Exception ex)
                     {
-                        short sample = (short)((dataBytes[index + 1] << 8) | dataBytes[index]);
-                        var absSample = Math.Abs(sample);
-                        if (absSample > max) max = absSample;
+                        // Clear the progress bar on error
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            PBar_resound.Value = PBar_resound.Minimum;
+                        });
+                        Debug.WriteLine("Error playing audio: " + ex.Message);
                     }
-
-                    // Convert to a percentage of the maximum value of a 16-bit audio sample
-                    double percent = (double)max / short.MaxValue;
-
-                    // Add the current level to the queue and remove the oldest if necessary
-                    soundLevels.Enqueue(percent);
-                    if (soundLevels.Count > soundLevelAverageCount)
-                    {
-                        soundLevels.Dequeue();
-                    }
-
-                    // Calculate the average sound level
-                    double averagePercent = soundLevels.Average();
-
-                    // Amplify the average sound level to make the bar move more
-                    double amplifiedAveragePercent = averagePercent * 2; // Amplification factor of 2
-                                                                         // Ensure the amplified value does not exceed 1
-                    amplifiedAveragePercent = Math.Min(amplifiedAveragePercent, 1);
-
-                    // Update PBar_resound based on the received audio data
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        PBar_resound.Value = (int)(amplifiedAveragePercent * PBar_resound.Maximum);
-                    });
                 }
                 else
                 {
@@ -193,7 +205,6 @@ namespace anonymous_chat
                     {
                         PBar_resound.Value = PBar_resound.Minimum;
                     });
-                    break;
                 }
             }
         }
@@ -329,15 +340,15 @@ namespace anonymous_chat
             CB_cam.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
-        private void CB_cam_SelectedIndexChanged(object sender, EventArgs e)
+        private async void CB_cam_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PB_me.Image?.Dispose();
-
             if (videoSource != null && videoSource.IsRunning)
             {
                 // Stop the current video source
                 videoSource.SignalToStop();
                 videoSource.WaitForStop();
+                await Task.Delay(100);
+                PB_me.Image = Properties.Resources.user300x300;
 
                 // Check if a valid selection is made
                 if (CB_cam.SelectedIndex != -1)
@@ -404,14 +415,16 @@ namespace anonymous_chat
             }
         }
 
-        private void BT_cam_Click(object sender, EventArgs e)
+        private async void BT_cam_Click(object sender, EventArgs e)
         {
             if (videoSource != null && videoSource.IsRunning)
             {
                 BT_cam.BackColor = Color.Red;
-                PB_me.Image = null;
                 videoSource.SignalToStop();
                 videoSource.WaitForStop();
+                main.Send("CAMOFF=" + main.UID);
+                await Task.Delay(100);
+                PB_me.Image = Properties.Resources.user300x300;
             }
             else
             {
@@ -493,9 +506,16 @@ namespace anonymous_chat
             int max = 0;
             for (int index = 0; index < e.BytesRecorded; index += 2)
             {
-                short sample = (short)((e.Buffer[index + 1] << 8) | e.Buffer[index]);
-                var absSample = Math.Abs(sample);
-                if (absSample > max) max = absSample;
+                try
+                {
+                    short sample = (short)((e.Buffer[index + 1] << 8) | e.Buffer[index]);
+                    var absSample = Math.Abs(sample);
+                    if (absSample > max) max = absSample;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error calculating max amplitude: " + ex.Message);
+                }
             }
 
             // Convert to a percentage of the maximum value of a 16-bit audio sample
@@ -524,18 +544,17 @@ namespace anonymous_chat
         }
 
 
-        private void BT_mic_Click(object sender, EventArgs e)
+        private async void BT_mic_Click(object sender, EventArgs e)
         {
             if (waveSource != null)
             {
                 BT_mic.BackColor = Color.Red;
                 waveSource.StopRecording();
                 // Reset the sound level indicator
-                PBar_sound.BeginInvoke((MethodInvoker)delegate
-                {
-                    PBar_sound.Value = PBar_sound.Minimum;
-                });
                 soundLevels.Clear();
+                main.Send("MICOFF=" + main.UID);
+                await Task.Delay(100);
+                PBar_sound.Value = PBar_sound.Minimum;
             }
             else
             {

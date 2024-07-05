@@ -339,10 +339,12 @@ namespace anonymous_chat
             // 
             // mainLogo
             // 
+            mainLogo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             mainLogo.Image = Properties.Resources.logo300x300;
             mainLogo.Location = new Point(160, 70);
             mainLogo.Name = "mainLogo";
             mainLogo.Size = new Size(300, 300);
+            mainLogo.SizeMode = PictureBoxSizeMode.CenterImage;
             mainLogo.TabIndex = 1;
             mainLogo.TabStop = false;
             // 

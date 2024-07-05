@@ -175,139 +175,370 @@ namespace anonymous_chat
                     break;
                 }
 
-                string receivedMessage = Encoding.UTF8.GetString(data, 0, bytes);
-                Debug.WriteLine(receivedMessage);
-                //MessageBox.Show("Receive:\n" + receivedMessage);
-
-
-                string[] parts = receivedMessage.Split('=');
-
-                if (parts[0] == "FILE")
+                try
                 {
-                    // Extract file name and size from the header
-                    string[] fileInfo = parts[1].Split(':');
-                    string fileName = fileInfo[0];
-                    long fileSize;
-                    if (!long.TryParse(fileInfo[1], out fileSize))
+                    string receivedMessage = Encoding.UTF8.GetString(data, 0, bytes);
+                    Debug.WriteLine(receivedMessage);
+                    //MessageBox.Show("Receive:\n" + receivedMessage);
+
+
+                    string[] parts = receivedMessage.Split('=');
+
+                    if (parts[0] == "FILE")
                     {
-                        Debug.WriteLine("Invalid file size: " + fileInfo[1]);
-                        continue;
-                    }
-                    string[] mode = fileName.Split("~");
-                    string dowhat = mode[0];
-                    string content = mode[1];
-                    int senderID = 0;
-                    int receiverID = 0;
-                    string folderPath;
-                    string filePath;
-                    if (dowhat == "SETAVATAR")
-                    {
-                        string[] nameAndEx = content.Split(".");
-                        string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
-                        folderPath = Path.Combine(folderPathRoot, nameAndEx[0]);
-                        if (!Directory.Exists(folderPath))
+                        // Extract file name and size from the header
+                        string[] fileInfo = parts[1].Split(':');
+                        string fileName = fileInfo[0];
+                        long fileSize;
+                        if (!long.TryParse(fileInfo[1], out fileSize))
                         {
-                            Directory.CreateDirectory(folderPath);
+                            Debug.WriteLine("Invalid file size: " + fileInfo[1]);
+                            continue;
                         }
-                        filePath = Path.Combine(folderPath, fileName);
-                    }
-                    else
-                    {
-                        string[] send = dowhat.Split("-");
-                        senderID = int.Parse(send[0]);
-                        receiverID = int.Parse(send[1]);
-                        if (receiverID < 10000)
+                        string[] mode = fileName.Split("~");
+                        string dowhat = mode[0];
+                        string content = mode[1];
+                        int senderID = 0;
+                        int receiverID = 0;
+                        string folderPath;
+                        string filePath;
+                        if (dowhat == "SETAVATAR")
                         {
-                            string folderPathroot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, receiverID.ToString());
-                            folderPath = Path.Combine(folderPathroot, senderID.ToString());
+                            string[] nameAndEx = content.Split(".");
+                            string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                            folderPath = Path.Combine(folderPathRoot, nameAndEx[0]);
+                            if (!Directory.Exists(folderPath))
+                            {
+                                Directory.CreateDirectory(folderPath);
+                            }
+                            filePath = Path.Combine(folderPath, fileName);
                         }
                         else
                         {
-                            string folderPath1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
-                            string folderPath2 = Path.Combine(folderPath1, receiverID.ToString());
-                            folderPath = Path.Combine(folderPath2, senderID.ToString());
+                            string[] send = dowhat.Split("-");
+                            senderID = int.Parse(send[0]);
+                            receiverID = int.Parse(send[1]);
+                            if (receiverID < 10000)
+                            {
+                                string folderPathroot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, receiverID.ToString());
+                                folderPath = Path.Combine(folderPathroot, senderID.ToString());
+                            }
+                            else
+                            {
+                                string folderPath1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                                string folderPath2 = Path.Combine(folderPath1, receiverID.ToString());
+                                folderPath = Path.Combine(folderPath2, senderID.ToString());
+                            }
+                            if (!Directory.Exists(folderPath))
+                            {
+                                Directory.CreateDirectory(folderPath);
+                            }
+                            filePath = Path.Combine(folderPath, fileName);
                         }
-                        if (!Directory.Exists(folderPath))
+
+                        // Prepare to receive the file
+                        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                         {
-                            Directory.CreateDirectory(folderPath);
+                            long totalBytesReceived = 0;
+                            byte[] fileBuffer = new byte[100 * 1024 * 1024];
+
+                            while (totalBytesReceived < fileSize)
+                            {
+                                int bytesReadfile = await stream.ReadAsync(fileBuffer, 0, fileBuffer.Length);
+                                fileStream.Write(fileBuffer, 0, bytesReadfile);
+                                totalBytesReceived += bytesReadfile;
+                            }
                         }
-                        filePath = Path.Combine(folderPath, fileName);
+
+                        if (dowhat != "SETAVATAR")
+                        {
+                            IChatModel chatModel;
+                            IChatModel saveChatModel;
+                            byte[] fileContent = File.ReadAllBytes(filePath);
+                            string author = "";
+                            string attachmentName = "";
+                            string type = "";
+                            DateTime datetime = DateTime.Now;
+                            nameConvert(ref author, ref attachmentName, ref type, ref datetime, content);
+                            switch (type)
+                            {
+                                case "image":
+                                    chatModel = new ImageChatModel()
+                                    {
+                                        Author = author,
+                                        Time = datetime,
+                                        ImageName = attachmentName,
+                                        Image = Image.FromFile(filePath),
+                                        path = filePath,
+                                        Inbound = true,
+                                    };
+                                    saveChatModel = new ImageChatModel()
+                                    {
+                                        Author = author,
+                                        Time = datetime,
+                                        ImageName = attachmentName,
+                                        path = filePath,
+                                        Inbound = true,
+                                    };
+                                    break;
+                                default:
+                                    chatModel = new AttachmentChatModel()
+                                    {
+                                        Author = author,
+                                        Filename = attachmentName,
+                                        Time = datetime,
+                                        Attachment = fileContent,
+                                        path = filePath,
+                                        Inbound = true,
+                                    };
+                                    saveChatModel = new AttachmentChatModel()
+                                    {
+                                        Author = author,
+                                        Filename = attachmentName,
+                                        Time = datetime,
+                                        path = filePath,
+                                        Inbound = true,
+                                    };
+                                    break;
+                            }
+                            if (receiverID == 999)
+                            {
+                                if (this.IsHandleCreated) // Check if the handle has been created
+                                {
+                                    this.Invoke((MethodInvoker)delegate
+                                    {
+                                        if (chatModel != null)
+                                        {
+                                            Random.AddMessage(chatModel);
+                                            if (toUID != 999)
+                                            {
+                                                friendPanel.friendList[999].hasMessage();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                            else if (receiverID == UID)
+                            {
+                                UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
+                                // Update TB_remessage on the UI thread
+                                if (this.IsHandleCreated) // Check if the handle has been created
+                                {
+                                    this.Invoke((MethodInvoker)delegate
+                                    {
+                                        if (userSender != null && chatModel != null)
+                                        {
+                                            friendList[userSender].AddMessage(chatModel);
+                                            if (receiverID != toUID)
+                                            {
+                                                friendPanel.friendList[receiverID].hasMessage();
+                                            }
+                                        }
+                                    });
+                                }
+                                string json = JsonConvert.SerializeObject(saveChatModel);
+                                saveChat(senderID, receiverID, json);
+                            }
+                            else
+                            {
+                                GroupChat groupSender = groupList.Keys.FirstOrDefault(group => group.GroupUID == receiverID);
+                                if (groupSender != null)
+                                {
+                                    // Update TB_remessage on the UI thread
+                                    if (this.IsHandleCreated) // Check if the handle has been created
+                                    {
+                                        this.Invoke((MethodInvoker)delegate
+                                        {
+                                            if (chatModel != null)
+                                            {
+                                                groupList[groupSender].AddMessage(chatModel);
+                                                if (groupSender.GroupUID != toUID)
+                                                {
+                                                    friendPanel.friendList[groupSender.GroupUID].hasMessage();
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                                string json = JsonConvert.SerializeObject(saveChatModel);
+                                saveChat(senderID, receiverID, json);
+                            }
+                        }
+                        else
+                        {
+                            string[] nameAndEx = content.Split(".");
+                            int avatarUID = int.Parse(nameAndEx[0]);
+                            string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                            folderPath = Path.Combine(folderPathRoot, nameAndEx[0]);
+                            filePath = Path.Combine(folderPath, fileName);
+                            string newFilePath = Path.Combine(folderPath, "SETAVATAR~" + nameAndEx[0] + "70x70.png");
+                            if (File.Exists(filePath))
+                            {
+                                ResizeImage(filePath, newFilePath, 70, 70);
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    try
+                                    {
+                                        using (var ms = new MemoryStream(File.ReadAllBytes(newFilePath)))
+                                        {
+                                            friendPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
+                                            friendListPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Debug.WriteLine("Change avatar: " + ex.Message, "ERROR");
+                                    }
+                                });
+                            }
+                        }
                     }
-
-                    // Prepare to receive the file
-                    using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                    else if (parts[0] == "DISCONNECT")
                     {
-                        long totalBytesReceived = 0;
-                        byte[] fileBuffer = new byte[100 * 1024 * 1024];
-
-                        while (totalBytesReceived < fileSize)
+                        int disconnectUID = int.Parse(parts[1]);
+                        if (friendPanel.friendList.ContainsKey(disconnectUID))
                         {
-                            int bytesReadfile = await stream.ReadAsync(fileBuffer, 0, fileBuffer.Length);
-                            fileStream.Write(fileBuffer, 0, bytesReadfile);
-                            totalBytesReceived += bytesReadfile;
+                            friendPanel.friendList[disconnectUID].changeOnlineStatus(false);
+                            friendListPanel.friendList[disconnectUID].changeOnlineStatus(false);
                         }
                     }
-
-                    if (dowhat != "SETAVATAR")
+                    else if (parts[0] == "UIDCONNECT")
                     {
-                        IChatModel chatModel;
-                        IChatModel saveChatModel;
-                        byte[] fileContent = File.ReadAllBytes(filePath);
-                        string author = "";
-                        string attachmentName = "";
-                        string type = "";
-                        DateTime datetime = DateTime.Now;
-                        nameConvert(ref author, ref attachmentName, ref type, ref datetime, content);
-                        switch (type)
+                        int connectUID = int.Parse(parts[1]);
+                        if (friendPanel.friendList.ContainsKey(connectUID))
                         {
-                            case "image":
-                                chatModel = new ImageChatModel()
-                                {
-                                    Author = author,
-                                    Time = datetime,
-                                    ImageName = attachmentName,
-                                    Image = Image.FromFile(filePath),
-                                    path = filePath,
-                                    Inbound = true,
-                                };
-                                saveChatModel = new ImageChatModel()
-                                {
-                                    Author = author,
-                                    Time = datetime,
-                                    ImageName = attachmentName,
-                                    path = filePath,
-                                    Inbound = true,
-                                };
-                                break;
-                            default:
-                                chatModel = new AttachmentChatModel()
-                                {
-                                    Author = author,
-                                    Filename = attachmentName,
-                                    Time = datetime,
-                                    Attachment = fileContent,
-                                    path = filePath,
-                                    Inbound = true,
-                                };
-                                saveChatModel = new AttachmentChatModel()
-                                {
-                                    Author = author,
-                                    Filename = attachmentName,
-                                    Time = datetime,
-                                    path = filePath,
-                                    Inbound = true,
-                                };
-                                break;
+                            friendPanel.friendList[connectUID].changeOnlineStatus(true);
+                            friendListPanel.friendList[connectUID].changeOnlineStatus(true);
                         }
+                    }
+                    else if (parts[0] == "RANDOMACCEPTED")
+                    {
+                        random = true;
+                        TextChatModel system = new TextChatModel()
+                        {
+                            Author = "System",
+                            Time = DateTime.Now,
+                            Body = "Người nhắn ngẫu nhiên đã tham gia cuộc trò chuyện.",
+                            Inbound = true
+                        };
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            Random.ChatPanel.Controls.Clear();
+                            Random.AddMessage(system);
+                            Random.BT_send.Enabled = true;
+                            friendPanel.friendList[999].changeOnlineStatus(true);
+                        });
+                    }
+                    else if (parts[0] == "RANDOMCANCELLED")
+                    {
+                        random = false;
+                        TextChatModel system = new TextChatModel()
+                        {
+                            Author = "System",
+                            Time = DateTime.Now,
+                            Body = "Người nhắn ngẫu nhiên đã thoát cuộc trò chuyện.",
+                            Inbound = true
+                        };
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            Random.AddMessage(system);
+                            Random.BT_send.Enabled = false;
+                            friendPanel.friendList[999].changeOnlineStatus(false);
+                        });
+                    }
+                    else if (parts[0] == "RANDOMREJECTED")
+                    {
+                        TextChatModel system = new TextChatModel()
+                        {
+                            Author = "System",
+                            Time = DateTime.Now,
+                            Body = "Hiện tại không tìm thấy ai, xin đợi.",
+                            Inbound = true
+                        };
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            Random.ChatPanel.Controls.Clear();
+                            Random.AddMessage(system);
+                            friendPanel.friendList[999].changeOnlineStatus(false);
+                        });
+                    }
+                    else if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED" || parts[0] == "GROUPREQUEST" || parts[0] == "CALLREQUEST")
+                    {
+                        notiPanel.addNoti(receivedMessage);
+                        BT_noti.BackColor = Color.Red;
+                    }
+                    else if (parts[0] == "CALLACCEPTED")
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            call.LB_log.ForeColor = Color.Green;
+                            call.LB_log.Text = "Cuộc gọi được chấp nhận";
+                        });
+                        call.Start();
+                    }
+                    else if (parts[0] == "CALLREJECTED")
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            call.LB_log.ForeColor = Color.Red;
+                            call.LB_log.Text = "Cuộc gọi bị từ chối";
+                        });
+                    }
+                    else if (parts[0] == "ENDCALL")
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            call.LB_log.ForeColor = Color.Red;
+                            call.LB_log.Text = "Cuộc gọi đã kết thúc";
+                        });
+                    }
+                    else if (parts[0] == "CAMOFF")
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            call.PB_you.Image = Properties.Resources.user300x300;
+                        });
+                    }
+                    else if (parts[0] == "MICOFF")
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            call.PBar_resound.Value = call.PBar_resound.Minimum;
+                        });
+                    }
+                    else
+                    {
+                        int senderID = 0;
+                        int receiverID = 0;
+                        TextChatModel? textMessage = new TextChatModel();
+                        string json = "";
+                        try
+                        {
+                            string[] ids = parts[0].Split(">");
+
+                            senderID = int.Parse(ids[0]);
+                            receiverID = int.Parse(ids[1]);
+
+                            json = parts[1];
+                            textMessage = JsonConvert.DeserializeObject<TextChatModel>(json);
+                            textMessage.Inbound = true;
+                            json = JsonConvert.SerializeObject(textMessage);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.Message, "ERROR");
+                        }
+
+                        // Check if the message is sent to you
                         if (receiverID == 999)
                         {
                             if (this.IsHandleCreated) // Check if the handle has been created
                             {
                                 this.Invoke((MethodInvoker)delegate
                                 {
-                                    if (chatModel != null)
+                                    if (textMessage != null)
                                     {
-                                        Random.AddMessage(chatModel);
+                                        Random.AddMessage(textMessage);
                                         if (toUID != 999)
                                         {
                                             friendPanel.friendList[999].hasMessage();
@@ -324,17 +555,16 @@ namespace anonymous_chat
                             {
                                 this.Invoke((MethodInvoker)delegate
                                 {
-                                    if (userSender != null && chatModel != null)
+                                    if (userSender != null && textMessage != null)
                                     {
-                                        friendList[userSender].AddMessage(chatModel);
-                                        if (receiverID != toUID)
+                                        friendList[userSender].AddMessage(textMessage);
+                                        if (userSender.UID != toUID)
                                         {
-                                            friendPanel.friendList[receiverID].hasMessage();
+                                            friendPanel.friendList[userSender.UID].hasMessage();
                                         }
                                     }
                                 });
                             }
-                            string json = JsonConvert.SerializeObject(saveChatModel);
                             saveChat(senderID, receiverID, json);
                         }
                         else
@@ -347,10 +577,10 @@ namespace anonymous_chat
                                 {
                                     this.Invoke((MethodInvoker)delegate
                                     {
-                                        if (chatModel != null)
+                                        if (textMessage != null)
                                         {
-                                            groupList[groupSender].AddMessage(chatModel);
-                                            if (groupSender.GroupUID != toUID)
+                                            groupList[groupSender].AddMessage(textMessage);
+                                            if (receiverID != toUID)
                                             {
                                                 friendPanel.friendList[groupSender.GroupUID].hasMessage();
                                             }
@@ -358,222 +588,13 @@ namespace anonymous_chat
                                     });
                                 }
                             }
-                            string json = JsonConvert.SerializeObject(saveChatModel);
                             saveChat(senderID, receiverID, json);
                         }
                     }
-                    else
-                    {
-                        string[] nameAndEx = content.Split(".");
-                        int avatarUID = int.Parse(nameAndEx[0]);
-                        string folderPathRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
-                        folderPath = Path.Combine(folderPathRoot, nameAndEx[0]);
-                        filePath = Path.Combine(folderPath, fileName);
-                        string newFilePath = Path.Combine(folderPath, "SETAVATAR~" + nameAndEx[0] + "70x70.png");
-                        if (File.Exists(filePath))
-                        {
-                            ResizeImage(filePath, newFilePath, 70, 70);
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                try
-                                {
-                                    using (var ms = new MemoryStream(File.ReadAllBytes(newFilePath)))
-                                    {
-                                        friendPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
-                                        friendListPanel.friendList[avatarUID].PB_avatar.Image = Image.FromStream(ms);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show("Change avatar: " + ex.Message, "ERROR");
-                                }
-                            });
-                        }
-                    }
                 }
-                else if (parts[0] == "DISCONNECT")
+                catch (Exception ex)
                 {
-                    int disconnectUID = int.Parse(parts[1]);
-                    if (friendPanel.friendList.ContainsKey(disconnectUID))
-                    {
-                        friendPanel.friendList[disconnectUID].changeOnlineStatus(false);
-                        friendListPanel.friendList[disconnectUID].changeOnlineStatus(false);
-                    }
-                }
-                else if (parts[0] == "UIDCONNECT")
-                {
-                    int connectUID = int.Parse(parts[1]);
-                    if (friendPanel.friendList.ContainsKey(connectUID))
-                    {
-                        friendPanel.friendList[connectUID].changeOnlineStatus(true);
-                        friendListPanel.friendList[connectUID].changeOnlineStatus(true);
-                    }
-                }
-                else if (parts[0] == "RANDOMACCEPTED")
-                {
-                    random = true;
-                    TextChatModel system = new TextChatModel()
-                    {
-                        Author = "System",
-                        Time = DateTime.Now,
-                        Body = "Người nhắn ngẫu nhiên đã tham gia cuộc trò chuyện.",
-                        Inbound = true
-                    };
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        Random.ChatPanel.Controls.Clear();
-                        Random.AddMessage(system);
-                        Random.BT_send.Enabled = true;
-                        friendPanel.friendList[999].changeOnlineStatus(true);
-                    });
-                }
-                else if (parts[0] == "RANDOMCANCELLED")
-                {
-                    random = false;
-                    TextChatModel system = new TextChatModel()
-                    {
-                        Author = "System",
-                        Time = DateTime.Now,
-                        Body = "Người nhắn ngẫu nhiên đã thoát cuộc trò chuyện.",
-                        Inbound = true
-                    };
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        Random.AddMessage(system);
-                        Random.BT_send.Enabled = false;
-                        friendPanel.friendList[999].changeOnlineStatus(false);
-                    });
-                }
-                else if (parts[0] == "RANDOMREJECTED")
-                {
-                    TextChatModel system = new TextChatModel()
-                    {
-                        Author = "System",
-                        Time = DateTime.Now,
-                        Body = "Hiện tại không tìm thấy ai, xin đợi.",
-                        Inbound = true
-                    };
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        Random.ChatPanel.Controls.Clear();
-                        Random.AddMessage(system);
-                        friendPanel.friendList[999].changeOnlineStatus(false);
-                    });
-                }
-                else if (parts[0] == "FRIENDREQUEST" || parts[0] == "FRIENDACCEPTED" || parts[0] == "FRIENDREJECTED" || parts[0] == "GROUPREQUEST" || parts[0] == "CALLREQUEST")
-                {
-                    notiPanel.addNoti(receivedMessage);
-                    BT_noti.BackColor = Color.Red;
-                }
-                else if (parts[0] == "CALLACCEPTED")
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        call.LB_log.ForeColor = Color.Green;
-                        call.LB_log.Text = "Cuộc gọi được chấp nhận";
-                    });
-                    call.Start();
-                }
-                else if (parts[0] == "CALLREJECTED")
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        call.LB_log.ForeColor = Color.Red;
-                        call.LB_log.Text = "Cuộc gọi bị từ chối";
-                    });
-                }
-                else if (parts[0] == "ENDCALL")
-                {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        call.LB_log.ForeColor = Color.Red;
-                        call.LB_log.Text = "Cuộc gọi đã kết thúc";
-                    });
-                }
-                else
-                {
-                    int senderID = 0;
-                    int receiverID = 0;
-                    TextChatModel? textMessage = new TextChatModel();
-                    string json = "";
-                    try
-                    {
-                        string[] ids = parts[0].Split(">");
-
-                        senderID = int.Parse(ids[0]);
-                        receiverID = int.Parse(ids[1]);
-
-                        json = parts[1];
-                        textMessage = JsonConvert.DeserializeObject<TextChatModel>(json);
-                        textMessage.Inbound = true;
-                        json = JsonConvert.SerializeObject(textMessage);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, "ERROR");
-                    }
-
-                    // Check if the message is sent to you
-                    if (receiverID == 999)
-                    {
-                        if (this.IsHandleCreated) // Check if the handle has been created
-                        {
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                if (textMessage != null)
-                                {
-                                    Random.AddMessage(textMessage);
-                                    if (toUID != 999)
-                                    {
-                                        friendPanel.friendList[999].hasMessage();
-                                    }
-                                }
-                            });
-                        }
-                    }
-                    else if (receiverID == UID)
-                    {
-                        UserData userSender = friendList.Keys.FirstOrDefault(user => user.UID == senderID);
-                        // Update TB_remessage on the UI thread
-                        if (this.IsHandleCreated) // Check if the handle has been created
-                        {
-                            this.Invoke((MethodInvoker)delegate
-                            {
-                                if (userSender != null && textMessage != null)
-                                {
-                                    friendList[userSender].AddMessage(textMessage);
-                                    if (userSender.UID != toUID)
-                                    {
-                                        friendPanel.friendList[userSender.UID].hasMessage();
-                                    }
-                                }
-                            });
-                        }
-                        saveChat(senderID, receiverID, json);
-                    }
-                    else
-                    {
-                        GroupChat groupSender = groupList.Keys.FirstOrDefault(group => group.GroupUID == receiverID);
-                        if (groupSender != null)
-                        {
-                            // Update TB_remessage on the UI thread
-                            if (this.IsHandleCreated) // Check if the handle has been created
-                            {
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    if (textMessage != null)
-                                    {
-                                        groupList[groupSender].AddMessage(textMessage);
-                                        if (receiverID != toUID)
-                                        {
-                                            friendPanel.friendList[groupSender.GroupUID].hasMessage();
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                        saveChat(senderID, receiverID, json);
-                    }
+                    Debug.WriteLine("Receive message: " + ex.Message, "ERROR");
                 }
             }
         }

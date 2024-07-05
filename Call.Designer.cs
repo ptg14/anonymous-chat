@@ -47,18 +47,22 @@
             // PB_me
             // 
             PB_me.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            PB_me.Image = Properties.Resources.user300x300;
             PB_me.Location = new Point(3, 3);
             PB_me.Name = "PB_me";
             PB_me.Size = new Size(382, 349);
+            PB_me.SizeMode = PictureBoxSizeMode.CenterImage;
             PB_me.TabIndex = 0;
             PB_me.TabStop = false;
             // 
             // PB_you
             // 
             PB_you.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            PB_you.Image = Properties.Resources.user300x300;
             PB_you.Location = new Point(391, 3);
             PB_you.Name = "PB_you";
             PB_you.Size = new Size(382, 349);
+            PB_you.SizeMode = PictureBoxSizeMode.CenterImage;
             PB_you.TabIndex = 1;
             PB_you.TabStop = false;
             // 
@@ -184,7 +188,7 @@
         #endregion
 
         private PictureBox PB_me;
-        private PictureBox PB_you;
+        public PictureBox PB_you;
         private Button BT_cam;
         private Button BT_sound;
         private Button BT_mic;
@@ -192,7 +196,7 @@
         private TableLayoutPanel tableLayoutPanel1;
         private ComboBox CB_cam;
         private ProgressBar PBar_sound;
-        private ProgressBar PBar_resound;
+        public ProgressBar PBar_resound;
         public Label LB_log;
     }
 }
