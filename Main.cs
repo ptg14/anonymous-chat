@@ -213,6 +213,18 @@ namespace anonymous_chat
                             }
                             filePath = Path.Combine(folderPath, fileName);
                         }
+                        else if (dowhat == "FINDLOGO"){
+                            // Define the folder path and the file name
+                            folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, UID.ToString());
+                            fileName = "FINDLOGO.png";
+                            filePath = Path.Combine(folderPath, fileName);
+
+                            // Ensure the directory exists
+                            if (!Directory.Exists(folderPath))
+                            {
+                                Directory.CreateDirectory(folderPath);
+                            }
+                        }
                         else
                         {
                             string[] send = dowhat.Split("-");
@@ -250,7 +262,15 @@ namespace anonymous_chat
                             }
                         }
 
-                        if (dowhat != "SETAVATAR")
+                        if (dowhat == "FINDLOGO")
+                        {
+                            // Load the resized image into a MemoryStream to avoid locking the file
+                            using (var ms = new MemoryStream(File.ReadAllBytes(filePath)))
+                            {
+                                PB_findResult.Image = Image.FromStream(ms);
+                            }
+                        }
+                        else if (dowhat != "SETAVATAR")
                         {
                             IChatModel chatModel;
                             IChatModel saveChatModel;
@@ -1072,6 +1092,8 @@ namespace anonymous_chat
 
             // Display the user's name
             TB_findResult.Text = user.UserName;
+
+            Send("FINDLOGO=" + UID + ">" + TB_friendUID.Text);
         }
 
         private void BT_addFriend_Click(object sender, EventArgs e)
@@ -1084,6 +1106,11 @@ namespace anonymous_chat
             else if (TB_friendUID.Text == UID.ToString())
             {
                 TB_findResult.Text = "Đây là UID của bạn";
+                return;
+            }
+            else if (friendPanel.friendList.ContainsKey(int.Parse(TB_friendUID.Text)))
+            {
+                TB_findResult.Text = "Đã là bạn bè";
                 return;
             }
             // send to server
