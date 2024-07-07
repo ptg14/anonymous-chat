@@ -215,7 +215,7 @@
             ClientSize = new Size(544, 296);
             Controls.Add(panel1);
             Name = "JoinGroup";
-            Text = "JoinGroup";
+            Text = "Anonymous Chat";
             Icon = new Icon("resource\\icon.ico");
             panel1.ResumeLayout(false);
             panel1.PerformLayout();

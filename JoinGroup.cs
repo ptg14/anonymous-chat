@@ -129,6 +129,13 @@ namespace anonymous_chat
                 return;
             }
 
+            if (TB_password.Text != group.Password)
+            {
+                LB_log.ForeColor = Color.Red;
+                LB_log.Text = "Sai mật khẩu";
+                return;
+            }
+
             DocumentReference groupDocRef = db.Collection("Group").Document(group.GroupUID.ToString());
             await groupDocRef.UpdateAsync("MemberUID", FieldValue.ArrayUnion(main.UID));
 

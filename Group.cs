@@ -72,7 +72,6 @@ namespace anonymous_chat
                 rTB_info.Text += "GroupName: " + TB_Name.Text + "\n";
                 rTB_info.Text += "Password: " + TB_password.Text + "\n";
                 rTB_info.Text += "AdminUID: " + main.UID + "\n";
-                rTB_info.Text += "InviteUID: " + string.Join(", ", groupInviteUID) + "\n";
                 rTB_info.Text += "BanUID: " + string.Join(", ", groupBanUID) + "\n";
 
                 BT_group.Enabled = true;

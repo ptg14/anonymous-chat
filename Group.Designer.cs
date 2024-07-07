@@ -311,7 +311,7 @@ namespace anonymous_chat
             Controls.Add(taoNhom);
             Controls.Add(groupSetting);
             Name = "Group";
-            Text = "Group";
+            Text = "Anonymous Chat";
             Icon = new Icon("resource\\icon.ico");
             taoNhom.ResumeLayout(false);
             taoNhom.PerformLayout();
