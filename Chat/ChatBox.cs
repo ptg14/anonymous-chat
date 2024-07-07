@@ -182,7 +182,7 @@ namespace anonymous_chat.Chat
                         (saveChatModel as AttachmentChatModel).path = destinationFilePath;
                     }
                     string json = JsonConvert.SerializeObject(saveChatModel);
-                    main.saveChat(main.toUID, main.UID, json);
+                    main.saveChat(main.UID, main.toUID, json);
                     //MessageBox.Show(textJson);
                     main.SendFile(destinationFilePath);
 
